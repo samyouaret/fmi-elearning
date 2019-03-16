@@ -15,7 +15,6 @@ class CreateCourseTable extends Migration {
 		Schema::create('course', function(Blueprint $table)
 		{
 			$table->bigInteger('id', true);
-			$table->bigInteger('course_owner')->index('course_instructor');
 			$table->string('title', 200);
 			$table->string('description', 4000)->nullable();
 			$table->integer('num_of_chapters')->nullable();

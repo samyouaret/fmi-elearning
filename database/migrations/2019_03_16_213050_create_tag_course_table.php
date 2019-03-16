@@ -14,8 +14,9 @@ class CreateTagCourseTable extends Migration {
 	{
 		Schema::create('tag_course', function(Blueprint $table)
 		{
-			$table->bigInteger('course_id')->primary();
+			$table->bigInteger('course_id');
 			$table->integer('tag_id')->index('tag_course_joiner_tag');
+			$table->primary(['course_id','tag_id']);
 		});
 	}
 

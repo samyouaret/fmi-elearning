@@ -14,8 +14,10 @@ class CreateInstructorCourseTable extends Migration {
 	{
 		Schema::create('instructor_course', function(Blueprint $table)
 		{
-			$table->bigInteger('course_id')->primary();
-			$table->bigInteger('instructor_id')->index('instructor_course_instructor');
+			$table->bigInteger('course_id');
+			$table->bigInteger('instructor_id');
+			$table->boolean('is_owner');
+			$table->primary(['course_id','instructor_id']);
 		});
 	}
 

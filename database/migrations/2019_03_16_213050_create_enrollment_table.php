@@ -15,10 +15,10 @@ class CreateEnrollmentTable extends Migration {
 		Schema::create('enrollment', function(Blueprint $table)
 		{
 			$table->bigInteger('id', true);
-			$table->bigInteger('student_id')->index('enrollment_student');
 			$table->bigInteger('course_id')->index('enrollment_course');
 			$table->date('enrollment_date');
 			$table->char('is_paid_subscription', 1);
+			$table->bigInteger('user_id')->index('enrollment_user');
 		});
 	}
 
