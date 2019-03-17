@@ -7,6 +7,9 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 
 class AuthServiceProvider extends ServiceProvider
 {
+    const USER_STUDENT = 0;
+    const USER_INSTRUCTOR = 1;
+    const USER_ADMIN = 2;
     /**
      * The policy mappings for the application.
      *
@@ -25,6 +28,15 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
+        Gate::define('isAdmin', function ($user) {
+          return $user->user_type == self::USER_ADMIN;
+        });
+        Gate::define('isStudent', function ($user) {
+          return $user->user_type == self::USER_STUDENT;
+        });
+        Gate::define('isInstructor', function ($user) {
+          return $user->user_type == self::USER_INSTRUCTOR;
+        });
         //
     }
 }

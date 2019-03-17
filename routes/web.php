@@ -30,6 +30,7 @@ Route::resource('instructor', 'course\CourseInstructorController',['parameters' 
 /**
  * course explorer
  */
+
 Route::prefix('course')->group(function()
 {
   Route::get('{id}','course\CourseExplorerController@show');
