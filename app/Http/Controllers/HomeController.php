@@ -14,7 +14,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        // $this->middleware('auth');
     }
 
     /**
@@ -22,9 +22,14 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
+    public function dashboard()
+    {
+           // return var_dump(Gate::allows("isInstructor"));
+        return view('dashboard');
+    }
     public function index()
     {
-           return var_dump(Gate::allows("isInstructor"));
-        // return view('home');
+           // return var_dump(Gate::allows("isInstructor"));
+        return view('index');
     }
 }
