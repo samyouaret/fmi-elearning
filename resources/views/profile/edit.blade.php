@@ -51,4 +51,10 @@
       </form>
     </div>
   </div>
+  <div id="test">
+  </div>
 @endsection
+@push('scripts')
+  <!-- Scripts -->
+<script src="{{ asset('js/profile/edit.js') }}" defer></script>
+@endpush
