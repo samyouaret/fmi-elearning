@@ -1,5 +1,7 @@
+@navbar
 <div id="app">
-        <main class="py-4">
+  @include('inc.messages')
+        <main class=" container py-4">
             @yield('content')
         </main>
 </div>

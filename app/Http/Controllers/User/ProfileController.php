@@ -4,6 +4,8 @@ namespace App\Http\Controllers\User;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Profile;
+use Illuminate\Support\Facades\DB;
 
 class ProfileController extends Controller
 {
@@ -14,12 +16,12 @@ class ProfileController extends Controller
      */
     public function __construct()
     {
-      $this->middleware("auth");
-      $this->middleware('profile',['only' => ['create']]);
+      // $this->middleware("auth")->except;
+      // $this->middleware('profile',['only' => ['create']]);
     }
     public function index()
     {
-      return view('profile/');
+      return view('profile.show');
     }
 
     /**
@@ -62,7 +64,15 @@ class ProfileController extends Controller
      */
     public function edit($id)
     {
-        //
+      $profile = Profile::find($id);
+      $universities =  DB::table('university')->select('id','name')->get();
+      $departments =  DB::table('department')->select('id','name')->get();
+        return view('profile.edit')->with([
+          'profile'=>$profile,
+          'id'=>$id,
+          'departments'=>$departments,
+          'universities' =>$universities
+        ]);
     }
 
     /**
@@ -74,7 +84,21 @@ class ProfileController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request,[
+          'university' => 'required',
+          'department' => 'required',
+          'gender'=>'required'
+        ]);
+        if (!$request->user()->id==$id) {
+          App::abort(404, 'Unauthorized');
+        }
+        $profile = Profile::find($id) ?? new Profile;
+        $profile->id = $id;
+        $profile->university_id = $request->input('university');
+        $profile->department_id = $request->input('department');
+        $profile->gender = $request->input('gender');
+        $profile->save();
+        return redirect('/dashboard')->with('success',"Profile updated successfully");
     }
 
     /**
