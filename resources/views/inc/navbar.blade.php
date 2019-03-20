@@ -48,10 +48,14 @@
                 @else
                     <li class="nav-item dropdown">
                         <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                            {{ Auth::user()->first_name." ".Auth::user()->last_name }} <span class="caret"></span>
+                            <img  class="rounded-circle" src="/storage/profile_image/{{ Auth::user()->image}}"
+                            style="width:40px;height:40px;" alt="profile image"/>
                         </a>
 
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                              <a href="#" class="dropdown-header dropdown-item">{{ Auth::user()->first_name." ".Auth::user()->last_name }}</a>
+                              <a href="/dashboard" class="dropdown-item">dashboard</a>
+                              <a href="/profile/{{Auth::user()->id}}/edit" class="dropdown-item">edit profile</a>
                             <a class="dropdown-item" href="{{ route('logout') }}"
                                onclick="event.preventDefault();
                                              document.getElementById('logout-form').submit();">
@@ -61,7 +65,6 @@
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                 @csrf
                             </form>
-                            <a href="/profile/{{Auth::user()->id}}/edit" class="dropdown-item">edit profile</a>
                         </div>
                     </li>
                 @endguest

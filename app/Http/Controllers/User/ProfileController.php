@@ -5,7 +5,9 @@ namespace App\Http\Controllers\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Profile;
+use App\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -87,10 +89,29 @@ class ProfileController extends Controller
         $this->validate($request,[
           'university' => 'required',
           'department' => 'required',
-          'gender'=>'required'
+          'gender'=>'required',
+          'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
+        echo "<pre>";
+        print_r($request->all());
+        var_dump($request->has('profile_image'));
         if (!$request->user()->id==$id) {
           App::abort(404, 'Unauthorized');
+        }
+        if ($request->hasFile('profile_image')) {
+            $fileNameWithExt = $request->file('profile_image')->getClientOriginalName();
+            //get filename
+            $fileName = pathinfo($fileNameWithExt,PATHINFO_FILENAME);
+            //get extension
+            $ext = $request->file('profile_image')->getClientOriginalExtension();
+            $fileNameToStore = $fileName.'_'.time().'.'.$ext;
+            $path = $request->file('profile_image')->storeAs('public/profile_image',$fileNameToStore);
+            // echo "yeeeeeeeeeeees";
+            $user =  User::find($id);
+            $user->image = $fileNameToStore;
+            $user->save();
+            if ($user->image !=='no_image.jpg')
+              Storage::delete('public/profile_image' . $user->image);
         }
         $profile = Profile::find($id) ?? new Profile;
         $profile->id = $id;
