@@ -4,7 +4,8 @@ namespace App\Http\Controllers\course;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
+// use Illuminate\Support\Facades\DB;
+use App\Course;
 class CourseInstructorController extends Controller
 {
     /**
@@ -14,7 +15,12 @@ class CourseInstructorController extends Controller
      */
     public function index()
     {
-        //
+       return view('courseinstructor.index');
+    }
+    public function courses()
+    {
+         $courses = Course::all();
+         return $courses->toJson();
     }
 
     /**
@@ -24,7 +30,7 @@ class CourseInstructorController extends Controller
      */
     public function create()
     {
-        //
+       return view('courseinstructor.create');
     }
 
     /**
@@ -58,7 +64,18 @@ class CourseInstructorController extends Controller
      */
     public function edit($id)
     {
-        //
+        return view('courseinstructor.edit');
+    }
+    /**
+     * Show the the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+       $course = Course::find($id);
+        return $course->toJson();
     }
 
     /**

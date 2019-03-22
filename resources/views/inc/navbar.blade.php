@@ -8,9 +8,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'fmi-Elearing') }}</title>
-       <!-- scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
-
+    
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
@@ -30,7 +28,12 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <!-- Left Side Of Navbar -->
             <ul class="navbar-nav mr-auto">
-
+              {{-- // TODO: make instrcutor as a guard --}}
+            @auth
+               @if (Auth::user()->user_type==1)
+                  <li class="nav-item"><a class="nav-link" href="/instructor">instructor</a></li>
+               @endif
+            @endauth
             </ul>
 
             <!-- Right Side Of Navbar -->

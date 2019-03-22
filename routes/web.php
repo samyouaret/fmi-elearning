@@ -34,9 +34,10 @@ Route::get('/dashboard', 'HomeController@dashboard')->middleware('auth')
 // Route::match(['get','head'],'instructor/{courses}','course\CourseInstructorController');
 
 Route::post('instructor/{course}','course\CourseInstructorController@publish');
+Route::get('instructor/courses', 'course\CourseInstructorController@courses');
 Route::resource('instructor', 'course\CourseInstructorController',['parameters' => [
   'instructor' => 'course',
-]])->except('show');
+]]);
 
 /**
  * course explorer
