@@ -4,7 +4,7 @@ namespace App\Http\Controllers\course;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-// use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\DB;
 use App\Course;
 class CourseInstructorController extends Controller
 {
@@ -74,8 +74,31 @@ class CourseInstructorController extends Controller
      */
     public function show($id)
     {
-       $course = Course::find($id);
-        return $course->toJson();
+       $course = Course::join('sub_subject','sub_subject_id','=','sub_subject.id')
+       ->where('course.id',$id)
+       ->join('language','language_id','=','language.id')
+       ->first();
+        return response()->json($course);
+    }
+    public function subSubjects($subjectId)
+    {
+       $items = DB::table('sub_subject')
+       ->where('subject_id',$subjectId)
+       ->get();
+       // var_dump($course);
+      return response()->json($items);
+    }
+    public function subjects()
+    {
+       $items = DB::table('subject')
+       ->get();
+      return response()->json($items);
+    }
+    public function languages()
+    {
+       $items = DB::table('language')
+       ->get();
+      return response()->json($items);
     }
 
     /**
@@ -87,7 +110,21 @@ class CourseInstructorController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+         $this->validate($request,[
+         "title"=>"string|max:60",
+         "description"=>"nullable|string|max:2000",
+         "description"=>"nullable|string|max:2000",
+         "course_fee"=>'nullable|numeric',
+         "sub_subject_id"=>'integer',
+         "language_id"=>'integer',
+         "cover_image"=>'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+         "num_of_chapters"=>'nullable|integer',
+         "level"=>"nullable|integer|max:3",
+      ]);
+      $data = $request->all();
+      $resp = DB::table('course')->updateOrInsert(['id'=>$id],$data) ? ['status'=>'success','msg' =>"course has been updated successfully"] : ['status'=>'failed','msg' =>"oops something went wrong"];
+      // return response()->json($request->all());
+      return response()->json($resp);
     }
 
     /**
