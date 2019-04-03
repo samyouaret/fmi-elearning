@@ -11,13 +11,8 @@ export default class CourseInfo extends Component {
       this.edit = this.edit.bind(this);
       this.cancel = this.cancel.bind(this);
       this.save = this.save.bind(this);
-      this.handleDescriptionChange= this.handleDescriptionChange.bind(this);
-      this.handleTitleChange= this.handleTitleChange.bind(this);
       this.handleSubjectChange= this.handleSubjectChange.bind(this);
-      this.handleSubSubjectChange = this.handleSubSubjectChange.bind(this);
-      this.handleLanguageChange= this.handleLanguageChange.bind(this);
-      this.handlePriceChange= this.handlePriceChange.bind(this);
-      this.handleLevelChange= this.handleLevelChange.bind(this);
+      this.handleChange= this.handleChange.bind(this);
       // this.loadSubSubjects();
       $.when(loadData('/instructor/subSubjects/'+ this.props.data.subject_id),
         loadData('/instructor/subjects'),loadData('/instructor/languages'))
@@ -29,16 +24,6 @@ export default class CourseInfo extends Component {
          })
     });
    }
-   handleTitleChange(e){
-     this.setState({
-      title : e.target.value
-     });
-   }
-   handleDescriptionChange(e){
-     this.setState({
-      description : e.target.value
-     });
-   }
    handleSubjectChange(e){
       loadData('/instructor/subSubjects/'+ e.target.value).then((data)=>{
          console.log(data);
@@ -48,25 +33,10 @@ export default class CourseInfo extends Component {
        })
       });
    }
-   handleSubSubjectChange(e){
+   handleChange(event{
+      event.persist();
      this.setState({
-      sub_subject_id : e.target.value
-     });
-   }
-   handleLanguageChange(e){
-      console.log(e.target.defaultValue);
-     this.setState({
-      language_id : e.target.value
-     });
-   }
-   handlePriceChange(e){
-     this.setState({
-      course_fee : e.target.value
-     });
-   }
-   handleLevelChange(e){
-     this.setState({
-      level : e.target.value
+      [event.target.name] : event.target.value
      });
    }
    save(){
@@ -86,7 +56,7 @@ export default class CourseInfo extends Component {
             console.log(ele[key]);
             selected = "selected";
          }
-       return <option key={ele[key]} dataValue={ele[value]} selected value={ele[key]}>{ele[value]}</option>
+       return <option key={ele[key]} selected value={ele[key]}>{ele[value]}</option>
       })
    }
    renderForm(){
@@ -128,34 +98,34 @@ export default class CourseInfo extends Component {
          <div className="card-body">
          <form onSubmit={this.save}>
             <div className="form-group">
-             <input  className="form-control" defaultValue={this.props.data.title} onChange={this.handleTitleChange}/>
+             <input  className="form-control" name="title" defaultValue={this.props.data.title} onChange={this.handleChange}/>
             </div>
             <div className="form-group">
-             <textarea  rows="7" className="form-control" defaultValue={this.props.data.description} onChange={this.handleDescriptionChange}/>
+             <textarea  rows="7" className="form-control" name="description" defaultValue={this.props.data.description} onChange={this.handleChange}/>
             </div>
             <div className="form-group">
-             <select  defaultValue= {this.props.data.subject_id} className="form-control"  onChange={this.handleSubjectChange}>
+             <select  defaultValue= {this.props.data.subject_id} className="form-control" name="subject_id"  onChange={this.handleSubjectChange}>
                 {subjects}
              </select>
             </div>
             <div className="form-group">
-             <select defaultValue= {this.props.data.sub_subject_id} className="form-control" onChange={this.handleSubSubjectChange}>
+             <select defaultValue= {this.props.data.sub_subject_id} className="form-control" name="sub_subject_id" onChange={this.handleChange}>
                {sub_subjects}
              </select>
             </div>
             <div className="form-group">
-             <select  defaultValue= {this.props.data.language_id} className="form-control" onChange={this.handleLanguageChange}>
+             <select  defaultValue= {this.props.data.language_id} className="form-control" name="language_id" onChange={this.handleChange}>
                {languages}
              </select>
             </div>
             <div className="form-group">
-             <select  defaultValue= {this.props.data.level} className="form-control" onChange={this.handleLevelChange}>
+             <select  defaultValue= {this.props.data.level} className="form-control" name="level" onChange={this.handleChange}>
                {levels}
              </select>
             </div>
             <div className="form-group">
                <label>Price</label>
-             <input  className="form-control" defaultValue={this.props.data.course_fee} onChange={this.handlePriceChange}/>
+             <input  className="form-control" name="course_fee" defaultValue={this.props.data.course_fee} onChange={this.handleChange}/>
             </div>
             <button className="btn btn-success mr-3" onClick={this.save}>save</button>
             <button className="btn btn-danger" onClick={this.cancel}>cancel</button>

@@ -1,6 +1,5 @@
 {
     "/js/app.js": "/js/app.js",
-    "/js/courseinstructor/edit.js": "/js/courseinstructor/edit.js",
-    "/js/courseinstructor/index.js": "/js/courseinstructor/index.js",
+    "/js/formComponents/testIndex.js": "/js/formComponents/testIndex.js",
     "/js/profile/edit.js": "/js/profile/edit.js"
 }

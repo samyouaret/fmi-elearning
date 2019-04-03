@@ -13,13 +13,20 @@
 //
 // echo Hash::make('james1995');
 // test route
-Route::get('test/test', function()
+Route::prefix('test')->group(function()
 {
-  return view('test.test');
-});
-Route::get('test', function()
-{
-  return view('test.index');
+   Route::get('test', function()
+   {
+      return view('test.test');
+   });
+   Route::get('', function()
+   {
+      return view('test.index');
+   });
+   Route::get('form', function()
+   {
+      return view('test.form');
+   });
 });
 
 Auth::routes();

@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -61270,22 +61270,18 @@ if (token) {
 
 /***/ }),
 
-/***/ "./resources/js/courseinstructor/CourseBuilder.js":
-/*!********************************************************!*\
-  !*** ./resources/js/courseinstructor/CourseBuilder.js ***!
-  \********************************************************/
+/***/ "./resources/js/formComponents/Form.js":
+/*!*********************************************!*\
+  !*** ./resources/js/formComponents/Form.js ***!
+  \*********************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Form; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _CourseInfo__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CourseInfo */ "./resources/js/courseinstructor/CourseInfo.js");
-/* harmony import */ var _CourseInfo__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_CourseInfo__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _Navbar__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Navbar */ "./resources/js/courseinstructor/Navbar.js");
-/* harmony import */ var _Curriculum__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Curriculum */ "./resources/js/courseinstructor/Curriculum.js");
-/* harmony import */ var _dataLoader__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./dataLoader */ "./resources/js/courseinstructor/dataLoader.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
@@ -61300,9 +61296,136 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+var Form =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(Form, _Component);
+
+  function Form(props) {
+    var _this;
+
+    _classCallCheck(this, Form);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Form).call(this, props));
+    _this.state = {
+      values: _this.props.initialValues || {},
+      touched: {},
+      isValid: false,
+      errors: {}
+    };
+
+    _this.handleChange = function (event) {
+      var target = event.target;
+      var value = target.type === "checkbox" ? target.checked : target.value;
+
+      _this.setState(function (prevState) {
+        return {
+          values: _objectSpread({}, prevState.values, _defineProperty({}, target.name, value))
+        };
+      });
+    };
+
+    _this.handleBlur = function (event) {
+      var target = event.target;
+
+      _this.setState(function (prevState) {
+        return {
+          touched: _objectSpread({}, prevState.touched, _defineProperty({}, target.name, true))
+        };
+      });
+    };
+
+    _this.validate = function () {
+      if (_this.props.validate) {
+        var errors = _this.props.validate(_this.state.values);
+
+        if (_this.isEmpty(errors)) {
+          return true;
+        }
+
+        _this.setState({
+          errors: errors,
+          isValid: false
+        });
+
+        return false;
+      }
+    };
+
+    _this.handleSubmit = function (event) {
+      event.preventDefault();
+
+      if (_this.validate()) {
+        _this.setState({
+          errors: {},
+          isValid: true
+        });
+
+        _this.props.onSubmit(_this.state.values);
+      }
+    };
+
+    _this.isEmpty = function (obj) {
+      return Object.entries(obj).length === 0 && obj.constructor === Object;
+    };
+
+    return _this;
+  }
+
+  _createClass(Form, [{
+    key: "render",
+    value: function render() {
+      return this.props.children(_objectSpread({}, this.state, {
+        handleChange: this.handleChange,
+        handleBlur: this.handleBlur,
+        handleSubmit: this.handleSubmit
+      }));
+    }
+  }]);
+
+  return Form;
+}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
+
+
+
+/***/ }),
+
+/***/ "./resources/js/formComponents/Login.js":
+/*!**********************************************!*\
+  !*** ./resources/js/formComponents/Login.js ***!
+  \**********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Login; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _Form__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Form */ "./resources/js/formComponents/Form.js");
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
@@ -61311,348 +61434,101 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
-
-
-
-var CourseBuilder =
+var Login =
 /*#__PURE__*/
 function (_Component) {
-  _inherits(CourseBuilder, _Component);
+  _inherits(Login, _Component);
 
-  function CourseBuilder(props) {
+  function Login(props) {
     var _this;
 
-    _classCallCheck(this, CourseBuilder);
+    _classCallCheck(this, Login);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(CourseBuilder).call(this, props));
-    console.log(props);
-    _this.state = {
-      display: 0
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Login).call(this, props));
+
+    _this.validate = function (values) {
+      var errors = {};
+
+      if (!values.email) {
+        errors.email = 'Required';
+      } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+        errors.email = 'Invalid email address';
+      }
+
+      if (!values.password) {
+        errors.password = 'Required';
+      } else if (values.password.length < 6) {
+        errors.password = 'password length can\'t be less than 6 characters';
+      }
+
+      return errors;
     };
 
-    _this.loadCourse();
-
-    _this.showCourseInfo = _this.showCourseInfo.bind(_assertThisInitialized(_this));
-    _this.showCurriculum = _this.showCurriculum.bind(_assertThisInitialized(_this));
-    _this.save = _this.save.bind(_assertThisInitialized(_this));
-    _this.updateParentData = _this.updateParentData.bind(_assertThisInitialized(_this));
     return _this;
-  } // componentDidMount will not work because id conditional rendering
+  }
 
-
-  _createClass(CourseBuilder, [{
-    key: "loadCourse",
-    value: function loadCourse() {
-      var _this2 = this;
-
-      var id = this.getCourseId();
-      $.getJSON('/instructor/' + id, null, function (data, textStatus, jqxhr) {
-        _this2.setState({
-          data: data
-        });
-      });
-    }
-  }, {
-    key: "loadSubSubjects",
-    value: function loadSubSubjects() {
-      var _this3 = this;
-
-      console.log(this.props);
-      $.getJSON('/instructor/subSubjects/' + this.props.subject_id, null, function (data, textStatus, jqxhr) {
-        _this3.setState({
-          sub_subjects: data
-        });
-      });
-    }
-  }, {
-    key: "loadSubjects",
-    value: function loadSubjects() {
-      var _this4 = this;
-
-      console.log(this.props);
-      $.getJSON('/instructor/subjects', null, function (data, textStatus, jqxhr) {
-        _this4.setState({
-          subjects: data
-        });
-      });
-    }
-  }, {
-    key: "getCourseId",
-    value: function getCourseId() {
-      return location.pathname.split("/")[2];
-    }
-  }, {
-    key: "showCourseInfo",
-    value: function showCourseInfo() {
-      this.setState({
-        display: 0
-      });
-    }
-  }, {
-    key: "showCurriculum",
-    value: function showCurriculum() {
-      this.setState({
-        display: 1
-      });
-    } // updateData({key,value}){
-    //    this.setState({
-    //    });
-    // }
-
-  }, {
-    key: "save",
-    value: function save(data) {
-      $.ajaxSetup({
-        headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-      });
-      $.ajax({
-        type: 'PUT',
-        url: '/instructor/' + this.state.data.id,
-        contentType: 'application/json',
-        data: JSON.stringify(data)
-      }).done(function (data) {
-        console.log('SUCCESS');
-        console.log(data);
-      }).fail(function (msg) {
-        console.log('FAIL');
-      }).always(function (msg) {
-        console.log('ALWAYS');
-      });
-      this.setState({
-        data: _objectSpread({}, this.state.data, data)
-      });
-    }
-  }, {
-    key: "updateParentData",
-    value: function updateParentData(key, value) {
-      if (this.state.key) {
-        this.setState(_defineProperty({}, key, value));
-      }
-    }
-  }, {
+  _createClass(Login, [{
     key: "render",
     value: function render() {
-      console.log(this.state);
-      var content = this.state.display == 0 ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_CourseInfo__WEBPACK_IMPORTED_MODULE_1___default.a, {
-        data: this.state.data,
-        save: this.save,
-        updateParentData: this.updateParentData
-      }) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Curriculum__WEBPACK_IMPORTED_MODULE_3__["default"], null);
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "container-fluid border border-secondary h-100",
-        style: {
-          minHeight: 500 + "px"
-        }
+        className: "card"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row flex-row justify-content-end",
-        style: {
-          minHeight: 500 + "px"
-        }
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Navbar__WEBPACK_IMPORTED_MODULE_2__["default"], {
-        showCourseInfo: this.showCourseInfo,
-        showCurriculum: this.showCurriculum
-      }), this.state && this.state.data && content));
+        className: "card-header text-center"
+      }, "Login"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "card-body"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Form__WEBPACK_IMPORTED_MODULE_1__["default"], {
+        onSubmit: function onSubmit(values) {
+          alert(JSON.stringify(values, null, 2));
+        },
+        validate: this.validate
+      }, function (_ref) {
+        var values = _ref.values,
+            handleChange = _ref.handleChange,
+            handleBlur = _ref.handleBlur,
+            handleSubmit = _ref.handleSubmit,
+            errors = _ref.errors,
+            touched = _ref.touched;
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
+          onSubmit: handleSubmit
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "form-group"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+          type: "text",
+          className: "form-control",
+          name: "email",
+          onChange: handleChange,
+          onBlur: handleBlur
+        }), errors.email && touched.email && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", {
+          className: "invalid-feedback d-inline-block"
+        }, errors.email)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "form-group"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+          type: "password",
+          className: "form-control",
+          name: "password",
+          onChange: handleChange,
+          onBlur: handleBlur
+        }), errors.password && touched.password && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", {
+          className: "invalid-feedback d-inline-block"
+        }, errors.password)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          type: "submit",
+          className: "btn btn-primary btn-block"
+        }, "login"));
+      })));
     }
   }]);
 
-  return CourseBuilder;
-}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
-
-/* harmony default export */ __webpack_exports__["default"] = (CourseBuilder);
-
-/***/ }),
-
-/***/ "./resources/js/courseinstructor/CourseInfo.js":
-/*!*****************************************************!*\
-  !*** ./resources/js/courseinstructor/CourseInfo.js ***!
-  \*****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-throw new Error("Module build failed (from ./node_modules/babel-loader/lib/index.js):\nSyntaxError: C:\\xampp\\htdocs\\fmi-Elearning\\resources\\js\\courseinstructor\\CourseInfo.js: Unexpected token, expected \",\" (36:21)\n\n\u001b[0m \u001b[90m 34 | \u001b[39m      })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 35 | \u001b[39m   }\u001b[0m\n\u001b[0m\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 36 | \u001b[39m   handleChange(event{\u001b[0m\n\u001b[0m \u001b[90m    | \u001b[39m                     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 37 | \u001b[39m      event\u001b[33m.\u001b[39mpersist()\u001b[33m;\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 38 | \u001b[39m     \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39msetState({\u001b[0m\n\u001b[0m \u001b[90m 39 | \u001b[39m      [event\u001b[33m.\u001b[39mtarget\u001b[33m.\u001b[39mname] \u001b[33m:\u001b[39m event\u001b[33m.\u001b[39mtarget\u001b[33m.\u001b[39mvalue\u001b[0m\n    at Object.raise (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\parser\\lib\\index.js:3831:17)\n    at Object.unexpected (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\parser\\lib\\index.js:5143:16)\n    at Object.expect (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\parser\\lib\\index.js:5135:28)\n    at Object.parseBindingList (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\parser\\lib\\index.js:5417:14)\n    at Object.parseFunctionParams (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\parser\\lib\\index.js:7961:24)\n    at Object.parseMethod (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\parser\\lib\\index.js:6802:10)\n    at Object.pushClassMethod (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\parser\\lib\\index.js:8200:30)\n    at Object.parseClassMemberWithIsStatic (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\parser\\lib\\index.js:8125:12)\n    at Object.parseClassMember (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\parser\\lib\\index.js:8067:10)\n    at withTopicForbiddingContext (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\parser\\lib\\index.js:8022:14)\n    at Object.withTopicForbiddingContext (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\parser\\lib\\index.js:7150:14)\n    at Object.parseClassBody (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\parser\\lib\\index.js:7999:10)\n    at Object.parseClass (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\parser\\lib\\index.js:7973:10)\n    at Object.parseExportDefaultExpression (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\parser\\lib\\index.js:8394:19)\n    at Object.parseExport (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\parser\\lib\\index.js:8299:31)\n    at Object.parseStatementContent (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\parser\\lib\\index.js:7347:27)\n    at Object.parseStatement (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\parser\\lib\\index.js:7243:17)\n    at Object.parseBlockOrModuleBlockBody (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\parser\\lib\\index.js:7810:25)\n    at Object.parseBlockBody (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\parser\\lib\\index.js:7797:10)\n    at Object.parseTopLevel (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\parser\\lib\\index.js:7181:10)\n    at Object.parse (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\parser\\lib\\index.js:8660:17)\n    at parse (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\parser\\lib\\index.js:10660:38)\n    at parser (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\core\\lib\\transformation\\normalize-file.js:170:34)\n    at normalizeFile (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\core\\lib\\transformation\\normalize-file.js:138:11)\n    at runSync (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\core\\lib\\transformation\\index.js:44:43)\n    at runAsync (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\core\\lib\\transformation\\index.js:35:14)\n    at process.nextTick (C:\\xampp\\htdocs\\fmi-Elearning\\node_modules\\@babel\\core\\lib\\transform.js:34:34)\n    at process._tickCallback (internal/process/next_tick.js:61:11)");
-
-/***/ }),
-
-/***/ "./resources/js/courseinstructor/Curriculum.js":
-/*!*****************************************************!*\
-  !*** ./resources/js/courseinstructor/Curriculum.js ***!
-  \*****************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Curriculum; });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-
-
-var Curriculum =
-/*#__PURE__*/
-function (_Component) {
-  _inherits(Curriculum, _Component);
-
-  function Curriculum(props) {
-    var _this;
-
-    _classCallCheck(this, Curriculum);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Curriculum).call(this, props));
-    _this.state = {
-      editing: false
-    };
-    _this.renderForm = _this.renderForm.bind(_assertThisInitialized(_this));
-    return _this;
-  }
-
-  _createClass(Curriculum, [{
-    key: "renderForm",
-    value: function renderForm() {
-      return null;
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      if (this.state.editing) {
-        return this.renderForm();
-      }
-
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "card col-8",
-        style: {
-          minHeight: 500 + "px"
-        }
-      }, "Curriculum");
-    }
-  }]);
-
-  return Curriculum;
+  return Login;
 }(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
 
 
 
 /***/ }),
 
-/***/ "./resources/js/courseinstructor/Navbar.js":
-/*!*************************************************!*\
-  !*** ./resources/js/courseinstructor/Navbar.js ***!
-  \*************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Navbar; });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-
-
-var Navbar =
-/*#__PURE__*/
-function (_Component) {
-  _inherits(Navbar, _Component);
-
-  function Navbar(props) {
-    _classCallCheck(this, Navbar);
-
-    return _possibleConstructorReturn(this, _getPrototypeOf(Navbar).call(this, props));
-  }
-
-  _createClass(Navbar, [{
-    key: "showCourseInfo",
-    value: function showCourseInfo() {
-      this.props.showCourseInfo();
-    }
-  }, {
-    key: "showCurriculum",
-    value: function showCurriculum() {
-      this.props.showCurriculum();
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "nav bg-light col-sm-4 border-right  flex-column align-items-baseline",
-        style: {
-          flex: 1
-        }
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-        href: "#",
-        className: "nav-item nav-link",
-        onClick: this.props.showCourseInfo
-      }, "course information"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-        href: "#",
-        className: "nav-item nav-link",
-        onClick: this.props.showCurriculum
-      }, "Curriculum"));
-    }
-  }]);
-
-  return Navbar;
-}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
-
-
-
-/***/ }),
-
-/***/ "./resources/js/courseinstructor/dataLoader.js":
-/*!*****************************************************!*\
-  !*** ./resources/js/courseinstructor/dataLoader.js ***!
-  \*****************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return loadData; });
-function loadData(url) {
-  return $.getJSON(url); // return $data;
-}
-
-/***/ }),
-
-/***/ "./resources/js/courseinstructor/edit.js":
-/*!***********************************************!*\
-  !*** ./resources/js/courseinstructor/edit.js ***!
-  \***********************************************/
+/***/ "./resources/js/formComponents/testIndex.js":
+/*!**************************************************!*\
+  !*** ./resources/js/formComponents/testIndex.js ***!
+  \**************************************************/
 /*! no exports provided */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -61662,27 +61538,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _CourseBuilder__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./CourseBuilder */ "./resources/js/courseinstructor/CourseBuilder.js");
+/* harmony import */ var _Login__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Login */ "./resources/js/formComponents/Login.js");
 __webpack_require__(/*! ../bootstrap */ "./resources/js/bootstrap.js");
 
 
 
 
 
-if (document.getElementById('course')) {
-  react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_CourseBuilder__WEBPACK_IMPORTED_MODULE_2__["default"], null), document.getElementById('course'));
+if (document.getElementById('login')) {
+  Object(react_dom__WEBPACK_IMPORTED_MODULE_1__["render"])(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Login__WEBPACK_IMPORTED_MODULE_2__["default"], null), document.getElementById('login'));
 }
 
 /***/ }),
 
-/***/ 3:
-/*!*****************************************************!*\
-  !*** multi ./resources/js/courseinstructor/edit.js ***!
-  \*****************************************************/
+/***/ 2:
+/*!********************************************************!*\
+  !*** multi ./resources/js/formComponents/testIndex.js ***!
+  \********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\xampp\htdocs\fmi-Elearning\resources\js\courseinstructor\edit.js */"./resources/js/courseinstructor/edit.js");
+module.exports = __webpack_require__(/*! C:\xampp\htdocs\fmi-Elearning\resources\js\formComponents\testIndex.js */"./resources/js/formComponents/testIndex.js");
 
 
 /***/ })
