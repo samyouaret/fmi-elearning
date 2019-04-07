@@ -27,6 +27,10 @@ Route::prefix('test')->group(function()
    {
       return view('test.form');
    });
+   Route::get('dataprovider', function()
+   {
+      return view('test.dataprovider');
+   });
 });
 
 Auth::routes();

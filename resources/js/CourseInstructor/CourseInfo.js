@@ -1,19 +1,20 @@
 import React,{Component} from "react"
 import loadData from "./dataLoader"
+import Form from '../FormComponents/Form'
+import Input from '../FormComponents/Input'
+import Select from '../FormComponents/Select'
 
+import levelsList from './levels'
 export default class CourseInfo extends Component {
    constructor(props){
       super(props);
       this.state = {
          editing : false
       }
-      // this.renderForm = this.renderForm.bind(this);
       this.edit = this.edit.bind(this);
       this.cancel = this.cancel.bind(this);
       this.save = this.save.bind(this);
       this.handleSubjectChange= this.handleSubjectChange.bind(this);
-      this.handleChange= this.handleChange.bind(this);
-      // this.loadSubSubjects();
       $.when(loadData('/instructor/subSubjects/'+ this.props.data.subject_id),
         loadData('/instructor/subjects'),loadData('/instructor/languages'))
         .then((sub_subjects, subjects,languages) => {
@@ -24,23 +25,30 @@ export default class CourseInfo extends Component {
          })
     });
    }
-   handleSubjectChange(e){
+   static getDerivedStateFromProps(nextProps, prevState) {
+         return {data : nextProps.data};
+   }
+   validate(values){
+      let errors={}
+      if (!values.title) {
+         console.log(Boolean(values.title));
+         console.log(values.title.length);
+         errors.title =" title is Required.";
+      }
+      else if (values.title.length > 60) {
+         errors.title =" title length can't be greater than 60";
+      }
+      return errors;
+   }
+   handleSubjectChange(e,handleChange){
       loadData('/instructor/subSubjects/'+ e.target.value).then((data)=>{
-         console.log(data);
          this.setState({
           sub_subjects : data,
           sub_subject_id : data[0].id
        })
       });
    }
-   handleChange(event{
-      event.persist();
-     this.setState({
-      [event.target.name] : event.target.value
-     });
-   }
-   save(){
-      var {languages,subjects,sub_subjects,editing,...data} = this.state;
+   save(data){
       this.props.save(data);
       this.cancel();
    }
@@ -49,100 +57,81 @@ export default class CourseInfo extends Component {
          editing : false
       });
    }
-   renderSelectList(arr,{key='id',value,compare}){
-      return arr.map((ele)=> {
-         let selected ="";
-         if (compare===ele[key]) {
-            console.log(ele[key]);
-            selected = "selected";
-         }
-       return <option key={ele[key]} selected value={ele[key]}>{ele[value]}</option>
-      })
-   }
    renderForm(){
-      const subjects = this.renderSelectList(this.state.subjects,{
-         value  :'label',
-         key:'id',
-         compare : this.props.data.subject_id,
-      });
-      const sub_subjects = this.renderSelectList(this.state.sub_subjects,{
-         value  :'label',
-         key:'id',
-         compare : this.props.data.sub_subject_id,
-      });
-      const languages = this.renderSelectList(this.state.languages,{
-         value  :'language_name',
-         key:'id',
-         compare : this.props.data.sub_subject_id,
-      });
-      const levels = this.renderSelectList(
-         [
-          {
-           id : 1,
-           value : 'beginner',
-          },
-          {
-           id : 2,
-           value : 'intermediate',
-          },
-          {
-           id : 3,
-           value : 'advanced',
-          }
-       ],{
-         value  :'value',
-         key:'id',
-         compare : this.props.data.level,
-      });
+      const data = {
+         title : this.props.data.title,
+         description : this.props.data.description,
+         course_fee : this.props.data.course_fee,
+         subject_id : this.props.data.subject_id,
+         sub_subject_id : this.props.data.sub_subject_id,
+         language_id : this.props.data.language_id,
+         level : this.props.data.level,
+      }
       return (
          <div className="card-body">
-         <form onSubmit={this.save}>
-            <div className="form-group">
-             <input  className="form-control" name="title" defaultValue={this.props.data.title} onChange={this.handleChange}/>
-            </div>
-            <div className="form-group">
-             <textarea  rows="7" className="form-control" name="description" defaultValue={this.props.data.description} onChange={this.handleChange}/>
-            </div>
-            <div className="form-group">
-             <select  defaultValue= {this.props.data.subject_id} className="form-control" name="subject_id"  onChange={this.handleSubjectChange}>
-                {subjects}
-             </select>
-            </div>
-            <div className="form-group">
-             <select defaultValue= {this.props.data.sub_subject_id} className="form-control" name="sub_subject_id" onChange={this.handleChange}>
-               {sub_subjects}
-             </select>
-            </div>
-            <div className="form-group">
-             <select  defaultValue= {this.props.data.language_id} className="form-control" name="language_id" onChange={this.handleChange}>
-               {languages}
-             </select>
-            </div>
-            <div className="form-group">
-             <select  defaultValue= {this.props.data.level} className="form-control" name="level" onChange={this.handleChange}>
-               {levels}
-             </select>
-            </div>
-            <div className="form-group">
-               <label>Price</label>
-             <input  className="form-control" name="course_fee" defaultValue={this.props.data.course_fee} onChange={this.handleChange}/>
-            </div>
-            <button className="btn btn-success mr-3" onClick={this.save}>save</button>
-            <button className="btn btn-danger" onClick={this.cancel}>cancel</button>
-         </form>
-      </div>
-      )
+            <Form
+              initialValues={data}
+              onSubmit={({subject_id,...values},errors)=>{
+                 this.save(values);
+              }}
+              validateOnChange={false}
+             validate={this.validate}
+            >
+           { ({values,handleChange,handleBlur,handleSubmit,errors,touched}) => {
+             const handlers = {
+                onChange : handleChange,
+                onBlur : handleBlur
+             }
+           return  (
+                <form onSubmit={handleSubmit}>
+               <div className="form-group">
+                <Input name="title" value={values.title} {...handlers}/>
+                {errors.title && touched.title &&
+                 (<small className="invalid-feedback d-inline-block">{errors.title}</small>)
+                 }
+               </div>
+               <div className="form-group">
+                <textarea  rows="7" className="form-control" name="description" value={values.description} {...handlers}/>
+               </div>
+               <div className="form-group">
+                  <Select defaultValue= {values.subject_id} name="subject_id" {...handlers}
+                  data={this.state.subjects} keys={{value : "label"}}/>
+               </div>
+               <div className="form-group">
+                <Select defaultValue= {values.sub_subject_id} name="sub_subject_id" {...handlers}
+                data={this.state.sub_subjects} keys={{value : "label"}}/>
+               </div>
+               <div className="form-group">
+                <Select  defaultValue= {values.language_id} name="language_id" {...handlers}
+                data={this.state.languages} keys={{value:"language_name"}}/>
+               </div>
+               <div className="form-group">
+                <Select  defaultValue= {values.level} name="level" {...handlers}
+                data={levelsList}/>
+               </div>
+               <div className="form-group">
+                  <label>Price</label>
+                <Input  name="course_fee" value={values.course_fee} {...handlers}/>
+               </div>
+               <button className="btn btn-success mr-3" type="submit">save</button>
+               <button className="btn btn-danger" onClick={this.cancel}>cancel</button>
+            </form>
+            )
+         }
+        }
+     </Form>
+   </div>)
    }
    renderDisplay(){
-      console.log(this.state.subjects);
-      return (
+      const data = this.state.data;
+      return  (
        <div className="card-body">
-        <h3 className="card-title">{this.props.data.title}</h3>
-        <small className="badge pill-badge badge-light">{this.props.data.label}</small>
-        <small className="badge pill-badge badge-secondary ml-2">{this.props.data.language_name}</small>
-        <p> {this.props.data.description} </p>
+        <h3 className="card-title">{data.title}</h3>
+        <small className="badge pill-badge badge-light">{data.language_name}</small>
+        <small className="badge pill-badge badge-secondary ml-2">{data.label}</small>
+        <p> {data.description} </p>
         <button className="btn btn-primary" onClick={this.edit}>edit</button>
-     </div>
+      </div>
       )
      return null;
    }

@@ -3,17 +3,19 @@ export default class Select extends Component {
    constructor(props) {
       super(props);
    }
-   render(){
-
-   }
-   renderSelectList(arr,{key='id',value,compare}){
+   renderList(arr,{key="id",value="value"}){
+      console.log(value);
+      console.log(key);
       return arr.map((ele)=> {
-         let selected ="";
-         if (compare===ele[key]) {
-            console.log(ele[key]);
-            selected = "selected";
-         }
-       return <option key={ele[key]} selected value={ele[key]}>{ele[value]}</option>
-      })
+      return <option key={ele[key]} value={ele[key]}>{ele[value]}</option>
+     })
+   }
+   render(){
+      const {keys={},data,...rest} = this.props;
+      return (
+         <select className="form-control" {...rest}>
+         {this.renderList(data,keys)}
+         </select>
+      )
    }
 }

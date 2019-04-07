@@ -1,9 +1,9 @@
 import React,{Component} from "react"
-export default class Input {
+export default class Input extends Component{
    constructor(props) {
       super(props);
    }
    render(){
-      <input type={this.props.type} name={this.props} value="">
+      return (<input className="form-control" {...this.props}/>)
    }
 }

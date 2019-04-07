@@ -7,11 +7,16 @@ export default class Form extends Component {
          values : this.props.initialValues || {},
          touched : {},
          isValid : false,
-         errors : {}
+         errors : {},
+         validateOnChange: this.props.validateOnChange || true
       }
       this.handleChange = (event) => {
          const target = event.target;
          const value = target.type === "checkbox" ? target.checked : target.value;
+         if (this.ShouldValidateOnChange()) {
+            let errors = this.props.validate(this.state.values);
+            this.updateErrors(errors);
+         }
          this.setState(prevState => ({
             values : {
                ...prevState.values,
@@ -30,27 +35,33 @@ export default class Form extends Component {
             })
          )
       };
+      this.ShouldValidate = () => {
+        return Boolean(this.props.validate);
+     };
+     this.ShouldValidateOnChange = () => {
+        return Boolean(this.state.validateOnChange && this.props.validate);
+     };
+     this.updateErrors = (errors)=>{
+       this.setState(prevState =>{
+          return {
+                errors : errors,
+                isValid : false
+           }
+       })
+     };
       this.validate = () => {
-         if (this.props.validate) {
-            let errors = this.props.validate(this.state.values);
-            if (this.isEmpty(errors)) {
-               return true;
+         let errors = {};
+            if (this.ShouldValidate()) {
+               errors = this.props.validate(this.state.values);
+               this.updateErrors(errors);
             }
-            this.setState({
-               errors : errors,
-               isValid : false
-            })
-            return false
-         }
+            return this.isEmpty(errors);
       }
       this.handleSubmit = (event) => {
         event.preventDefault();
+        console.log(this.validate());
         if (this.validate()) {
-           this.setState({
-             errors : {},
-             isValid : true
-           })
-           this.props.onSubmit(this.state.values);
+             this.props.onSubmit(this.state.values);
         }
       };
       this.isEmpty = (obj) => {

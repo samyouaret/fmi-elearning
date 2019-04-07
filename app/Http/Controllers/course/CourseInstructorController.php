@@ -74,7 +74,10 @@ class CourseInstructorController extends Controller
      */
     public function show($id)
     {
-       $course = Course::join('sub_subject','sub_subject_id','=','sub_subject.id')
+       $course = Course::select("course.id as id","language_name","label","subject_id",
+        "description","title","course_fee","is_published","level","language_id","sub_subject_id",
+        "cover_image")
+       ->join('sub_subject','sub_subject_id','=','sub_subject.id')
        ->where('course.id',$id)
        ->join('language','language_id','=','language.id')
        ->first();
@@ -92,6 +95,9 @@ class CourseInstructorController extends Controller
     {
        $items = DB::table('subject')
        ->get();
+     //   return response()->json([
+     // 'message' => 'Record not found',
+     // ], 404);
       return response()->json($items);
     }
     public function languages()
@@ -111,10 +117,9 @@ class CourseInstructorController extends Controller
     public function update(Request $request, $id)
     {
          $this->validate($request,[
-         "title"=>"string|max:60",
+         "title"=>"required|string|max:60",
          "description"=>"nullable|string|max:2000",
-         "description"=>"nullable|string|max:2000",
-         "course_fee"=>'nullable|numeric',
+         "course_fee"=>'numeric',
          "sub_subject_id"=>'integer',
          "language_id"=>'integer',
          "cover_image"=>'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -122,7 +127,10 @@ class CourseInstructorController extends Controller
          "level"=>"nullable|integer|max:3",
       ]);
       $data = $request->all();
-      $resp = DB::table('course')->updateOrInsert(['id'=>$id],$data) ? ['status'=>'success','msg' =>"course has been updated successfully"] : ['status'=>'failed','msg' =>"oops something went wrong"];
+      // $resp = DB::table('course')->updateOrInsert(['id'=>$id],$data) ? ['status'=>'success','msg' =>"course has been updated successfully"] : ['status'=>'failed','msg' =>"oops something went wrong"];
+      $resp = DB::table('course')->where('id',$id)->update($data) ?
+      ['status'=>'success','msg' =>"course has been updated successfully"] :
+      ['status'=>'failed','msg' =>"oops something went wrong"];
       // return response()->json($request->all());
       return response()->json($resp);
     }

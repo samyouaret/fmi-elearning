@@ -7,7 +7,7 @@ import loadData from "./dataLoader"
 class CourseBuilder extends Component {
    constructor(props) {
       super(props);
-      console.log(props);
+      // console.log(props);
       this.state = {
          display : 0
       }
@@ -60,27 +60,30 @@ class CourseBuilder extends Component {
    //    });
    // }
    save(data){
+      console.log(data);
       $.ajaxSetup({
          headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
          }
       });
+      console.log("id of course: " +  this.state.data.id);
       $.ajax({
       type: 'PUT',
       url: '/instructor/' + this.state.data.id,
       contentType: 'application/json',
       data: JSON.stringify(data)
-   }).done(function (data) {
+   }).done((data) =>{
         console.log('SUCCESS');
+        this.loadCourse();
         console.log(data);
-     }).fail(function (msg) {
+     }).fail(function (msg,var1,var2) {
+        console.log(msg.responseJSON.errors);
+        console.log(var1);
+        console.log(var2);
       console.log('FAIL');
      }).always(function (msg) {
       console.log('ALWAYS');
      });
-      this.setState({
-         data : {...this.state.data,...data}
-      })
    }
    updateParentData(key,value){
      if (this.state.key) {
@@ -90,7 +93,7 @@ class CourseBuilder extends Component {
      }
    }
    render(){
-      console.log(this.state);
+      // console.log(this.state);
       const content = this.state.display == 0 ? <CourseInfo data={this.state.data} save={this.save}
       updateParentData={this.updateParentData}/> : <Curriculum/>;
       return (
