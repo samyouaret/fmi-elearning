@@ -3,8 +3,9 @@ import loadData from "./dataLoader"
 import Form from '../FormComponents/Form'
 import Input from '../FormComponents/Input'
 import Select from '../FormComponents/Select'
-
 import levelsList from './levels'
+import DataProvider from '../providers/DataProvider'
+
 export default class CourseInfo extends Component {
    constructor(props){
       super(props);
@@ -15,19 +16,16 @@ export default class CourseInfo extends Component {
       this.cancel = this.cancel.bind(this);
       this.save = this.save.bind(this);
       this.handleSubjectChange= this.handleSubjectChange.bind(this);
-      $.when(loadData('/instructor/subSubjects/'+ this.props.data.subject_id),
-        loadData('/instructor/subjects'),loadData('/instructor/languages'))
-        .then((sub_subjects, subjects,languages) => {
-           this.setState({
-            sub_subjects : sub_subjects[0],
-            subjects : subjects[0],
-            languages : languages[0]
-         })
-    });
+    this.options =
+      {
+          url : "/instructor/courseinfo/"  + this.props.id,
+          method:"GET",
+          contentType: 'application/json',
+      };
    }
-   static getDerivedStateFromProps(nextProps, prevState) {
-         return {data : nextProps.data};
-   }
+   // static getDerivedStateFromProps(nextProps, prevState) {
+   //       return {data : nextProps.data};
+   // }
    validate(values){
       let errors={}
       if (!values.title) {
@@ -57,20 +55,11 @@ export default class CourseInfo extends Component {
          editing : false
       });
    }
-   renderForm(){
-      const data = {
-         title : this.props.data.title,
-         description : this.props.data.description,
-         course_fee : this.props.data.course_fee,
-         subject_id : this.props.data.subject_id,
-         sub_subject_id : this.props.data.sub_subject_id,
-         language_id : this.props.data.language_id,
-         level : this.props.data.level,
-      }
+   renderForm({course,subjects,sub_subjects,languages},error,refersh){
       return (
          <div className="card-body">
             <Form
-              initialValues={data}
+              initialValues={course}
               onSubmit={({subject_id,...values},errors)=>{
                  this.save(values);
               }}
@@ -95,15 +84,15 @@ export default class CourseInfo extends Component {
                </div>
                <div className="form-group">
                   <Select defaultValue= {values.subject_id} name="subject_id" {...handlers}
-                  data={this.state.subjects} keys={{value : "label"}}/>
+                  data={subjects} keys={{value : "label"}}/>
                </div>
                <div className="form-group">
                 <Select defaultValue= {values.sub_subject_id} name="sub_subject_id" {...handlers}
-                data={this.state.sub_subjects} keys={{value : "label"}}/>
+                data={sub_subjects} keys={{value : "label"}}/>
                </div>
                <div className="form-group">
                 <Select  defaultValue= {values.language_id} name="language_id" {...handlers}
-                data={this.state.languages} keys={{value:"language_name"}}/>
+                data={languages} keys={{value:"language_name"}}/>
                </div>
                <div className="form-group">
                 <Select  defaultValue= {values.level} name="level" {...handlers}
@@ -119,17 +108,16 @@ export default class CourseInfo extends Component {
             )
          }
         }
-     </Form>
+       </Form>
    </div>)
    }
-   renderDisplay(){
-      const data = this.state.data;
+   renderDisplay(course){
       return  (
        <div className="card-body">
-        <h3 className="card-title">{data.title}</h3>
-        <small className="badge pill-badge badge-light">{data.language_name}</small>
-        <small className="badge pill-badge badge-secondary ml-2">{data.label}</small>
-        <p> {data.description} </p>
+        <h3 className="card-title">{course.title}</h3>
+        <small className="badge pill-badge badge-light">{course.language_name}</small>
+        <small className="badge pill-badge badge-secondary ml-2">{course.label}</small>
+        <p> {course.description} </p>
         <button className="btn btn-primary" onClick={this.edit}>edit</button>
       </div>
       )
@@ -141,15 +129,36 @@ export default class CourseInfo extends Component {
       })
    }
    render(){
-      let content = null;
-      if (this.state.editing) {
-         content =  this.renderForm();
-      }else {
-         content =  this.renderDisplay();
-      }
       return (
         <div className="card col-8"  style={{minHeight:500 + "px"}}>
-            {content}
+           <DataProvider options={this.options}
+                renderLoading={()=>{
+                   return (<div className="d-flex justify-content-center">
+                           <div className="spinner-border" role="status">
+                             <span className="sr-only">Loading...</span>
+                           </div>
+                         </div>)
+                }}
+                renderError={(error)=>{
+                   // this.updateError(error);
+                   return (<div className="alert alert-danger">{error.message}</div>)
+                }}
+                Onsuccess={(data)=>{
+                   this.setState({
+                      data : data.course
+                   })
+                }}
+                OnError={(error)=>{
+                   this.setState({
+                      error : error
+                   })
+                }}
+                >
+            {(result,error,refersh)=>{
+              return this.state.editing ? this.renderForm(result,error,refersh) :
+              this.renderDisplay(result.course);
+            }}
+         </DataProvider>
         </div>
       )
    }

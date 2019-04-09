@@ -11,11 +11,11 @@ class CourseBuilder extends Component {
       this.state = {
          display : 0
       }
-      this.loadCourse();
+      this.id =  this.getCourseId();
+      // this.loadCourse();
       this.showCourseInfo = this.showCourseInfo.bind(this);
       this.showCurriculum = this.showCurriculum.bind(this);
       this.save = this.save.bind(this);
-      this.updateParentData = this.updateParentData.bind(this);
    }
    // componentDidMount will not work because id conditional rendering
    loadCourse(){
@@ -23,22 +23,6 @@ class CourseBuilder extends Component {
       $.getJSON('/instructor/'+ id,null,(data,textStatus,jqxhr)=> {
          this.setState({
                data : data
-            });
-      });
-   }
-   loadSubSubjects(){
-      console.log(this.props);
-      $.getJSON('/instructor/subSubjects/'+ this.props.subject_id,null,(data,textStatus,jqxhr)=> {
-         this.setState({
-               sub_subjects : data
-            });
-      });
-   }
-   loadSubjects(){
-      console.log(this.props);
-      $.getJSON('/instructor/subjects',null,(data,textStatus,jqxhr)=> {
-         this.setState({
-               subjects : data
             });
       });
    }
@@ -55,10 +39,6 @@ class CourseBuilder extends Component {
          display : 1
       });
    }
-   // updateData({key,value}){
-   //    this.setState({
-   //    });
-   // }
    save(data){
       console.log(data);
       $.ajaxSetup({
@@ -78,30 +58,22 @@ class CourseBuilder extends Component {
         console.log(data);
      }).fail(function (msg,var1,var2) {
         console.log(msg.responseJSON.errors);
-        console.log(var1);
-        console.log(var2);
-      console.log('FAIL');
+        console.log('FAIL');
      }).always(function (msg) {
       console.log('ALWAYS');
      });
    }
-   updateParentData(key,value){
-     if (this.state.key) {
-        this.setState({
-           [key] : value
-        });
-     }
-   }
    render(){
-      // console.log(this.state);
-      const content = this.state.display == 0 ? <CourseInfo data={this.state.data} save={this.save}
-      updateParentData={this.updateParentData}/> : <Curriculum/>;
+      const content = this.state.display == 0 ? <CourseInfo id={this.id}/> :
+      <Curriculum id={this.id}/>;
       return (
          <div className="container-fluid border border-secondary h-100" style={{minHeight:500 + "px"}}>
          <div className="row flex-row justify-content-end" style={{minHeight:500 + "px"}}>
-           <Navbar showCourseInfo = {this.showCourseInfo}
-           showCurriculum={this.showCurriculum}/>
-           {this.state && this.state.data && content}
+           <Navbar
+           showCourseInfo={this.showCourseInfo}
+           showCurriculum={this.showCurriculum}
+           />
+           {content}
          </div>
         </div>
       )

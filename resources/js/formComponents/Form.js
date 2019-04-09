@@ -7,7 +7,7 @@ export default class Form extends Component {
          values : this.props.initialValues || {},
          touched : {},
          isValid : false,
-         errors : {},
+         errors : this.props.initialErrors || {},
          validateOnChange: this.props.validateOnChange || true
       }
       this.handleChange = (event) => {

@@ -48,6 +48,7 @@ Route::post('instructor/{course}','course\CourseInstructorController@publish');
 Route::get('instructor/subSubjects/{subject}','course\CourseInstructorController@subSubjects');
 Route::get('instructor/subjects','course\CourseInstructorController@subjects');
 Route::get('instructor/languages','course\CourseInstructorController@languages');
+Route::get('instructor/courseinfo/{course}','course\CourseInstructorController@courseinfo');
 Route::get('instructor/courses', 'course\CourseInstructorController@courses');
 Route::resource('instructor', 'course\CourseInstructorController',['parameters' => [
   'instructor' => 'course',

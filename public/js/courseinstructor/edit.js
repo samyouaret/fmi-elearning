@@ -61263,7 +61263,7 @@ function (_Component) {
       values: _this.props.initialValues || {},
       touched: {},
       isValid: false,
-      errors: {},
+      errors: _this.props.initialErrors || {},
       validateOnChange: _this.props.validateOnChange || true
     };
 
@@ -61580,8 +61580,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _dataLoader__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./dataLoader */ "./resources/js/courseinstructor/dataLoader.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -61619,13 +61617,11 @@ function (_Component) {
     _this.state = {
       display: 0
     };
-
-    _this.loadCourse();
+    _this.id = _this.getCourseId(); // this.loadCourse();
 
     _this.showCourseInfo = _this.showCourseInfo.bind(_assertThisInitialized(_this));
     _this.showCurriculum = _this.showCurriculum.bind(_assertThisInitialized(_this));
     _this.save = _this.save.bind(_assertThisInitialized(_this));
-    _this.updateParentData = _this.updateParentData.bind(_assertThisInitialized(_this));
     return _this;
   } // componentDidMount will not work because id conditional rendering
 
@@ -61639,30 +61635,6 @@ function (_Component) {
       $.getJSON('/instructor/' + id, null, function (data, textStatus, jqxhr) {
         _this2.setState({
           data: data
-        });
-      });
-    }
-  }, {
-    key: "loadSubSubjects",
-    value: function loadSubSubjects() {
-      var _this3 = this;
-
-      console.log(this.props);
-      $.getJSON('/instructor/subSubjects/' + this.props.subject_id, null, function (data, textStatus, jqxhr) {
-        _this3.setState({
-          sub_subjects: data
-        });
-      });
-    }
-  }, {
-    key: "loadSubjects",
-    value: function loadSubjects() {
-      var _this4 = this;
-
-      console.log(this.props);
-      $.getJSON('/instructor/subjects', null, function (data, textStatus, jqxhr) {
-        _this4.setState({
-          subjects: data
         });
       });
     }
@@ -61684,15 +61656,11 @@ function (_Component) {
       this.setState({
         display: 1
       });
-    } // updateData({key,value}){
-    //    this.setState({
-    //    });
-    // }
-
+    }
   }, {
     key: "save",
     value: function save(data) {
-      var _this5 = this;
+      var _this3 = this;
 
       console.log(data);
       $.ajaxSetup({
@@ -61709,34 +61677,24 @@ function (_Component) {
       }).done(function (data) {
         console.log('SUCCESS');
 
-        _this5.loadCourse();
+        _this3.loadCourse();
 
         console.log(data);
       }).fail(function (msg, var1, var2) {
         console.log(msg.responseJSON.errors);
-        console.log(var1);
-        console.log(var2);
         console.log('FAIL');
       }).always(function (msg) {
         console.log('ALWAYS');
       });
     }
   }, {
-    key: "updateParentData",
-    value: function updateParentData(key, value) {
-      if (this.state.key) {
-        this.setState(_defineProperty({}, key, value));
-      }
-    }
-  }, {
     key: "render",
     value: function render() {
-      // console.log(this.state);
       var content = this.state.display == 0 ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_CourseInfo__WEBPACK_IMPORTED_MODULE_1__["default"], {
-        data: this.state.data,
-        save: this.save,
-        updateParentData: this.updateParentData
-      }) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Curriculum__WEBPACK_IMPORTED_MODULE_3__["default"], null);
+        id: this.id
+      }) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Curriculum__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        id: this.id
+      });
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "container-fluid border border-secondary h-100",
         style: {
@@ -61750,7 +61708,7 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Navbar__WEBPACK_IMPORTED_MODULE_2__["default"], {
         showCourseInfo: this.showCourseInfo,
         showCurriculum: this.showCurriculum
-      }), this.state && this.state.data && content));
+      }), content));
     }
   }]);
 
@@ -61778,6 +61736,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _FormComponents_Input__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../FormComponents/Input */ "./resources/js/FormComponents/Input.js");
 /* harmony import */ var _FormComponents_Select__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../FormComponents/Select */ "./resources/js/FormComponents/Select.js");
 /* harmony import */ var _levels__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./levels */ "./resources/js/courseinstructor/levels.js");
+/* harmony import */ var _providers_DataProvider__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../providers/DataProvider */ "./resources/js/providers/DataProvider.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
@@ -61809,6 +61768,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
 var CourseInfo =
 /*#__PURE__*/
 function (_Component) {
@@ -61827,15 +61787,16 @@ function (_Component) {
     _this.cancel = _this.cancel.bind(_assertThisInitialized(_this));
     _this.save = _this.save.bind(_assertThisInitialized(_this));
     _this.handleSubjectChange = _this.handleSubjectChange.bind(_assertThisInitialized(_this));
-    $.when(Object(_dataLoader__WEBPACK_IMPORTED_MODULE_1__["default"])('/instructor/subSubjects/' + _this.props.data.subject_id), Object(_dataLoader__WEBPACK_IMPORTED_MODULE_1__["default"])('/instructor/subjects'), Object(_dataLoader__WEBPACK_IMPORTED_MODULE_1__["default"])('/instructor/languages')).then(function (sub_subjects, subjects, languages) {
-      _this.setState({
-        sub_subjects: sub_subjects[0],
-        subjects: subjects[0],
-        languages: languages[0]
-      });
-    });
+    _this.options = {
+      url: "/instructor/courseinfo/" + _this.props.id,
+      method: "GET",
+      contentType: 'application/json'
+    };
     return _this;
-  }
+  } // static getDerivedStateFromProps(nextProps, prevState) {
+  //       return {data : nextProps.data};
+  // }
+
 
   _createClass(CourseInfo, [{
     key: "validate",
@@ -61879,37 +61840,32 @@ function (_Component) {
     }
   }, {
     key: "renderForm",
-    value: function renderForm() {
+    value: function renderForm(_ref, error, refersh) {
       var _this3 = this;
 
-      var data = {
-        title: this.props.data.title,
-        description: this.props.data.description,
-        course_fee: this.props.data.course_fee,
-        subject_id: this.props.data.subject_id,
-        sub_subject_id: this.props.data.sub_subject_id,
-        language_id: this.props.data.language_id,
-        level: this.props.data.level
-      };
+      var course = _ref.course,
+          subjects = _ref.subjects,
+          sub_subjects = _ref.sub_subjects,
+          languages = _ref.languages;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "card-body"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_FormComponents_Form__WEBPACK_IMPORTED_MODULE_2__["default"], {
-        initialValues: data,
-        onSubmit: function onSubmit(_ref, errors) {
-          var subject_id = _ref.subject_id,
-              values = _objectWithoutProperties(_ref, ["subject_id"]);
+        initialValues: course,
+        onSubmit: function onSubmit(_ref2, errors) {
+          var subject_id = _ref2.subject_id,
+              values = _objectWithoutProperties(_ref2, ["subject_id"]);
 
           _this3.save(values);
         },
         validateOnChange: false,
         validate: this.validate
-      }, function (_ref2) {
-        var values = _ref2.values,
-            handleChange = _ref2.handleChange,
-            handleBlur = _ref2.handleBlur,
-            handleSubmit = _ref2.handleSubmit,
-            errors = _ref2.errors,
-            touched = _ref2.touched;
+      }, function (_ref3) {
+        var values = _ref3.values,
+            handleChange = _ref3.handleChange,
+            handleBlur = _ref3.handleBlur,
+            handleSubmit = _ref3.handleSubmit,
+            errors = _ref3.errors,
+            touched = _ref3.touched;
         var handlers = {
           onChange: handleChange,
           onBlur: handleBlur
@@ -61936,7 +61892,7 @@ function (_Component) {
           defaultValue: values.subject_id,
           name: "subject_id"
         }, handlers, {
-          data: _this3.state.subjects,
+          data: subjects,
           keys: {
             value: "label"
           }
@@ -61946,7 +61902,7 @@ function (_Component) {
           defaultValue: values.sub_subject_id,
           name: "sub_subject_id"
         }, handlers, {
-          data: _this3.state.sub_subjects,
+          data: sub_subjects,
           keys: {
             value: "label"
           }
@@ -61956,7 +61912,7 @@ function (_Component) {
           defaultValue: values.language_id,
           name: "language_id"
         }, handlers, {
-          data: _this3.state.languages,
+          data: languages,
           keys: {
             value: "language_name"
           }
@@ -61983,17 +61939,16 @@ function (_Component) {
     }
   }, {
     key: "renderDisplay",
-    value: function renderDisplay() {
-      var data = this.state.data;
+    value: function renderDisplay(course) {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "card-body"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", {
         className: "card-title"
-      }, data.title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", {
+      }, course.title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", {
         className: "badge pill-badge badge-light"
-      }, data.language_name), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", {
+      }, course.language_name), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", {
         className: "badge pill-badge badge-secondary ml-2"
-      }, data.label), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, " ", data.description, " "), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+      }, course.label), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, " ", course.description, " "), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-primary",
         onClick: this.edit
       }, "edit"));
@@ -62009,27 +61964,44 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var content = null;
-
-      if (this.state.editing) {
-        content = this.renderForm();
-      } else {
-        content = this.renderDisplay();
-      }
+      var _this4 = this;
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "card col-8",
         style: {
           minHeight: 500 + "px"
         }
-      }, content);
-    }
-  }], [{
-    key: "getDerivedStateFromProps",
-    value: function getDerivedStateFromProps(nextProps, prevState) {
-      return {
-        data: nextProps.data
-      };
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_DataProvider__WEBPACK_IMPORTED_MODULE_6__["default"], {
+        options: this.options,
+        renderLoading: function renderLoading() {
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+            className: "d-flex justify-content-center"
+          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+            className: "spinner-border",
+            role: "status"
+          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+            className: "sr-only"
+          }, "Loading...")));
+        },
+        renderError: function renderError(error) {
+          // this.updateError(error);
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+            className: "alert alert-danger"
+          }, error.message);
+        },
+        Onsuccess: function Onsuccess(data) {
+          _this4.setState({
+            data: data.course
+          });
+        },
+        OnError: function OnError(error) {
+          _this4.setState({
+            error: error
+          });
+        }
+      }, function (result, error, refersh) {
+        return _this4.state.editing ? _this4.renderForm(result, error, refersh) : _this4.renderDisplay(result.course);
+      }));
     }
   }]);
 
@@ -62209,7 +62181,7 @@ function (_Component) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return loadData; });
 function loadData(url) {
-  return $.getJSON(url); // return $data;
+  return $.getJSON(url);
 }
 
 /***/ }),
@@ -62259,6 +62231,155 @@ __webpack_require__.r(__webpack_exports__);
   id: 3,
   value: 'advanced'
 }]);
+
+/***/ }),
+
+/***/ "./resources/js/providers/DataProvider.js":
+/*!************************************************!*\
+  !*** ./resources/js/providers/DataProvider.js ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return DataProvider; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+
+var DataProvider =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(DataProvider, _Component);
+
+  function DataProvider(props) {
+    var _this;
+
+    _classCallCheck(this, DataProvider);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(DataProvider).call(this, props));
+    _this.state = {
+      error: null,
+      data: [],
+      isLoaded: false
+    };
+    _this.times = 0;
+
+    _this.refresh = function () {
+      _this.multiRequest();
+    };
+
+    return _this;
+  }
+
+  _createClass(DataProvider, [{
+    key: "multiRequest",
+    value: function multiRequest() {
+      var _$,
+          _this2 = this;
+
+      var requests = [];
+
+      if (Array.isArray(this.props.options)) {
+        for (var i = 0; i < this.props.options.length; i++) {
+          requests[i] = $.ajax(this.props.options[i]);
+        }
+      } else {
+        requests[0] = $.ajax(this.props.options);
+      }
+
+      (_$ = $).when.apply(_$, requests).then(function () {
+        for (var _len = arguments.length, data = new Array(_len), _key = 0; _key < _len; _key++) {
+          data[_key] = arguments[_key];
+        }
+
+        var result = requests.length < 2 ? data[0] : data.map(function (ele) {
+          return ele[0];
+        });
+
+        _this2.setState(function () {
+          return {
+            data: result,
+            isLoaded: true
+          };
+        });
+
+        if (_this2.props.Onsuccess) {
+          _this2.props.Onsuccess(result);
+        }
+      }, function (msg) {
+        //error has happened
+        console.log("called error");
+        console.log(msg);
+
+        _this2.setState(function () {
+          return {
+            isLoaded: true,
+            error: msg.responseJSON
+          };
+        });
+
+        if (_this2.props.OnError) {
+          _this2.props.OnError(msg.responseJSON);
+        }
+      });
+    }
+  }, {
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.multiRequest();
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this$state = this.state,
+          error = _this$state.error,
+          isLoaded = _this$state.isLoaded,
+          data = _this$state.data;
+
+      if (error) {
+        this.errorFlag = true;
+        console.log("error renderd :" + this.times);
+        this.times++;
+        return this.props.renderError && this.props.renderError(error) || null;
+      } else if (!isLoaded) {
+        console.log("loading.. renderd :" + this.times);
+        this.times++;
+        return this.props.renderLoading && this.props.renderLoading() || null;
+      } else {
+        console.log("data renderd :" + this.times);
+        this.times++;
+        return this.props.children(data, error, this.refresh);
+      }
+    }
+  }]);
+
+  return DataProvider;
+}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
+
+
 
 /***/ }),
 

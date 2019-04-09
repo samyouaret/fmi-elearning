@@ -83,6 +83,32 @@ class CourseInstructorController extends Controller
        ->first();
         return response()->json($course);
     }
+
+    public function courseinfo($id)
+    {
+      $course = Course::select("course.id as id","language_name","label","subject_id",
+       "description","title","course_fee","is_published","level","language_id","sub_subject_id",
+       "cover_image")
+      ->join('sub_subject','sub_subject_id','=','sub_subject.id')
+      ->where('course.id',$id)
+      ->join('language','language_id','=','language.id')
+      ->first();
+      $subjects =DB::table('subject')
+      ->get();
+       $sub_subjects = DB::table('sub_subject')
+       ->where('subject_id',$course->subject_id)
+       ->get();
+       $languages = DB::table('language')
+       ->get();
+       $result = [
+          'course'=>$course,
+                 'subjects'=>$subjects,
+                 'sub_subjects'=>$sub_subjects,
+                 'languages' =>$languages
+              ];
+      return response()->json($result);
+    }
+
     public function subSubjects($subjectId)
     {
        $items = DB::table('sub_subject')
@@ -95,10 +121,10 @@ class CourseInstructorController extends Controller
     {
        $items = DB::table('subject')
        ->get();
-     //   return response()->json([
-     // 'message' => 'Record not found',
-     // ], 404);
-      return response()->json($items);
+    //    return response()->json([
+    //  'message' => 'Record not found',
+    //  ], 404);
+     return response()->json($items);
     }
     public function languages()
     {
