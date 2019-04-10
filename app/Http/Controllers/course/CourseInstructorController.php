@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use App\Course;
+use Illuminate\Support\Facades\Storage;
+
 class CourseInstructorController extends Controller
 {
     /**
@@ -88,7 +90,7 @@ class CourseInstructorController extends Controller
     {
       $course = Course::select("course.id as id","language_name","label","subject_id",
        "description","title","course_fee","is_published","level","language_id","sub_subject_id",
-       "cover_image")
+       "cover_image as image")
       ->join('sub_subject','sub_subject_id','=','sub_subject.id')
       ->where('course.id',$id)
       ->join('language','language_id','=','language.id')
@@ -142,23 +144,38 @@ class CourseInstructorController extends Controller
      */
     public function update(Request $request, $id)
     {
+      // return $request->all();
          $this->validate($request,[
          "title"=>"required|string|max:60",
-         "description"=>"nullable|string|max:2000",
-         "course_fee"=>'numeric',
-         "sub_subject_id"=>'integer',
-         "language_id"=>'integer',
+         "description"=>"required|string|max:2000",
+         "course_fee"=>'required|numeric',
+         "sub_subject_id"=>'required|integer',
+         "language_id"=>'required|integer',
          "cover_image"=>'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-         "num_of_chapters"=>'nullable|integer',
-         "level"=>"nullable|integer|max:3",
+         "level"=>"required|nullable|integer|max:3",
       ]);
       $data = $request->all();
+      unset($data['_method']);
+      if ($request->hasFile('cover_image')) {
+          $fileNameWithExt = $request->file('cover_image')->getClientOriginalName();
+          //get filename
+          $fileName = pathinfo($fileNameWithExt,PATHINFO_FILENAME);
+          //get extension
+          $ext = $request->file('cover_image')->getClientOriginalExtension();
+          $fileNameToStore = $fileName.'_'.time().'.'.$ext;
+          $path = $request->file('cover_image')->storeAs('public/course_image',$fileNameToStore);
+          $data['cover_image'] = $fileNameToStore;
+          $course =  Course::find($id);
+          if ($course->image !=='no_image.jpg')
+            Storage::delete('public/course_image' . $course->cover_image);
+      }
       // $resp = DB::table('course')->updateOrInsert(['id'=>$id],$data) ? ['status'=>'success','msg' =>"course has been updated successfully"] : ['status'=>'failed','msg' =>"oops something went wrong"];
-      $resp = DB::table('course')->where('id',$id)->update($data) ?
-      ['status'=>'success','msg' =>"course has been updated successfully"] :
-      ['status'=>'failed','msg' =>"oops something went wrong"];
+      $resp  = DB::table('course')->where('id',$id);
+      response()->json($resp);
+      return DB::table('course')->where('id',$id)->update($data) ?
+      response()->json(['status'=>'success','message' =>"course has been updated successfully"],200) :
+      response()->json(['status'=>'failed','message' =>"course has not been updated"],413);
       // return response()->json($request->all());
-      return response()->json($resp);
     }
 
     /**

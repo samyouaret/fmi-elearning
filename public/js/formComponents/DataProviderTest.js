@@ -61499,12 +61499,12 @@ function (_Component) {
       touched: {},
       isValid: false,
       errors: _this.props.initialErrors || {},
-      validateOnChange: _this.props.validateOnChange || true
+      validateOnChange: _this.props.validateOnChange || false
     };
 
     _this.handleChange = function (event) {
       var target = event.target;
-      var value = target.type === "checkbox" ? target.checked : target.value;
+      var value = target.type === "checkbox" ? target.checked : target.type == 'file' ? target.files[0] : target.value;
 
       if (_this.ShouldValidateOnChange()) {
         var errors = _this.props.validate(_this.state.values);
@@ -61582,6 +61582,13 @@ function (_Component) {
         handleBlur: this.handleBlur,
         handleSubmit: this.handleSubmit
       }));
+    }
+  }], [{
+    key: "getDerivedStateFromProps",
+    value: function getDerivedStateFromProps(nextProps, nextState) {
+      return {
+        errors: nextProps.initialErrors
+      };
     }
   }]);
 

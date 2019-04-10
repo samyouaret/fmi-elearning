@@ -8,11 +8,12 @@ export default class Form extends Component {
          touched : {},
          isValid : false,
          errors : this.props.initialErrors || {},
-         validateOnChange: this.props.validateOnChange || true
+         validateOnChange: this.props.validateOnChange || false
       }
       this.handleChange = (event) => {
          const target = event.target;
-         const value = target.type === "checkbox" ? target.checked : target.value;
+         const value = target.type === "checkbox" ? target.checked :
+         target.type =='file' ? target.files[0] : target.value;
          if (this.ShouldValidateOnChange()) {
             let errors = this.props.validate(this.state.values);
             this.updateErrors(errors);
@@ -67,6 +68,9 @@ export default class Form extends Component {
       this.isEmpty = (obj) => {
          return Object.entries(obj).length === 0 && obj.constructor === Object
       };
+   }
+   static getDerivedStateFromProps(nextProps,nextState){
+      return {errors : nextProps.initialErrors}
    }
   render() {
      return  (
