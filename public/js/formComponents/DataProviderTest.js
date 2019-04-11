@@ -61652,14 +61652,24 @@ function (_Component) {
     };
     _this.times = 0;
 
-    _this.refresh = function () {
+    _this.reload = function () {
       _this.multiRequest();
+    };
+
+    _this.update = function (data) {
+      // console.log(data);
+      _this.setState(data);
     };
 
     return _this;
   }
 
   _createClass(DataProvider, [{
+    key: "componentDidUpdate",
+    value: function componentDidUpdate() {
+      console.log("update");
+    }
+  }, {
     key: "multiRequest",
     value: function multiRequest() {
       var _$,
@@ -61725,18 +61735,18 @@ function (_Component) {
           data = _this$state.data;
 
       if (error) {
-        this.errorFlag = true;
-        console.log("error renderd :" + this.times);
+        this.errorFlag = true; // console.log("error renderd :" + this.times);
+
         this.times++;
         return this.props.renderError && this.props.renderError(error) || null;
       } else if (!isLoaded) {
-        console.log("loading.. renderd :" + this.times);
+        // console.log("loading.. renderd :" + this.times);
         this.times++;
         return this.props.renderLoading && this.props.renderLoading() || null;
       } else {
-        console.log("data renderd :" + this.times);
+        // console.log("data renderd :" + this.times);
         this.times++;
-        return this.props.children(data, error, this.refresh);
+        return this.props.children(data, error, this.reload, this.update);
       }
     }
   }]);

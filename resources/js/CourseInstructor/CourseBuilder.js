@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import CourseInfo from './CourseInfo'
 import Navbar from './Navbar'
-import Curriculum from './Curriculum'
+import Curriculum from '../curriculum/Curriculum'
 import loadData from "./dataLoader"
 
 class CourseBuilder extends Component {
@@ -46,7 +46,6 @@ class CourseBuilder extends Component {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
          }
       });
-      console.log("id of course: " +  this.state.data.id);
       $.ajax({
       type: 'PUT',
       url: '/instructor/' + this.state.data.id,

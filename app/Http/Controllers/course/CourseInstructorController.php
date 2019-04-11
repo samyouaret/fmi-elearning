@@ -166,8 +166,8 @@ class CourseInstructorController extends Controller
           $path = $request->file('cover_image')->storeAs('public/course_image',$fileNameToStore);
           $data['cover_image'] = $fileNameToStore;
           $course =  Course::find($id);
-          if ($course->image !=='no_image.jpg')
-            Storage::delete('public/course_image' . $course->cover_image);
+          if ($course->cover_image !== 'no_image.png')
+            Storage::delete('public/course_image/' . $course->cover_image);
       }
       // $resp = DB::table('course')->updateOrInsert(['id'=>$id],$data) ? ['status'=>'success','msg' =>"course has been updated successfully"] : ['status'=>'failed','msg' =>"oops something went wrong"];
       $resp  = DB::table('course')->where('id',$id);

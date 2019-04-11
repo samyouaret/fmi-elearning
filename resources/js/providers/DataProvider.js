@@ -10,9 +10,16 @@ export default class DataProvider extends Component{
          isLoaded : false,
       }
       this.times = 0;
-      this.refresh= () =>{
+      this.reload = () =>{
          this.multiRequest();
       }
+      this.update = (data) =>{
+         // console.log(data);
+         this.setState(data);
+      }
+   }
+   componentDidUpdate(){
+      console.log("update");
    }
    multiRequest(){
       let requests = [];
@@ -57,18 +64,18 @@ export default class DataProvider extends Component{
      const {error, isLoaded, data} = this.state;
      if (error) {
         this.errorFlag = true;
-        console.log("error renderd :" + this.times);
+        // console.log("error renderd :" + this.times);
         this.times++;
         return this.props.renderError && this.props.renderError(error) || null;
      }else if (!isLoaded) {
-        console.log("loading.. renderd :" + this.times);
+        // console.log("loading.. renderd :" + this.times);
         this.times++;
       return this.props.renderLoading && this.props.renderLoading() || null;
    }else{
-      console.log("data renderd :" + this.times);
+      // console.log("data renderd :" + this.times);
       this.times++;
       return (
-         this.props.children(data,error,this.refresh)
+         this.props.children(data,error,this.reload,this.update)
       )
    }
    }

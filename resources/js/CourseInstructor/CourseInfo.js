@@ -25,6 +25,14 @@ export default class CourseInfo extends Component {
           contentType: 'application/json',
       };
    }
+   findAttrById(arr,id,attr){
+      for (var i = 0; i < arr.length; i++) {
+            if (arr[i].id == id) {
+               return arr[i][attr]
+            }
+         }
+         return null;
+   }
    // static getDerivedStateFromProps(nextProps, prevState) {
    //       return {data : nextProps.data};
    // }
@@ -66,7 +74,6 @@ export default class CourseInfo extends Component {
           form_data.append(key,data[key]);
       }
       form_data.append('_method','PUT');
-      console.log(form_data.keys());
       $.ajax({
       type: 'POST',
       url: '/instructor/' + this.props.id,
@@ -74,20 +81,18 @@ export default class CourseInfo extends Component {
       processData: false,
       data: form_data
    }).done((message)=>{
+      console.log(data);
       this.setState({
          errors : message
       })
    }).fail((msg)=> {
       console.log("failed");
       console.log(msg);
-      let errors = msg.responseJSON.errors ? msg.responseJSON.errors: msg.responseJSON;
+      let errors = msg.responseJSON.errors || msg.responseJSON;
         this.setState({
            errors : errors
         })
-        console.log();
-     }).always((msg)=> {
-      console.log('ALWAYS');
-     });
+     })
      // this.cancel();
    }
    cancel(){
@@ -95,7 +100,8 @@ export default class CourseInfo extends Component {
          editing : false
       });
    }
-   renderForm({course,subjects,sub_subjects,languages},error,refersh){
+   renderForm(fullData,error,reload,update){
+       var {course,subjects,sub_subjects,languages} = fullData;
        let message  =null;
       if (this.state.errors.message) {
          let className  = this.state.errors.status == "success" ? "alert my-2 alert-success" :
@@ -108,8 +114,20 @@ export default class CourseInfo extends Component {
             <Form
                initialErrors={this.state.errors}
               initialValues={course}
-              onSubmit={({subject_id,language_name,label,image,...values},errors)=>{
+              onSubmit={(data,errors)=>{
+                  let {subject_id,language_name,label,image,...values} = data;
                   this.save(values);
+                  delete data.cover_image;
+                  console.log(this.findAttrById(languages,data.language_id,'language_name'));
+                  data.language_name = this.findAttrById(languages,data.language_id,'language_name');
+                  data.label = this.findAttrById(sub_subjects,data.sub_subject_id,'label');
+                  update({
+                     data : {
+                        ...fullData,
+                        course : data
+                     }
+                  });
+
               }}
              // validate={this.validate}
             >
@@ -211,8 +229,8 @@ export default class CourseInfo extends Component {
                    })
                 }}
                 >
-            {(result,error,refersh)=>{
-              return this.state.editing ? this.renderForm(result,error,refersh) :
+            {(result,error,reload,update)=>{
+              return this.state.editing ? this.renderForm(result,error,reload,update) :
               this.renderDisplay(result.course);
             }}
          </DataProvider>

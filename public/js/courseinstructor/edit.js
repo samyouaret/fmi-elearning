@@ -61481,8 +61481,6 @@ function (_Component) {
           key = _ref$key === void 0 ? "id" : _ref$key,
           _ref$value = _ref.value,
           value = _ref$value === void 0 ? "value" : _ref$value;
-      console.log(value);
-      console.log(key);
       return arr.map(function (ele) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
           key: ele[key],
@@ -61583,7 +61581,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _CourseInfo__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CourseInfo */ "./resources/js/courseinstructor/CourseInfo.js");
 /* harmony import */ var _Navbar__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Navbar */ "./resources/js/courseinstructor/Navbar.js");
-/* harmony import */ var _Curriculum__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Curriculum */ "./resources/js/courseinstructor/Curriculum.js");
+/* harmony import */ var _curriculum_Curriculum__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../curriculum/Curriculum */ "./resources/js/curriculum/Curriculum.js");
 /* harmony import */ var _dataLoader__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./dataLoader */ "./resources/js/courseinstructor/dataLoader.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -61675,7 +61673,6 @@ function (_Component) {
           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
       });
-      console.log("id of course: " + this.state.data.id);
       $.ajax({
         type: 'PUT',
         url: '/instructor/' + this.state.data.id,
@@ -61699,7 +61696,7 @@ function (_Component) {
     value: function render() {
       var content = this.state.display == 0 ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_CourseInfo__WEBPACK_IMPORTED_MODULE_1__["default"], {
         id: this.id
-      }) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Curriculum__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      }) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_curriculum_Curriculum__WEBPACK_IMPORTED_MODULE_3__["default"], {
         id: this.id
       });
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -61748,6 +61745,10 @@ __webpack_require__.r(__webpack_exports__);
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
 
@@ -61803,12 +61804,23 @@ function (_Component) {
       contentType: 'application/json'
     };
     return _this;
-  } // static getDerivedStateFromProps(nextProps, prevState) {
-  //       return {data : nextProps.data};
-  // }
-
+  }
 
   _createClass(CourseInfo, [{
+    key: "findAttrById",
+    value: function findAttrById(arr, id, attr) {
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i].id == id) {
+          return arr[i][attr];
+        }
+      }
+
+      return null;
+    } // static getDerivedStateFromProps(nextProps, prevState) {
+    //       return {data : nextProps.data};
+    // }
+
+  }, {
     key: "validate",
     value: function validate(values) {
       var errors = {};
@@ -61860,7 +61872,6 @@ function (_Component) {
       }
 
       form_data.append('_method', 'PUT');
-      console.log(form_data.keys());
       $.ajax({
         type: 'POST',
         url: '/instructor/' + this.props.id,
@@ -61868,21 +61879,19 @@ function (_Component) {
         processData: false,
         data: form_data
       }).done(function (message) {
+        console.log(data);
+
         _this3.setState({
           errors: message
         });
       }).fail(function (msg) {
         console.log("failed");
         console.log(msg);
-        var errors = msg.responseJSON.errors ? msg.responseJSON.errors : msg.responseJSON;
+        var errors = msg.responseJSON.errors || msg.responseJSON;
 
         _this3.setState({
           errors: errors
         });
-
-        console.log();
-      }).always(function (msg) {
-        console.log('ALWAYS');
       }); // this.cancel();
     }
   }, {
@@ -61894,13 +61903,13 @@ function (_Component) {
     }
   }, {
     key: "renderForm",
-    value: function renderForm(_ref, error, refersh) {
+    value: function renderForm(fullData, error, reload, update) {
       var _this4 = this;
 
-      var course = _ref.course,
-          subjects = _ref.subjects,
-          sub_subjects = _ref.sub_subjects,
-          languages = _ref.languages;
+      var course = fullData.course,
+          subjects = fullData.subjects,
+          sub_subjects = fullData.sub_subjects,
+          languages = fullData.languages;
       var message = null;
 
       if (this.state.errors.message) {
@@ -61915,23 +61924,33 @@ function (_Component) {
       }, message, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_FormComponents_Form__WEBPACK_IMPORTED_MODULE_2__["default"], {
         initialErrors: this.state.errors,
         initialValues: course,
-        onSubmit: function onSubmit(_ref2, errors) {
-          var subject_id = _ref2.subject_id,
-              language_name = _ref2.language_name,
-              label = _ref2.label,
-              image = _ref2.image,
-              values = _objectWithoutProperties(_ref2, ["subject_id", "language_name", "label", "image"]);
+        onSubmit: function onSubmit(data, errors) {
+          var subject_id = data.subject_id,
+              language_name = data.language_name,
+              label = data.label,
+              image = data.image,
+              values = _objectWithoutProperties(data, ["subject_id", "language_name", "label", "image"]);
 
           _this4.save(values);
+
+          delete data.cover_image;
+          console.log(_this4.findAttrById(languages, data.language_id, 'language_name'));
+          data.language_name = _this4.findAttrById(languages, data.language_id, 'language_name');
+          data.label = _this4.findAttrById(sub_subjects, data.sub_subject_id, 'label');
+          update({
+            data: _objectSpread({}, fullData, {
+              course: data
+            })
+          });
         } // validate={this.validate}
 
-      }, function (_ref3) {
-        var values = _ref3.values,
-            handleChange = _ref3.handleChange,
-            handleBlur = _ref3.handleBlur,
-            handleSubmit = _ref3.handleSubmit,
-            errors = _ref3.errors,
-            touched = _ref3.touched;
+      }, function (_ref) {
+        var values = _ref.values,
+            handleChange = _ref.handleChange,
+            handleBlur = _ref.handleBlur,
+            handleSubmit = _ref.handleSubmit,
+            errors = _ref.errors,
+            touched = _ref.touched;
         var handlers = {
           onChange: handleChange,
           onBlur: handleBlur
@@ -62070,91 +62089,13 @@ function (_Component) {
             error: error
           });
         }
-      }, function (result, error, refersh) {
-        return _this5.state.editing ? _this5.renderForm(result, error, refersh) : _this5.renderDisplay(result.course);
+      }, function (result, error, reload, update) {
+        return _this5.state.editing ? _this5.renderForm(result, error, reload, update) : _this5.renderDisplay(result.course);
       }));
     }
   }]);
 
   return CourseInfo;
-}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
-
-
-
-/***/ }),
-
-/***/ "./resources/js/courseinstructor/Curriculum.js":
-/*!*****************************************************!*\
-  !*** ./resources/js/courseinstructor/Curriculum.js ***!
-  \*****************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Curriculum; });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-
-
-var Curriculum =
-/*#__PURE__*/
-function (_Component) {
-  _inherits(Curriculum, _Component);
-
-  function Curriculum(props) {
-    var _this;
-
-    _classCallCheck(this, Curriculum);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Curriculum).call(this, props));
-    _this.state = {
-      editing: false
-    };
-    _this.renderForm = _this.renderForm.bind(_assertThisInitialized(_this));
-    return _this;
-  }
-
-  _createClass(Curriculum, [{
-    key: "renderForm",
-    value: function renderForm() {
-      return null;
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      if (this.state.editing) {
-        return this.renderForm();
-      }
-
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "card col-8",
-        style: {
-          minHeight: 500 + "px"
-        }
-      }, "Curriculum");
-    }
-  }]);
-
-  return Curriculum;
 }(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
 
 
@@ -62305,6 +62246,97 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/curriculum/Curriculum.js":
+/*!***********************************************!*\
+  !*** ./resources/js/curriculum/Curriculum.js ***!
+  \***********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Curriculum; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _FormComponents_Form__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../FormComponents/Form */ "./resources/js/FormComponents/Form.js");
+/* harmony import */ var _FormComponents_Input__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../FormComponents/Input */ "./resources/js/FormComponents/Input.js");
+/* harmony import */ var _FormComponents_Select__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../FormComponents/Select */ "./resources/js/FormComponents/Select.js");
+/* harmony import */ var _providers_FileInput__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../providers/FileInput */ "./resources/js/providers/FileInput.js");
+/* harmony import */ var _providers_DataProvider__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../providers/DataProvider */ "./resources/js/providers/DataProvider.js");
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+
+
+
+
+
+var Curriculum =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(Curriculum, _Component);
+
+  function Curriculum(props) {
+    var _this;
+
+    _classCallCheck(this, Curriculum);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Curriculum).call(this, props));
+    _this.state = {
+      editing: false
+    };
+    _this.renderForm = _this.renderForm.bind(_assertThisInitialized(_this));
+    return _this;
+  }
+
+  _createClass(Curriculum, [{
+    key: "renderForm",
+    value: function renderForm() {
+      return null;
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      if (this.state.editing) {
+        return this.renderForm();
+      }
+
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_DataProvider__WEBPACK_IMPORTED_MODULE_5__["default"], null, function (result, error, refersh) {
+        return;
+        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "card col-8",
+          style: {
+            minHeight: 500 + "px"
+          }
+        }, "Curriculum");
+      });
+    }
+  }]);
+
+  return Curriculum;
+}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
+
+
+
+/***/ }),
+
 /***/ "./resources/js/providers/DataProvider.js":
 /*!************************************************!*\
   !*** ./resources/js/providers/DataProvider.js ***!
@@ -62358,14 +62390,24 @@ function (_Component) {
     };
     _this.times = 0;
 
-    _this.refresh = function () {
+    _this.reload = function () {
       _this.multiRequest();
+    };
+
+    _this.update = function (data) {
+      // console.log(data);
+      _this.setState(data);
     };
 
     return _this;
   }
 
   _createClass(DataProvider, [{
+    key: "componentDidUpdate",
+    value: function componentDidUpdate() {
+      console.log("update");
+    }
+  }, {
     key: "multiRequest",
     value: function multiRequest() {
       var _$,
@@ -62431,18 +62473,18 @@ function (_Component) {
           data = _this$state.data;
 
       if (error) {
-        this.errorFlag = true;
-        console.log("error renderd :" + this.times);
+        this.errorFlag = true; // console.log("error renderd :" + this.times);
+
         this.times++;
         return this.props.renderError && this.props.renderError(error) || null;
       } else if (!isLoaded) {
-        console.log("loading.. renderd :" + this.times);
+        // console.log("loading.. renderd :" + this.times);
         this.times++;
         return this.props.renderLoading && this.props.renderLoading() || null;
       } else {
-        console.log("data renderd :" + this.times);
+        // console.log("data renderd :" + this.times);
         this.times++;
-        return this.props.children(data, error, this.refresh);
+        return this.props.children(data, error, this.reload, this.update);
       }
     }
   }]);

@@ -4,8 +4,6 @@ export default class Select extends Component {
       super(props);
    }
    renderList(arr,{key="id",value="value"}){
-      console.log(value);
-      console.log(key);
       return arr.map((ele)=> {
       return <option key={ele[key]} value={ele[key]}>{ele[value]}</option>
      })
