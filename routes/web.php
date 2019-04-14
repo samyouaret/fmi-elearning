@@ -65,6 +65,13 @@ Route::prefix('course')->group(function()
   Route::post('enroll/{id}','course\CourseExplorerController@enroll')
   ->middleware('auth');
 });
+Route::prefix('curriculum')->group(function()
+{
+  Route::get('{id}','course\CurriculumController@show');
+  Route::post('upload','course\CurriculumController@upload');
+  Route::put('update/{id}','course\CourseExplorerController@update')
+  ->middleware('auth');
+});
 
 /**
  * Profile routes

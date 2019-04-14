@@ -205,7 +205,7 @@ export default class CourseInfo extends Component {
    }
    render(){
       return (
-        <div className="card col-8"  style={{minHeight:500 + "px"}}>
+        <div className="card col-sm-8"  style={{minHeight:500 + "px"}}>
            <DataProvider options={this.options}
                 renderLoading={()=>{
                    return (<div className="d-flex justify-content-center">
