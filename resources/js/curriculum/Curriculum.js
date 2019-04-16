@@ -42,6 +42,16 @@ export default class Curriculum extends Component {
           }
          ]
       }
+      this.addNewChapter = ()=>{
+         this.setState({
+            editing :true
+         })
+      }
+      this.cancel = ()=>{
+         this.setState({
+            editing : false
+         })
+      };
    }
    renderChapters(){
       return this.state.chapters.map(function(chapter) {
@@ -49,14 +59,24 @@ export default class Curriculum extends Component {
             title={chapter.title}/>);
       })
    }
+   renderNewChapter(){
+      return (<div className="card col-sm-8"  style={{minHeight:500 + "px"}}>
+         <Chapter contents={[]} title="title example"/>
+         <button className="btn btn-primary m-2 btn-sm align-self-end"
+         onClick={this.cancel}>cancel</button>
+        </div>)
+   }
    render(){
-      // if (this.state.editing) {
-      //
-      // }
-      return (
-     <div className="card col-sm-8"  style={{minHeight:500 + "px"}}>
-        {this.renderChapters()}
-       </div>
-      )
+      if (this.state.editing) {
+        return  this.renderNewChapter();
+     }else {
+        return (
+           <div className="card col-sm-8"  style={{minHeight:500 + "px"}}>
+             {this.renderChapters()}
+             <button className="btn btn-secondary btn-sm mt-3 align-self-end"
+                onClick={this.addNewChapter}>+ new chapter</button>
+             </div>
+          )
+     }
    }
 }

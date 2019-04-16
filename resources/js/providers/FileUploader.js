@@ -8,27 +8,51 @@ export default class FileUploader extends Component{
          errors : null,
          options : this.props.options || {},
          isLoaded : false,
-         progressValue : 0,
+         progressValue : -1,
          files:null,
-         hasFile : false
+         hasFile : false,
+         accepts : this.props.options.accepts || []
       }
       this.reload = () =>{
-         this.multiRequest();
+         this.request();
+      }
+      this.validate = () =>{
+         if (this.state.accepts.length==0) {
+            return true;
+         }
+         let files = this.state.files;
+         for (var i = 0; i < files.length; i++) {
+            let type = files[i].type.split('/')[1];
+                if (!this.state.accepts.includes(type)) {
+                   return false;
+             }
+         }
+         return true;
       }
       this.upload = (event) =>{
          if (event.type=="change") {
             this.handleChange(event);
          }
-         this.request();
+         if (!this.validate()) {
+             let name = this.state.name.replace('[]','');
+            this.setState({
+               errors : {
+                  [name] : ["file must be of type " + this.state.accepts.join()]
+               }
+            })
+         }else {
+            this.request();
+         }
       }
      this.handleChange = (event) => {
          const target = event.target;
          console.log(event.type);
          const value = target.files;
+         let name = event.target.name
          let hasValue = Boolean(value);
         this.setState({
             files : value,
-            fileName : target.name,
+            name : name,
             hasFile : hasValue
            })
      }
@@ -42,7 +66,7 @@ export default class FileUploader extends Component{
      let files = this.state.files;
      var form_data = new FormData();
      for ( var key in files) {
-         form_data.append(this.state.fileName,files[key]);
+         form_data.append(this.state.name,files[key]);
      }
      console.log(form_data);
      let $this  = this;
@@ -52,6 +76,7 @@ export default class FileUploader extends Component{
           xhr.upload.addEventListener("progress", function(evt) {
               if (evt.lengthComputable) {
                   var percent = (evt.loaded / evt.total) * 100;
+                  console.log(evt);
                   $this.setState({
                      progressValue: percent
                   })
@@ -62,6 +87,7 @@ export default class FileUploader extends Component{
          xhr.addEventListener("progress", function(evt) {
              if (evt.lengthComputable) {
                 var percent = (evt.loaded / evt.total) * 100;
+                console.log(percent);
                 $this.setState({
                    progressValue: percent
                 })
@@ -75,26 +101,21 @@ export default class FileUploader extends Component{
      url: this.props.options.url,
      contentType: false,
      processData: false,
-     data: form_data,
-     progress: function(e) {
-                      if(e.lengthComputable) {
-                          var pct = (e.loaded / e.total) * 100;
-                          $('#prog')
-                              .progressbar('option', 'value', pct)
-                              .children('.ui-progressbar-value')
-                              .html(pct.toPrecision(3) + '%')
-                              .css('display', 'block');
-                      } else {
-                          console.warn('Content Length not reported!');
-                      }
-      }
+     data: form_data
      })
-     .done(function(data) {
+     .done((data) =>{
+        if (this.props.onupload) {
+           console.log("onupload");
+           this.props.onupload(data);
+        }
         console.log(data);
         console.log("success");
      })
-     .fail(function(msg) {
+     .fail((msg)=> {
         console.log(msg);
+        this.setState({
+           errors : msg.responseJSON.errors || msg.responseJSON
+        })
         console.log("error");
      });
   }
@@ -103,7 +124,8 @@ export default class FileUploader extends Component{
       upload :this.upload,
       handleChange:this.handleChange,
       progressValue: this.state.progressValue,
-      hasFile:this.state.hasFile
+      hasFile:this.state.hasFile,
+      errors : this.state.errors
     })
    }
 }

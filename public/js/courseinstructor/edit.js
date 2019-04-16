@@ -62265,6 +62265,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Content__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Content */ "./resources/js/curriculum/Content.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -62303,10 +62313,20 @@ function (_Component) {
       editing: false,
       title: _this.props.title || "",
       id: _this.props.id,
-      contents: _this.props.contents || {}
+      contents: _this.props.contents || {},
+      newContent: false
     };
 
-    _this.addContent = function () {
+    _this.addNewContent = function () {
+      _this.setState({
+        contents: [].concat(_toConsumableArray(_this.state.contents), [{
+          id: _this.randomInteger(),
+          title: "an example content title"
+        }])
+      });
+    };
+
+    _this.editTitle = function () {
       _this.setState({
         editing: true
       });
@@ -62318,29 +62338,88 @@ function (_Component) {
       });
     };
 
+    _this.handleChange = function (e) {
+      var target = e.target.name;
+
+      _this.setState(_defineProperty({}, target.name, target.value));
+    };
+
     return _this;
   }
 
   _createClass(Chapter, [{
     key: "renderContents",
     value: function renderContents() {
+      var _this2 = this;
+
       return this.state.contents.map(function (content) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Content__WEBPACK_IMPORTED_MODULE_5__["default"], {
           key: content.id,
+          delete: _this2.deleteContent.bind(_this2, content.id),
           data: content
         });
       });
     }
   }, {
+    key: "deleteContent",
+    value: function deleteContent(id) {
+      var contents = this.state.contents;
+      var pos = -1;
+
+      for (var i = 0; i < contents.length; i++) {
+        if (contents[i].id == id) {
+          pos = i;
+          break;
+        }
+      }
+
+      contents.splice(pos, 1);
+      this.setState({
+        contents: contents
+      });
+    }
+  }, {
+    key: "randomInteger",
+    value: function randomInteger() {
+      return Math.floor(Math.random() * 10000);
+    }
+  }, {
+    key: "renderTitleForm",
+    value: function renderTitleForm() {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        className: "form-control",
+        defaultValue: this.state.title,
+        name: "title",
+        onChange: this.handleChange
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        className: "btn btn-primary m-2 btn-sm",
+        onClick: this.save
+      }, "save"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        className: "btn btn-danger btn-sm",
+        onClick: this.cancel
+      }, "cancel"));
+    }
+  }, {
     key: "render",
     value: function render() {
+      var title = this.state.editing ? this.renderTitleForm() : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        className: "d-flex"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        className: "mr-auto"
+      }, this.state.title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        className: "btn btn-secondary btn-sm align-self-end",
+        onClick: this.editTitle
+      }, "edit"));
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "card mt-2"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "card-header"
-      }, this.state.title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
+      }, title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
         className: "list-group list-group-flush bg-light"
-      }, this.renderContents()));
+      }, this.renderContents()), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        className: "btn btn-light btn-sm mt-3 align-self-end",
+        onClick: this.addNewContent
+      }, "+ new content"));
     }
   }]);
 
@@ -62408,7 +62487,14 @@ function (_Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Content).call(this, props));
     _this.state = {
       editing: 0,
-      data: _this.props.data || {}
+      data: _this.props.data || {},
+      hasFile: false,
+      hasVideo: false,
+      hasArticle: false,
+      videoUrl: "",
+      article: {},
+      fileList: [],
+      video: []
     };
 
     _this.updateEditing = function (val) {
@@ -62452,9 +62538,12 @@ function (_Component) {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
         className: "list-group-item d-flex justify-content-between align-items-center"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, this.state.data.title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        className: "btn btn-primary btn-sm",
+        className: "btn btn-primary btn-sm mr-1",
         onClick: this.edit
-      }, "edit")));
+      }, "edit"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        className: "btn btn-danger btn-sm",
+        onClick: this.props.delete
+      }, "delete")));
     }
   }, {
     key: "renderContent",
@@ -62501,12 +62590,32 @@ function (_Component) {
       }, "+ file")));
     }
   }, {
+    key: "renderFileList",
+    value: function renderFileList(list) {
+      if (list.length == 0) {
+        return null;
+      }
+
+      return list.map(function (elem, index) {
+        console.log(elem);
+        var arr = elem.split('/');
+        var name = arr[arr.length - 1];
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
+          key: index + 1
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+          className: "text-success",
+          href: location.host + "/" + elem
+        }, name));
+      });
+    }
+  }, {
     key: "renderFile",
     value: function renderFile() {
       var _this2 = this;
 
       var options = {
-        url: "/curriculum/upload"
+        url: "/curriculum/upload" // accepts : ['pdf','docx']
+
       };
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
         className: "list-group-item d-flex flex-column align-items-center"
@@ -62517,16 +62626,48 @@ function (_Component) {
         },
         onClick: this.cancel
       }, "x"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_FileUploader__WEBPACK_IMPORTED_MODULE_5__["default"], {
-        options: options
+        options: options,
+        onupload: function onupload(data) {
+          var _this2$setState;
+
+          var targetType = "hasFile";
+          var fileType = "fileList";
+
+          if (_this2.state.editing == 3) {
+            targetType = "hasVideo";
+            fileType = "video";
+          } else if (_this2.state.editing == 4) {
+            targetType = "hasArticle";
+          }
+
+          _this2.setState((_this2$setState = {}, _defineProperty(_this2$setState, fileType, data), _defineProperty(_this2$setState, targetType, true), _this2$setState));
+        }
       }, function (_ref) {
         var upload = _ref.upload,
             handleChange = _ref.handleChange,
             progressValue = _ref.progressValue,
-            hasFile = _ref.hasFile;
+            hasFile = _ref.hasFile,
+            errors = _ref.errors;
         var cls = hasFile ? "btn btn-secondary btn-sm mr-1" : "btn btn-secondary btn-sm mr-1 disabled";
 
         var progressBar = _this2.renderProgressBar(progressValue);
 
+        var err = null;
+        console.log(errors);
+
+        if (errors) {
+          err = errors.file.map(function (error, index) {
+            return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
+              key: index + 1,
+              className: "text-danger"
+            }, error);
+          });
+        }
+
+        var multiple = _this2.state.editing == 2 ? true : false;
+        var fileList = _this2.state.editing == 2 ? _this2.state.fileList : _this2.state.video;
+        console.log("filelist");
+        console.log(fileList);
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "w-100"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -62546,7 +62687,7 @@ function (_Component) {
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
           type: "file",
           name: "file[]",
-          multiple: "multiple",
+          multiple: multiple,
           onChange: handleChange,
           className: "d-none"
         }), "browse file"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
@@ -62562,20 +62703,20 @@ function (_Component) {
             cursor: "pointer"
           },
           onClick: _this2.edit
-        }, "cancel")), progressBar);
+        }, "cancel")), _this2.renderFileList(fileList), err, progressBar);
       }));
     }
   }, {
     key: "renderProgressBar",
     value: function renderProgressBar(value) {
-      return value ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      return value < 100 && value > -1 ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "progress w-100",
         style: {
-          height: 10 + "px"
+          height: 5 + "px"
         }
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         id: "progressBar",
-        className: "progress-bar bg-info",
+        className: "progress-bar bg-secondary",
         role: "progressbar",
         style: {
           width: value + "%"
@@ -62688,6 +62829,19 @@ function (_Component) {
         }]
       }]
     };
+
+    _this.addNewChapter = function () {
+      _this.setState({
+        editing: true
+      });
+    };
+
+    _this.cancel = function () {
+      _this.setState({
+        editing: false
+      });
+    };
+
     return _this;
   }
 
@@ -62703,17 +62857,37 @@ function (_Component) {
       });
     }
   }, {
-    key: "render",
-    value: function render() {
-      // if (this.state.editing) {
-      //
-      // }
+    key: "renderNewChapter",
+    value: function renderNewChapter() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "card col-sm-8",
         style: {
           minHeight: 500 + "px"
         }
-      }, this.renderChapters());
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Chapter__WEBPACK_IMPORTED_MODULE_6__["default"], {
+        contents: [],
+        title: "title example"
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        className: "btn btn-primary m-2 btn-sm align-self-end",
+        onClick: this.cancel
+      }, "cancel"));
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      if (this.state.editing) {
+        return this.renderNewChapter();
+      } else {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "card col-sm-8",
+          style: {
+            minHeight: 500 + "px"
+          }
+        }, this.renderChapters(), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          className: "btn btn-secondary btn-sm mt-3 align-self-end",
+          onClick: this.addNewChapter
+        }, "+ new chapter"));
+      }
     }
   }]);
 
@@ -62977,6 +63151,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -63011,13 +63187,32 @@ function (_Component) {
       errors: null,
       options: _this.props.options || {},
       isLoaded: false,
-      progressValue: 0,
+      progressValue: -1,
       files: null,
-      hasFile: false
+      hasFile: false,
+      accepts: _this.props.options.accepts || []
     };
 
     _this.reload = function () {
-      _this.multiRequest();
+      _this.request();
+    };
+
+    _this.validate = function () {
+      if (_this.state.accepts.length == 0) {
+        return true;
+      }
+
+      var files = _this.state.files;
+
+      for (var i = 0; i < files.length; i++) {
+        var type = files[i].type.split('/')[1];
+
+        if (!_this.state.accepts.includes(type)) {
+          return false;
+        }
+      }
+
+      return true;
     };
 
     _this.upload = function (event) {
@@ -63025,18 +63220,27 @@ function (_Component) {
         _this.handleChange(event);
       }
 
-      _this.request();
+      if (!_this.validate()) {
+        var name = _this.state.name.replace('[]', '');
+
+        _this.setState({
+          errors: _defineProperty({}, name, ["file must be of type " + _this.state.accepts.join()])
+        });
+      } else {
+        _this.request();
+      }
     };
 
     _this.handleChange = function (event) {
       var target = event.target;
       console.log(event.type);
       var value = target.files;
+      var name = event.target.name;
       var hasValue = Boolean(value);
 
       _this.setState({
         files: value,
-        fileName: target.name,
+        name: name,
         hasFile: hasValue
       });
     };
@@ -63047,6 +63251,8 @@ function (_Component) {
   _createClass(FileUploader, [{
     key: "request",
     value: function request() {
+      var _this2 = this;
+
       $.ajaxSetup({
         headers: {
           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -63056,7 +63262,7 @@ function (_Component) {
       var form_data = new FormData();
 
       for (var key in files) {
-        form_data.append(this.state.fileName, files[key]);
+        form_data.append(this.state.name, files[key]);
       }
 
       console.log(form_data);
@@ -63067,6 +63273,7 @@ function (_Component) {
           xhr.upload.addEventListener("progress", function (evt) {
             if (evt.lengthComputable) {
               var percent = evt.loaded / evt.total * 100;
+              console.log(evt);
               $this.setState({
                 progressValue: percent
               }); //Do something with upload progress here
@@ -63075,6 +63282,7 @@ function (_Component) {
           xhr.addEventListener("progress", function (evt) {
             if (evt.lengthComputable) {
               var percent = evt.loaded / evt.total * 100;
+              console.log(percent);
               $this.setState({
                 progressValue: percent
               }); //Do something with download progress
@@ -63086,20 +63294,23 @@ function (_Component) {
         url: this.props.options.url,
         contentType: false,
         processData: false,
-        data: form_data,
-        progress: function progress(e) {
-          if (e.lengthComputable) {
-            var pct = e.loaded / e.total * 100;
-            $('#prog').progressbar('option', 'value', pct).children('.ui-progressbar-value').html(pct.toPrecision(3) + '%').css('display', 'block');
-          } else {
-            console.warn('Content Length not reported!');
-          }
-        }
+        data: form_data
       }).done(function (data) {
+        if (_this2.props.onupload) {
+          console.log("onupload");
+
+          _this2.props.onupload(data);
+        }
+
         console.log(data);
         console.log("success");
       }).fail(function (msg) {
         console.log(msg);
+
+        _this2.setState({
+          errors: msg.responseJSON.errors || msg.responseJSON
+        });
+
         console.log("error");
       });
     }
@@ -63110,7 +63321,8 @@ function (_Component) {
         upload: this.upload,
         handleChange: this.handleChange,
         progressValue: this.state.progressValue,
-        hasFile: this.state.hasFile
+        hasFile: this.state.hasFile,
+        errors: this.state.errors
       });
     }
   }]);
