@@ -7,14 +7,12 @@ export default class FileUploader extends Component{
       this.state = {
          errors : null,
          options : this.props.options || {},
-         isLoaded : false,
+         data : this.props.data || {},
          progressValue : -1,
          files:null,
          hasFile : false,
+         uploaded : false,
          accepts : this.props.options.accepts || []
-      }
-      this.reload = () =>{
-         this.request();
       }
       this.validate = () =>{
          if (this.state.accepts.length==0) {
@@ -32,6 +30,9 @@ export default class FileUploader extends Component{
       this.upload = (event) =>{
          if (event.type=="change") {
             this.handleChange(event);
+         }
+         if(!this.state.hasFile){
+            return;
          }
          if (!this.validate()) {
              let name = this.state.name.replace('[]','');
@@ -53,7 +54,8 @@ export default class FileUploader extends Component{
         this.setState({
             files : value,
             name : name,
-            hasFile : hasValue
+            hasFile : hasValue,
+            uploaded:false
            })
      }
   }
@@ -67,6 +69,9 @@ export default class FileUploader extends Component{
      var form_data = new FormData();
      for ( var key in files) {
          form_data.append(this.state.name,files[key]);
+     }
+     for ( var key in this.state.data) {
+         form_data.append(key,this.state.data[key]);
      }
      console.log(form_data);
      let $this  = this;
@@ -105,16 +110,25 @@ export default class FileUploader extends Component{
      })
      .done((data) =>{
         if (this.props.onupload) {
-           console.log("onupload");
            this.props.onupload(data);
         }
+        this.setState({
+         hasFile : false,
+         files : null
+       })
         console.log(data);
         console.log("success");
      })
      .fail((msg)=> {
         console.log(msg);
+        let errors =  msg.responseJSON.errors || msg.responseJSON
+        if (this.props.onError) {
+           this.props.onError(errors);
+        }
         this.setState({
-           errors : msg.responseJSON.errors || msg.responseJSON
+           errors : errors,
+           hasFile : false,
+           files : null
         })
         console.log("error");
      });

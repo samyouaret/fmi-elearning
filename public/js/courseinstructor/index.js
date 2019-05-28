@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -61467,14 +61467,14 @@ if (document.getElementById('dashboard')) {
 
 /***/ }),
 
-/***/ 0:
+/***/ 2:
 /*!******************************************************!*\
   !*** multi ./resources/js/courseinstructor/index.js ***!
   \******************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\xampp\htdocs\fmi-Elearning\resources\js\courseinstructor\index.js */"./resources/js/courseinstructor/index.js");
+module.exports = __webpack_require__(/*! /opt/lampp/htdocs/fmi-Elearning/resources/js/courseinstructor/index.js */"./resources/js/courseinstructor/index.js");
 
 
 /***/ })

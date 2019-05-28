@@ -14,7 +14,6 @@ export default class DataProvider extends Component{
          this.multiRequest();
       }
       this.update = (data) =>{
-         // console.log(data);
          this.setState(data);
       }
    }
@@ -39,8 +38,8 @@ export default class DataProvider extends Component{
              data : result,
              isLoaded: true
         }))
-        if (this.props.Onsuccess) {
-           this.props.Onsuccess(result);
+        if (this.props.onSuccess) {
+           this.props.onSuccess(result);
         }
      },
      (msg)=>{
@@ -51,8 +50,8 @@ export default class DataProvider extends Component{
           isLoaded: true,
           error : msg.responseJSON
        }))
-       if (this.props.OnError) {
-          this.props.OnError(msg.responseJSON);
+       if (this.props.onError) {
+          this.props.onError(msg.responseJSON);
        }
      }
   )
@@ -62,21 +61,16 @@ export default class DataProvider extends Component{
    }
    render(){
      const {error, isLoaded, data} = this.state;
+     this.times++;
      if (error) {
-        this.errorFlag = true;
-        // console.log("error renderd :" + this.times);
-        this.times++;
+        console.log("error renderd :" + this.times);
         return this.props.renderError && this.props.renderError(error) || null;
      }else if (!isLoaded) {
-        // console.log("loading.. renderd :" + this.times);
-        this.times++;
+        console.log("loading.. renderd :" + this.times);
       return this.props.renderLoading && this.props.renderLoading() || null;
    }else{
-      // console.log("data renderd :" + this.times);
-      this.times++;
-      return (
-         this.props.children(data,error,this.reload,this.update)
-      )
+         return this.props.children && this.props.children.constructor.name == "Function" ?
+         this.props.children(data,error,this.reload,this.update) : this.props.children || null;
    }
    }
 }

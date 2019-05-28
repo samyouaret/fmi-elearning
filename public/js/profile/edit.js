@@ -24829,7 +24829,7 @@ if (document.getElementById('test')) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\xampp\htdocs\fmi-Elearning\resources\js\profile\edit.js */"./resources/js/profile/edit.js");
+module.exports = __webpack_require__(/*! /opt/lampp/htdocs/fmi-Elearning/resources/js/profile/edit.js */"./resources/js/profile/edit.js");
 
 
 /***/ })

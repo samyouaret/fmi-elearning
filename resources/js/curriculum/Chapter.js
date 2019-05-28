@@ -1,9 +1,10 @@
 import React,{Component} from "react"
-import Form from '../FormComponents/Form'
-import Input from '../FormComponents/Input'
-import Select from '../FormComponents/Select'
+import Form from '../formcomponents/Form'
+import Input from '../formcomponents/Input'
+import Select from '../formcomponents/Select'
 import FileInput from '../providers/FileInput'
 import Content from './Content'
+import ResourceList from './ResourceList'
 
 export default class Chapter extends Component {
    constructor(props){
@@ -20,8 +21,8 @@ export default class Chapter extends Component {
            contents :[
              ...this.state.contents,
              {
-              id :this.randomInteger(),
-              title : "an example content title"
+              content_id :this.randomInteger(),
+              content_title : "an example content title"
              }
           ]
         })
@@ -43,33 +44,51 @@ export default class Chapter extends Component {
        })
      };
    }
+
    renderContents(){
       return this.state.contents.map((content) =>{
-         return (<Content key={content.id}  delete = {this.deleteContent.bind(this,content.id)}
+         return (<Content key={content.content_id}
+            delete = {this.deleteContent.bind(this,content.content_id)}
+            update = {this.updateContent.bind(this)}
             data={content}/>);
       })
    }
+
    deleteContent(id){
-      let contents = this.state.contents;
+      let pos  = this.findContentById(id);
+      this.state.contents.splice(pos,1);
+      this.setState({
+         contents : this.state.contents
+      })
+   }
+   updateContent(id,content){
+      let pos  = this.findContentById(id);
+      this.state.contents[pos] = content;
+      this.setState({
+         contents : this.state.contents
+      })
+   }
+
+   findContentById(id){
       let pos = -1;
-      for (var i = 0; i < contents.length; i++) {
-         if (contents[i].id ==id) {
+      for (var i = 0; i < this.state.contents.length; i++) {
+         if (this.state.contents[i].content_id ==id) {
             pos = i;
             break;
          }
       }
-      contents.splice(pos,1);
-      this.setState({
-         contents : contents
-      })
+      return pos;
    }
+
    randomInteger(){
       return Math.floor(Math.random() * 10000)
    }
+
    renderTitleForm(){
       return (
          <span>
-         <input className="form-control" defaultValue={this.state.title} name='title' onChange={this.handleChange}/>
+         <input className="form-control" defaultValue={this.state.title} name='title'
+            onChange={this.handleChange}/>
          <button className="btn btn-primary m-2 btn-sm"
          onClick={this.save}>save</button>
          <button className="btn btn-danger btn-sm"
@@ -77,6 +96,7 @@ export default class Chapter extends Component {
       </span>
       )
    }
+
    render(){
       const title = this.state.editing ? this.renderTitleForm() :
       (<span className="d-flex">
@@ -97,5 +117,17 @@ export default class Chapter extends Component {
             onClick={this.addNewContent}>+ new content</button>
       </div>
       )
+      // <div className="container">
+      //  <div className="row">
+      //     <div className="col-sm-6 mb-1">
+      //        <ResourceList list={[{id:1,url:"/source/test/video.mp4"}]} title="video"/>
+      //      </div>
+      //     <div className="col-sm-6">
+      //        <ResourceList list={[{id:1,url:"/source/test/filename.pdf"},
+      //          {id:2,url:"/source/test/filename2.pdf"}]} title="uploaded files"/>
+      //     </div>
+      //  </div>
+      // </div>
    }
+
 }

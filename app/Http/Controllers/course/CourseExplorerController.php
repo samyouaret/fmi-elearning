@@ -25,7 +25,7 @@ class CourseExplorerController extends Controller
    */
   public function search($id){
       return "Hello in this course";
-  }
+  } 
   /**
    *enroll a course in (auth is needed)
    *

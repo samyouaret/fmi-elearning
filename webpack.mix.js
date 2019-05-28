@@ -11,10 +11,11 @@ const mix = require('laravel-mix');
  |
  */
 
-// mix.react('resources/js/app.js', 'public/js')
-// .react('resources/js/profile/edit.js', 'public/js/profile')
-mix.react('resources/js/courseinstructor/index.js', 'public/js/courseinstructor')
+mix.react('resources/js/app.js', 'public/js')
+.react('resources/js/profile/edit.js', 'public/js/profile')
+.react('resources/js/courseinstructor/index.js', 'public/js/courseinstructor')
 .react('resources/js/courseinstructor/edit.js', 'public/js/courseinstructor')
-.react('resources/js/formComponents/DataProviderTest.js', 'public/js/formComponents');
+.react('resources/js/formcomponents/DataProviderTest.js', 'public/js/formcomponents');
+// .react('resources/js/curriculum/test.js', 'public/js/curriculum');
 // .react('resources/js/formComponents/testIndex.js', 'public/js/formComponents');
 // .sass('resources/sass/app.scss', 'public/css');

@@ -1,9 +1,15 @@
 import React,{Component} from "react"
-import Form from '../FormComponents/Form'
-import Input from '../FormComponents/Input'
-import Select from '../FormComponents/Select'
+import Form from '../formcomponents/Form'
+import Input from '../formcomponents/Input'
+import Select from '../formcomponents/Select'
 import FileInput from '../providers/FileInput'
 import FileUploader from '../providers/FileUploader'
+import DataProvider from '../providers/DataProvider'
+import ProgressBar from '../components/ProgressBar.js'
+import Loading from '../components/Loading.js'
+import ResourceList from './ResourceList'
+import request from '../helpers/request.js'
+import findByAttr from '../helpers/findByAttr.js'
 
 export default class Content extends Component {
    constructor(props){
@@ -11,47 +17,127 @@ export default class Content extends Component {
       this.state = {
          editing : 0,
          data : this.props.data || {},
-         hasFile : false,
-         hasVideo : false,
-         hasArticle : false,
-         videoUrl :"",
-         article : {},
          fileList : [],
-         video : [],
+         multiple : true,
+         message : {},
+         hasMessage : false
       };
-      this.updateEditing= (val)=>{
+      this.updateEditing= (val,data)=>{
          this.setState({
-            editing : val
+            editing : val,
+            hasMessage:false,
+            ...data
          })
       }
+      this.options = {
+         url : "/curriculum/content/resources/" + this.props.data.content_id
+      }
+      //edit mode
      this.edit = ()=>{
       this.updateEditing(1);
      };
+     //add a file
      this.addFile = ()=>{
-       this.updateEditing(2);
+       this.updateEditing(2,{multiple:true});
      };
+     //add a video
      this.addVideo = ()=>{
-       this.updateEditing(3);
+       this.updateEditing(2,{multiple:false});
      };
-     this.addArticle = ()=>{
-      this.updateEditing(4);
-     };
-     this.cancel = ()=>{
+     this.cancel =()=>{
         this.updateEditing(0);
      };
-     this.handleChange = (e)=>{
-        let target = e.target.name;
+     this.handleChange = (event)=>{
+        const target = event.target;
+        const value = target.type === "checkbox" ? target.checked : target.value;
+        console.log(target.type);
+        console.log(value);
+        let data = {
+          ...this.state.data,
+        [target.name] : value
+        }
+        clearTimeout(this.timer);
         this.setState({
-          [target.name] : target.value
+           data : data
         })
+        data.is_open_for_free *=1;
+        data.is_mandatory *=1;
+        this.update(data);
      };
+     this.onupload = (data)=>{
+        let state = {
+           hasMessage :true,
+           message : {
+             message : data.message,
+             status :  data.status,
+          },
+          editing:1
+         };
+         if (this.state.multiple) {
+             state.fileList = [...this.state.fileList,...data.files];
+             state.multiple = true
+          }else {
+            state.data = {
+               ...this.state.data,
+               video_url : data.data.video_url
+            }
+            var video = document.createElement('video');
+            video.setAttribute('src', data.data.video_url);
+            video.onloadedmetadata = ()=>{
+               state.data.time_required_in_sec = Math.round(video.duration);
+            }
+          }
+       // this.setState(state);
+       this.update(state.data);
+     }
+     this.update = (data,state)=>{
+        setTimeout(()=>{
+          request("/curriculum/content/update/" + this.state.data.content_id,data,"PUT")
+          .done((message)=>{
+            this.setState({
+               hasMessage:true,
+               message : message,
+               data : data,
+               ...state
+            });
+         })
+      },1500);
+     }
+     this.deleteVideo = ()=>{
+        request("/curriculum/content/removevideo/" + this.state.data.content_id,{},"DELETE").done((message)=>{
+           this.setState({
+              data : {
+                 ...this.state.data,
+                 video_url:null
+              },
+              hasMessage:true,
+              message : message
+           })
+        }).fail(this.setMessage);
+     }
+     this.setMessage= (message)=>{
+        this.setState({
+          hasMessage :true,
+          message : message
+       })
+     }
+     this.deleteResource = ($id)=>{
+        console.log(findByAttr(this.state.fileList,"id",$id));
+        request("/curriculum/content/resource/remove/" + $id,{},"DELETE").done((message)=>{
+           let pos = findByAttr(this.state.fileList,"id",$id);
+           this.state.fileList.splice(pos,1);
+           this.setState({
+             fileList : this.state.fileList,
+             hasMessage:true,
+             message : message
+          })
+        }).fail(this.setMessage);
    }
+  }
    renderDisplay(){
      return (
          <li className="list-group-item d-flex justify-content-between align-items-center">
-           <span>
-             {this.state.data.title}
-           </span>
+           <span>{this.state.data.content_title} </span>
            <span>
               <button className="btn btn-primary btn-sm mr-1" onClick={this.edit}>edit</button>
               <button className="btn btn-danger btn-sm" onClick={this.props.delete}>delete</button>
@@ -59,120 +145,152 @@ export default class Content extends Component {
         </li>
     )
    }
-   renderContent(){
+   renderVideo(){
+      return this.state.data.video_url ?
+        (<React.Fragment>
+           <video className="my-2" id="content_video"
+           width="100%" height="auto"
+           src={this.state.data.video_url} controls>
+        </video>
+       <button className="btn btn-danger btn-sm align-self-end"
+        onClick={this.deleteVideo}>delete video</button></React.Fragment>) :
+        <h5>this content has no video</h5>;
+   }
+   renderContentEdit(){
+      let data = {
+         content_title : this.state.data.content_title,
+         is_open_for_free : this.state.data.is_open_for_free
+      }
+      let  deleteVideoButton = null;
+      if (this.state.data.video_url) {
+         deleteVideoButton = (<button className="btn btn-danger btn-sm align-self-end"
+           onClick={this.deleteVideo}>delete video</button>);
+      }
       return (
-          <li className="list-group-item d-flex flex-column align-items-center">
-             <span className="close align-self-end" style={{cursor:"pointer"}}
-                onClick={this.cancel}>x</span>
+         <React.Fragment>
             <div className="w-100 my-2">
-             <input className="form-control" defaultValue={this.state.data.title} name='title' onChange={this.handleChange}/>
-          </div>
+             <input className="form-control" defaultValue={this.state.data.content_title} name='content_title'
+                onChange={this.handleChange}/>
+             <div className="custom-control custom-checkbox">
+                  <input type="checkbox" className="form-control" onChange={this.handleChange}
+                     name="is_open_for_free"
+                     defaultChecked={this.state.data.is_open_for_free}
+                     className="custom-control-input" id="is_open_for_free"/>
+                  <label className="custom-control-label" htmlFor="is_open_for_free">open for free</label>
+              </div>
+             <div className="custom-control custom-checkbox">
+                  <input type="checkbox" className="form-control" onChange={this.handleChange}
+                     name="is_mandatory"
+                     defaultChecked={this.state.data.is_mandatory}
+                     className="custom-control-input" id="is_mandatory"/>
+                  <label className="custom-control-label" htmlFor="is_mandatory">mandatory</label>
+              </div>
+            </div>
             <span>
-               <div className="btn-group">
-                  <button className="btn btn-secondary btn-sm">+ content</button>
-                  <button className="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split mr-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span className="sr-only">Toggle Dropdown</span>
-                  </button>
-                  <div className="dropdown-menu">
-                    <a className="dropdown-item" href="#" onClick={this.addArticle}>Add article</a>
-                    <a className="dropdown-item" href="#" onClick={this.addVideo}>Add video</a>
-                  </div>
-             </div>
-               <button className="btn btn-primary btn-sm" onClick={this.addFile}>+ file</button>
-            </span>
-         </li>
+               <button className="btn btn-secondary btn-sm mr-1"onClick={this.addVideo}>add video</button>
+               <button className="btn btn-primary btn-sm" onClick={this.addFile}>add file</button>
+           </span>
+        <DataProvider options={this.options}
+           renderLoading={()=>{return <Loading/>}}
+            renderError={(error)=>{
+                 return (<div className="alert alert-danger">{error.message}</div>)
+            }}
+            onSuccess={(data)=>{
+               this.setState({
+                  fileList : data
+               })
+            }}
+          >
+          <div className="container my-2">
+           <div className="row">
+              <div className="col-sm-6 mb-1">
+                 {this.renderFileList(this.state.fileList)}
+               </div>
+              <div className="col-sm-6">
+                  <h5>Video</h5>
+                    <span className="list-group-item d-flex flex-column align-items-center">
+                       {this.renderVideo()}
+                    </span>
+              </div>
+           </div>
+          </div>
+       </DataProvider>
+    </React.Fragment>
      )
    }
    renderFileList(list){
-      if (list.length==0) {
+      // console.log(list);
+      if (list && list.length==0) {
          return null;
       }
-      return list.map(function(elem,index) {
-         console.log(elem);
-         let arr = elem.split('/');
-         let name = arr[arr.length-1];
-         return (<p  key={index+1}>
-            <a className="text-success" href={location.host+ "/"+ elem}>{name}</a>
-         </p>)
-      });
+      return (<ResourceList context={this} onClick={this.deleteResource} list={list} title="files"/>);
    }
-   renderFile(){
+   renderFileUploader(){
       const options = {
-         url : "/curriculum/upload",
+         url : "/curriculum/content/resource/upload",
          // accepts : ['pdf','docx']
       }
       return (
-         <li className="list-group-item d-flex flex-column align-items-center">
-            <span className="close align-self-end" style={{cursor:"pointer"}}
-               onClick={this.cancel}>x</span>
-           <FileUploader options={options}
-             onupload={(data)=>{
-                let targetType = "hasFile";
-                let fileType = "fileList";
-                if (this.state.editing==3) {
-                   targetType  = "hasVideo";
-                   fileType = "video";
-
-                }else if (this.state.editing==4) {
-                   targetType  = "hasArticle";
-                }
-               this.setState({
-                  [fileType] : data,
-                  [targetType] : true
-               })
-             }}>
+            <FileUploader options={options} data={{id:this.state.data.content_id,
+                  isVideo: !this.state.multiple}}
+               onError={(error)=>{
+                  console.log("sucess");
+                  console.log(error);
+                     this.setState({
+                        hasMessage :true,
+                        message : error
+                     })
+                }}
+               onupload={this.onupload}>
              {({upload,handleChange,progressValue,hasFile,errors})=>{
                 let cls = hasFile ? "btn btn-secondary btn-sm mr-1" :
                 "btn btn-secondary btn-sm mr-1 disabled";
-               const  progressBar = this.renderProgressBar(progressValue);
-               let err = null;
-               console.log(errors);
-               if (errors) {
-                   err = errors.file.map(function(error,index) {
-                     return <p key={index+1} className="text-danger">{error}</p>;
-                  })
-               }
-               let multiple =this.state.editing ==2 ? true : false;
-               let fileList = this.state.editing == 2 ? this.state.fileList :
-               this.state.video;
-               console.log("filelist");
-               console.log( fileList);
            return (
              <div className="w-100">
              <div className="w-100 my-2">
-               <input className="form-control" defaultValue={this.state.data.title} name='title' onChange={this.handleChange}/>
+               <input className="form-control" defaultValue={this.state.data.content_title} name='title' onChange={this.handleChange}/>
               </div>
                <span className="flex-row">
                 <label className="btn btn-secondary btn-sm mr-1" style={{cursor:"pointer"}}>
-                <input type="file" name ="file[]"  multiple={multiple} onChange={handleChange} className="d-none"/>browse file</label>
+                <input type="file" name ="file[]"  multiple={this.state.multiple} onChange={handleChange} className="d-none"/>browse file</label>
                 <label className={cls}
                 style={{cursor:"pointer"}} onClick={upload} disabled={hasFile}>upload</label>
                 <label className="btn btn-danger btn-sm align-self-end" style={{cursor:"pointer"}}onClick={this.edit}>cancel</label>
                </span>
-               {this.renderFileList(fileList)}
-               {err}
-             {progressBar}
+             <ProgressBar value ={progressValue} style={{height: 5 + "px"}} id="fileprogress"/>
             </div>)
            }}
         </FileUploader>
-        </li>
       )
    }
-   renderProgressBar(value){
-     return value < 100 && value > -1  ?
-      (<div className="progress w-100" style={{height: 5 + "px"}}>
-         <div id="progressBar" className="progress-bar bg-secondary" role="progressbar" style={{width: value + "%"}} aria-valuenow={value} aria-valuemin="0" aria-valuemax="100"></div>
-      </div>) : null;
+   renderMessage(obj){
+      let className = "alert my-1 ";
+      if (obj.status == "success") {
+         className += "alert-success"
+      }else {
+         className += "alert-danger"
+      }
+      return <div className={className}>{obj.message}</div>
    }
    render(){
       let content = null;
+      let message = null;
       if (this.state.editing == 0) {
-          content = this.renderDisplay();
-      } else if(this.state.editing == 1){
-          content = this.renderContent();
-     }else{
-      content = this.renderFile();
+          return this.renderDisplay();
+      }else{
+          content  = this.state.editing == 1 ? this.renderContentEdit() :
+          this.renderFileUploader();
      }
-      return content;
+     if (this.state.hasMessage) {
+        message = this.renderMessage(this.state.message);
+     }
+     return (
+        <li className="list-group-item d-flex flex-column align-items-center">
+           {message}
+           <span className="close align-self-end" style={{cursor:"pointer"}}
+              onClick={this.cancel}>&times;</span>
+           {content}
+        </li>
+     )
    }
 }

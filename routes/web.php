@@ -31,6 +31,10 @@ Route::prefix('test')->group(function()
    {
       return view('test.dataprovider');
    });
+   Route::get('resource', function()
+   {
+      return view('test.resource');
+   });
 });
 
 Auth::routes();
@@ -68,11 +72,27 @@ Route::prefix('course')->group(function()
 Route::prefix('curriculum')->group(function()
 {
   Route::get('{id}','course\CurriculumController@show');
+  Route::get('resources/{id}','course\CurriculumController@resources');
   Route::post('upload','course\CurriculumController@upload');
-  Route::put('update/{id}','course\CourseExplorerController@update')
+  Route::put('update/{id}','course\CurriculumController@update')
   ->middleware('auth');
 });
 
+/**
+ * curriculum_content routes
+*/
+Route::prefix('curriculum/content')->group(function()
+{
+  Route::post('/create','course\ContentController@create');
+  Route::put('/update/{id}','course\ContentController@update');
+  Route::delete('/{id}','course\ContentController@delete');
+
+  Route::get('resource/{id}','course\ContentController@resource');
+  Route::get('resources/{id}','course\ContentController@resources');
+  Route::post('resource/upload','course\ContentController@upload');
+  Route::delete('resource/remove/{id}','course\ContentController@deleteResource');
+  Route::delete('removevideo/{content_id}','course\ContentController@deleteVideo');
+});
 /**
  * Profile routes
  */
