@@ -72,10 +72,9 @@ Route::prefix('course')->group(function()
 Route::prefix('curriculum')->group(function()
 {
   Route::get('{id}','course\CurriculumController@show');
-  Route::get('resources/{id}','course\CurriculumController@resources');
-  Route::post('upload','course\CurriculumController@upload');
-  Route::put('update/{id}','course\CurriculumController@update')
-  ->middleware('auth');
+  Route::delete('chapter/{id}','course\CurriculumController@delete');
+  Route::post('chapter/create/{id}','course\CurriculumController@createChapter');
+  Route::put('chapter/update/{id}','course\CurriculumController@updateChapter');
 });
 
 /**
@@ -83,7 +82,7 @@ Route::prefix('curriculum')->group(function()
 */
 Route::prefix('curriculum/content')->group(function()
 {
-  Route::post('/create','course\ContentController@create');
+  Route::post('/create/{chapter_id}','course\ContentController@create');
   Route::put('/update/{id}','course\ContentController@update');
   Route::delete('/{id}','course\ContentController@delete');
 

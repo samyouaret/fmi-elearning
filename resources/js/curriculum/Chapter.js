@@ -5,6 +5,7 @@ import Select from '../formcomponents/Select'
 import FileInput from '../providers/FileInput'
 import Content from './Content'
 import ResourceList from './ResourceList'
+import request from '../helpers/request.js'
 
 export default class Chapter extends Component {
    constructor(props){
@@ -14,18 +15,27 @@ export default class Chapter extends Component {
          title  : this.props.title || "",
          id : this.props.id,
          contents  : this.props.contents || {},
-         newContent : false
       }
+
      this.addNewContent = ()=>{
-        this.setState({
-           contents :[
-             ...this.state.contents,
-             {
-              content_id :this.randomInteger(),
-              content_title : "an example content title"
-             }
-          ]
-        })
+        request("/curriculum/content/create/" + this.state.id,{},"POST")
+       .done((message)=>{
+         this.setState({
+            contents :[
+               ...this.state.contents,
+               message.data
+            ]
+         })
+       })
+     };
+     this.save = (data)=>{
+        request("/curriculum/chapter/update/" + this.state.id,data,"PUT")
+       .done((message)=>{
+         this.setState({
+            message : message.message,
+            title : data.chapter_title
+         })
+       })
      };
      this.editTitle = ()=>{
         this.setState({
@@ -44,23 +54,27 @@ export default class Chapter extends Component {
        })
      };
    }
+    deleteContent(id){
+      request("/curriculum/content/" + id,{},"DELETE")
+     .done((message)=>{
+        let pos  = this.findContentById(id);
+        this.state.contents.splice(pos,1);
+        this.setState({
+           contents : this.state.contents
+        })
+     })
+   };
 
    renderContents(){
       return this.state.contents.map((content) =>{
          return (<Content key={content.content_id}
             delete = {this.deleteContent.bind(this,content.content_id)}
             update = {this.updateContent.bind(this)}
+            chapterId={this.props.id}
             data={content}/>);
       })
    }
 
-   deleteContent(id){
-      let pos  = this.findContentById(id);
-      this.state.contents.splice(pos,1);
-      this.setState({
-         contents : this.state.contents
-      })
-   }
    updateContent(id,content){
       let pos  = this.findContentById(id);
       this.state.contents[pos] = content;
@@ -85,15 +99,29 @@ export default class Chapter extends Component {
    }
 
    renderTitleForm(){
+      let initialValues = {
+         id : this.state.id,
+         chapter_title : this.state.title
+      }
       return (
-         <span>
-         <input className="form-control" defaultValue={this.state.title} name='title'
-            onChange={this.handleChange}/>
-         <button className="btn btn-primary m-2 btn-sm"
-         onClick={this.save}>save</button>
-         <button className="btn btn-danger btn-sm"
-         onClick={this.cancel}>cancel</button>
-      </span>
+         <Form
+              initialValues={initialValues}
+              onSubmit={(values,errors)=>{
+                  this.save(values);
+              }}
+            >
+         { ({values,handleChange,handleBlur,handleSubmit,errors,touched}) => {
+            return (<form onSubmit={handleSubmit} method="POST">
+            <span>
+               <input className="form-control" defaultValue={values.chapter_title} name='chapter_title'
+                  onChange={handleChange}/>
+               <button className="btn btn-primary m-2 btn-sm" type="submit">save</button>
+               <button className="btn btn-danger btn-sm"
+                  onClick={this.cancel}>cancel</button>
+            </span>
+         </form>)
+         }}
+         </Form>
       )
    }
 

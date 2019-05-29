@@ -5,7 +5,9 @@ import Select from '../formcomponents/Select'
 import FileInput from '../providers/FileInput'
 import DataProvider from '../providers/DataProvider'
 import Chapter from './Chapter'
-
+import Loading from '../components/Loading.js'
+import request from '../helpers/request.js'
+import findByAttr from '../helpers/findByAttr.js'
 
 export default class Curriculum extends Component {
    constructor(props){
@@ -14,11 +16,7 @@ export default class Curriculum extends Component {
          editing : false,
          chapters : []
       }
-      this.addNewChapter = ()=>{
-         this.setState({
-            editing :true
-         })
-      }
+
       this.cancel = ()=>{
          this.setState({
             editing : false
@@ -30,11 +28,28 @@ export default class Curriculum extends Component {
            method:"GET",
            contentType: 'application/json',
         };
+        this.addNewChapter = ()=>{
+           request("/curriculum/chapter/create/" + this.props.id,{},"POST")
+          .done((message)=>{
+             let newChapter = {
+                 ...message.data,
+                 contents : []
+             }
+            this.setState({
+               chapters :[
+                  ...this.state.chapters,
+                  newChapter
+               ]
+            })
+          })
+        };
    }
+   // data is array of obj are ordered by chapter_id
    shape_chapters(data){
      let current_id = 0;
      let current_index = -1;
      let chapters = [];
+     // visited_chapters = [];
      for (let chapter_index in data){
        let {chapter_id,chapter_title,...content} = data[chapter_index];
        // console.log(content);
@@ -48,7 +63,9 @@ export default class Curriculum extends Component {
          }
          chapters[current_index] = newChapter;
        }
-       chapters[current_index].contents.push(content);
+       if (content.content_id!=null) { 
+          chapters[current_index].contents.push(content);
+       }
      }
      return chapters;
    }
@@ -72,55 +89,19 @@ export default class Curriculum extends Component {
       if (this.state.editing) {
         return  this.renderNewChapter();
      }else {
-      //   return (
-      //      <DataProvider options={this.options}
-      //        renderLoading={()=>{
-      //           return (<div className="d-flex justify-content-center">
-      //                  <div className="spinner-border" role="status">
-      //                   <span className="sr-only">Loading...</span>
-      //                  </div>
-      //                 </div>)
-      //        }}
-      //        renderError={(error)=>{
-      //           // this.updateError(error);
-      //           return (<div className="alert alert-danger">{error.message}</div>)
-      //        }}
-      //        Onsuccess={(data)=>{
-      //           return  (<p>sucess</p>)
-      //        }}
-      //        OnError={(error)=>{
-      //           return (<p>error</p>)
-      //        }}
-      //        >
-      //    {(data,error,reload,update)=>{
-      //     return (
-      //      <div className="card col-sm-8"  style={{minHeight:500 + "px"}}>
-      //       {this.renderChapters(data)}
-      //       <button className="btn btn-secondary btn-sm mt-3 align-self-end"
-      //          onClick={this.addNewChapter}>+ new chapter</button>
-      //      </div>
-      //     )
-      //    }}
-      // </DataProvider>)
       return  (<DataProvider options={this.options}
                    renderLoading={()=>{
-                      return (<div className="d-flex justify-content-center">
-                             <div className="spinner-border" role="status">
-                              <span className="sr-only">Loading...</span>
-                             </div>
-                            </div>)
+                      return <Loading/>
                    }}
                    renderError={(error)=>{
                       // this.updateError(error);
                       return (<div className="alert alert-danger">{error.message}</div>)
                    }}
                    onSuccess={(data)=>{
+                      console.log(this.shape_chapters(data));
                       this.setState({
                         chapters : this.shape_chapters(data)
                      })
-                   }}
-                   onError={(error)=>{
-                      
                    }}
                    >
                    <div className="card col-sm-8"  style={{minHeight:500 + "px"}}>

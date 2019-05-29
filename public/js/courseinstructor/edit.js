@@ -62102,6 +62102,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _providers_FileInput__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../providers/FileInput */ "./resources/js/providers/FileInput.js");
 /* harmony import */ var _Content__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Content */ "./resources/js/curriculum/Content.js");
 /* harmony import */ var _ResourceList__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./ResourceList */ "./resources/js/curriculum/ResourceList.js");
+/* harmony import */ var _helpers_request_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../helpers/request.js */ "./resources/js/helpers/request.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -62138,6 +62139,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
 var Chapter =
 /*#__PURE__*/
 function (_Component) {
@@ -62153,16 +62155,23 @@ function (_Component) {
       editing: false,
       title: _this.props.title || "",
       id: _this.props.id,
-      contents: _this.props.contents || {},
-      newContent: false
+      contents: _this.props.contents || {}
     };
 
     _this.addNewContent = function () {
-      _this.setState({
-        contents: [].concat(_toConsumableArray(_this.state.contents), [{
-          content_id: _this.randomInteger(),
-          content_title: "an example content title"
-        }])
+      Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_7__["default"])("/curriculum/content/create/" + _this.state.id, {}, "POST").done(function (message) {
+        _this.setState({
+          contents: [].concat(_toConsumableArray(_this.state.contents), [message.data])
+        });
+      });
+    };
+
+    _this.save = function (data) {
+      Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_7__["default"])("/curriculum/chapter/update/" + _this.state.id, data, "PUT").done(function (message) {
+        _this.setState({
+          message: message.message,
+          title: data.chapter_title
+        });
       });
     };
 
@@ -62188,26 +62197,33 @@ function (_Component) {
   }
 
   _createClass(Chapter, [{
-    key: "renderContents",
-    value: function renderContents() {
+    key: "deleteContent",
+    value: function deleteContent(id) {
       var _this2 = this;
 
-      return this.state.contents.map(function (content) {
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Content__WEBPACK_IMPORTED_MODULE_5__["default"], {
-          key: content.content_id,
-          delete: _this2.deleteContent.bind(_this2, content.content_id),
-          update: _this2.updateContent.bind(_this2),
-          data: content
+      Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_7__["default"])("/curriculum/content/" + id, {}, "DELETE").done(function (message) {
+        var pos = _this2.findContentById(id);
+
+        _this2.state.contents.splice(pos, 1);
+
+        _this2.setState({
+          contents: _this2.state.contents
         });
       });
     }
   }, {
-    key: "deleteContent",
-    value: function deleteContent(id) {
-      var pos = this.findContentById(id);
-      this.state.contents.splice(pos, 1);
-      this.setState({
-        contents: this.state.contents
+    key: "renderContents",
+    value: function renderContents() {
+      var _this3 = this;
+
+      return this.state.contents.map(function (content) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Content__WEBPACK_IMPORTED_MODULE_5__["default"], {
+          key: content.content_id,
+          delete: _this3.deleteContent.bind(_this3, content.content_id),
+          update: _this3.updateContent.bind(_this3),
+          chapterId: _this3.props.id,
+          data: content
+        });
       });
     }
   }, {
@@ -62241,18 +62257,40 @@ function (_Component) {
   }, {
     key: "renderTitleForm",
     value: function renderTitleForm() {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-        className: "form-control",
-        defaultValue: this.state.title,
-        name: "title",
-        onChange: this.handleChange
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        className: "btn btn-primary m-2 btn-sm",
-        onClick: this.save
-      }, "save"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        className: "btn btn-danger btn-sm",
-        onClick: this.cancel
-      }, "cancel"));
+      var _this4 = this;
+
+      var initialValues = {
+        id: this.state.id,
+        chapter_title: this.state.title
+      };
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_formcomponents_Form__WEBPACK_IMPORTED_MODULE_1__["default"], {
+        initialValues: initialValues,
+        onSubmit: function onSubmit(values, errors) {
+          _this4.save(values);
+        }
+      }, function (_ref) {
+        var values = _ref.values,
+            handleChange = _ref.handleChange,
+            handleBlur = _ref.handleBlur,
+            handleSubmit = _ref.handleSubmit,
+            errors = _ref.errors,
+            touched = _ref.touched;
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
+          onSubmit: handleSubmit,
+          method: "POST"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+          className: "form-control",
+          defaultValue: values.chapter_title,
+          name: "chapter_title",
+          onChange: handleChange
+        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          className: "btn btn-primary m-2 btn-sm",
+          type: "submit"
+        }, "save"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          className: "btn btn-danger btn-sm",
+          onClick: _this4.cancel
+        }, "cancel")));
+      });
     }
   }, {
     key: "render",
@@ -62446,8 +62484,7 @@ function (_Component) {
       };
 
       if (_this.state.multiple) {
-        state.fileList = [].concat(_toConsumableArray(_this.state.fileList), _toConsumableArray(data.files));
-        state.multiple = true;
+        state.fileList = [].concat(_toConsumableArray(_this.state.fileList), _toConsumableArray(data.files)); // state.multiple = true
       } else {
         state.data = _objectSpread({}, _this.state.data, {
           video_url: data.data.video_url
@@ -62458,10 +62495,11 @@ function (_Component) {
         video.onloadedmetadata = function () {
           state.data.time_required_in_sec = Math.round(video.duration);
         };
-      } // this.setState(state);
+      }
 
+      console.log(state);
 
-      _this.update(state.data);
+      _this.setState(state);
     };
 
     _this.update = function (data, state) {
@@ -62480,7 +62518,7 @@ function (_Component) {
       Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_10__["default"])("/curriculum/content/removevideo/" + _this.state.data.content_id, {}, "DELETE").done(function (message) {
         _this.setState({
           data: _objectSpread({}, _this.state.data, {
-            video_url: null
+            video_url: ""
           }),
           hasMessage: true,
           message: message
@@ -62514,6 +62552,10 @@ function (_Component) {
   }
 
   _createClass(Content, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {// this.create();
+    }
+  }, {
     key: "renderDisplay",
     value: function renderDisplay() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
@@ -62782,11 +62824,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _providers_FileInput__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../providers/FileInput */ "./resources/js/providers/FileInput.js");
 /* harmony import */ var _providers_DataProvider__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../providers/DataProvider */ "./resources/js/providers/DataProvider.js");
 /* harmony import */ var _Chapter__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Chapter */ "./resources/js/curriculum/Chapter.js");
+/* harmony import */ var _components_Loading_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../components/Loading.js */ "./resources/js/components/Loading.js");
+/* harmony import */ var _helpers_request_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../helpers/request.js */ "./resources/js/helpers/request.js");
+/* harmony import */ var _helpers_findByAttr_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../helpers/findByAttr.js */ "./resources/js/helpers/findByAttr.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
 
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -62812,6 +62869,9 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
+
+
 var Curriculum =
 /*#__PURE__*/
 function (_Component) {
@@ -62828,12 +62888,6 @@ function (_Component) {
       chapters: []
     };
 
-    _this.addNewChapter = function () {
-      _this.setState({
-        editing: true
-      });
-    };
-
     _this.cancel = function () {
       _this.setState({
         editing: false
@@ -62845,15 +62899,29 @@ function (_Component) {
       method: "GET",
       contentType: 'application/json'
     };
+
+    _this.addNewChapter = function () {
+      Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_8__["default"])("/curriculum/chapter/create/" + _this.props.id, {}, "POST").done(function (message) {
+        var newChapter = _objectSpread({}, message.data, {
+          contents: []
+        });
+
+        _this.setState({
+          chapters: [].concat(_toConsumableArray(_this.state.chapters), [newChapter])
+        });
+      });
+    };
+
     return _this;
-  }
+  } // data is array of obj are ordered by chapter_id
+
 
   _createClass(Curriculum, [{
     key: "shape_chapters",
     value: function shape_chapters(data) {
       var current_id = 0;
       var current_index = -1;
-      var chapters = [];
+      var chapters = []; // visited_chapters = [];
 
       for (var chapter_index in data) {
         var _data$chapter_index = data[chapter_index],
@@ -62873,7 +62941,9 @@ function (_Component) {
           chapters[current_index] = newChapter;
         }
 
-        chapters[current_index].contents.push(content);
+        if (content.content_id != null) {
+          chapters[current_index].contents.push(content);
+        }
       }
 
       return chapters;
@@ -62915,47 +62985,10 @@ function (_Component) {
       if (this.state.editing) {
         return this.renderNewChapter();
       } else {
-        //   return (
-        //      <DataProvider options={this.options}
-        //        renderLoading={()=>{
-        //           return (<div className="d-flex justify-content-center">
-        //                  <div className="spinner-border" role="status">
-        //                   <span className="sr-only">Loading...</span>
-        //                  </div>
-        //                 </div>)
-        //        }}
-        //        renderError={(error)=>{
-        //           // this.updateError(error);
-        //           return (<div className="alert alert-danger">{error.message}</div>)
-        //        }}
-        //        Onsuccess={(data)=>{
-        //           return  (<p>sucess</p>)
-        //        }}
-        //        OnError={(error)=>{
-        //           return (<p>error</p>)
-        //        }}
-        //        >
-        //    {(data,error,reload,update)=>{
-        //     return (
-        //      <div className="card col-sm-8"  style={{minHeight:500 + "px"}}>
-        //       {this.renderChapters(data)}
-        //       <button className="btn btn-secondary btn-sm mt-3 align-self-end"
-        //          onClick={this.addNewChapter}>+ new chapter</button>
-        //      </div>
-        //     )
-        //    }}
-        // </DataProvider>)
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_DataProvider__WEBPACK_IMPORTED_MODULE_5__["default"], {
           options: this.options,
           renderLoading: function renderLoading() {
-            return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-              className: "d-flex justify-content-center"
-            }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-              className: "spinner-border",
-              role: "status"
-            }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-              className: "sr-only"
-            }, "Loading...")));
+            return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Loading_js__WEBPACK_IMPORTED_MODULE_7__["default"], null);
           },
           renderError: function renderError(error) {
             // this.updateError(error);
@@ -62964,11 +62997,12 @@ function (_Component) {
             }, error.message);
           },
           onSuccess: function onSuccess(data) {
+            console.log(_this2.shape_chapters(data));
+
             _this2.setState({
               chapters: _this2.shape_chapters(data)
             });
-          },
-          onError: function onError(error) {}
+          }
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "card col-sm-8",
           style: {

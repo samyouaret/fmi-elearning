@@ -60,9 +60,23 @@ class ContentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create(int $chapter_id)
     {
-
+      $data = [
+      "title"=>"new Content title.",
+      "is_mandatory"=>1,
+      "course_chapter_id"=>$chapter_id,
+      "video_url"=>NULL,
+      "time_required_in_sec"=>0,
+      "is_open_for_free"=>0
+      ];
+      $id = DB::table("course_chapter_content")->
+      insertGetId($data);
+     $data['content_id'] = $id;
+     $data['content_title'] = $data['title'];
+     unset($data['title']);
+     return response()->json(["data"=>$data,'status'=>'success','message'
+     =>"content created."],200);
     }
     /**
      * update the specified content.
@@ -96,7 +110,24 @@ class ContentController extends Controller
      */
     public function delete(int $id)
     {
-        //
+      $resources = DB::table('resource')
+      ->where('course_chapter_content_id',$id)
+      ->get();
+      if ($resources) {
+         foreach ($resources as $resource) {
+            Storage::delete(str_replace("/storage",'public',$resource->url));
+         }
+         DB::table("resource")->where('course_chapter_content_id',$id)->delete();
+      }
+      $content =  DB::table('course_chapter_content')->select("video_url")
+      ->where('id',$id)->first();
+      if (!$content){
+          response()->json(['status'=>'failed','message' =>"content is undefined."],413);
+      }
+      Storage::delete(str_replace("/storage",'public',$content->video_url));
+      $content =  DB::table('course_chapter_content')
+      ->where('id',$id)->delete();
+      return response()->json(['status'=>'success','message' =>"content deleted."],200);
     }
 
     protected function storeFile($file){
@@ -114,7 +145,7 @@ class ContentController extends Controller
       ->select("video_url")
       ->where('id',$id)
       ->first();
-      if ($content->video_url!=null) {
+      if ($content->video_url!=NULL) {
          return response()->json(['status'=>'failed','message'
          =>"this content has already a video."],413);
       }
@@ -197,7 +228,7 @@ class ContentController extends Controller
            ->where('id',$content_id)->first();
          if ($resource) {
             DB::table("course_chapter_content")->where('id',$content_id)
-            ->update(["video_url"=>null]);
+            ->update(["video_url"=>NULL]);
             $path = str_replace("/storage",'public',$resource->video_url);
             Storage::delete($path);
             return response()->json(['status'=>'success','message' =>"video deleted."],200);

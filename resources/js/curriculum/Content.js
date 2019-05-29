@@ -75,7 +75,7 @@ export default class Content extends Component {
          };
          if (this.state.multiple) {
              state.fileList = [...this.state.fileList,...data.files];
-             state.multiple = true
+             // state.multiple = true
           }else {
             state.data = {
                ...this.state.data,
@@ -87,8 +87,8 @@ export default class Content extends Component {
                state.data.time_required_in_sec = Math.round(video.duration);
             }
           }
-       // this.setState(state);
-       this.update(state.data);
+        console.log(state);
+       this.setState(state);
      }
      this.update = (data,state)=>{
         setTimeout(()=>{
@@ -108,7 +108,7 @@ export default class Content extends Component {
            this.setState({
               data : {
                  ...this.state.data,
-                 video_url:null
+                 video_url:""
               },
               hasMessage:true,
               message : message
@@ -134,6 +134,9 @@ export default class Content extends Component {
         }).fail(this.setMessage);
    }
   }
+  componentDidMount(){
+     // this.create();
+ }
    renderDisplay(){
      return (
          <li className="list-group-item d-flex justify-content-between align-items-center">
