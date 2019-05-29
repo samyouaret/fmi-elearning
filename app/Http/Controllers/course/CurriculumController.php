@@ -5,9 +5,11 @@ namespace App\Http\Controllers\course;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use App\Traits\ContentTrait as ContentTrait;
 
 class CurriculumController extends Controller
 {
+   use ContentTrait;
    /**
     * get the curriculum of a given course
     * @var int $id
@@ -55,7 +57,19 @@ class CurriculumController extends Controller
       response()->json(['status'=>'failed','message' =>"chapter cannot be updated"],413);
    }
 
-   public function deleteChapter($id){
-
+   public function deleteChapter(int $id){
+      $contents = DB::table('course_chapter_content')->select('id')
+      ->where('course_chapter_id',$id)->get();
+      // return $contents;
+      foreach ($contents as $content) {
+        $message = $this->deleteContent($content->id);
+        if ($message['status'] != 200) {
+         return response()->json($message['message'],$message['status']);
+        }
+      }
+      return DB::table('course_chapter')->where('id',$id)->delete() ?
+      response()->json(['status'=>'success','message'
+      =>"chapter deleted."],200) : response()->json(['status'=>'failed','message'
+      =>"chapter cannot be deleted."],413);
    }
 }

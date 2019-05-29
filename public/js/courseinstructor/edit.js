@@ -62170,7 +62170,18 @@ function (_Component) {
       Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_7__["default"])("/curriculum/chapter/update/" + _this.state.id, data, "PUT").done(function (message) {
         _this.setState({
           message: message.message,
-          title: data.chapter_title
+          title: data.chapter_title,
+          editing: false
+        });
+      });
+    };
+
+    _this.delete = function () {
+      Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_7__["default"])("/curriculum/chapter/update/" + _this.state.id, data, "PUT").done(function (message) {
+        _this.setState({
+          message: message.message,
+          title: data.chapter_title,
+          editing: false
         });
       });
     };
@@ -62302,7 +62313,10 @@ function (_Component) {
       }, this.state.title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-secondary btn-sm align-self-end",
         onClick: this.editTitle
-      }, "edit"));
+      }, "edit"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        className: "btn btn-default btn-sm align-self-end",
+        onClick: this.props.delete
+      }, "delete"));
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "card mt-2"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -62487,7 +62501,7 @@ function (_Component) {
         state.fileList = [].concat(_toConsumableArray(_this.state.fileList), _toConsumableArray(data.files)); // state.multiple = true
       } else {
         state.data = _objectSpread({}, _this.state.data, {
-          video_url: data.data.video_url
+          video_url: data.data.video_url || ""
         });
         var video = document.createElement('video');
         video.setAttribute('src', data.data.video_url);
@@ -62504,6 +62518,7 @@ function (_Component) {
 
     _this.update = function (data, state) {
       setTimeout(function () {
+        data.video_url = data.video_url || "";
         Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_10__["default"])("/curriculum/content/update/" + _this.state.data.content_id, data, "PUT").done(function (message) {
           _this.setState(_objectSpread({
             hasMessage: true,
@@ -62912,6 +62927,18 @@ function (_Component) {
       });
     };
 
+    _this.deleteChapter = function ($id) {
+      Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_8__["default"])("/curriculum/chapter/" + $id, {}, "DELETE").done(function (message) {
+        var pos = Object(_helpers_findByAttr_js__WEBPACK_IMPORTED_MODULE_9__["default"])(_this.state.chapters, "id", $id);
+
+        _this.state.chapters.splice(pos, 1);
+
+        _this.setState({
+          chapters: _this.state.chapters
+        });
+      });
+    };
+
     return _this;
   } // data is array of obj are ordered by chapter_id
 
@@ -62951,13 +62978,16 @@ function (_Component) {
   }, {
     key: "renderChapters",
     value: function renderChapters(chapters) {
+      var _this2 = this;
+
       // console.log(organized_chapters);
       return chapters.map(function (chapter) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Chapter__WEBPACK_IMPORTED_MODULE_6__["default"], {
           key: chapter.chapter_id,
           contents: chapter.contents,
           id: chapter.chapter_id,
-          title: chapter.chapter_title
+          title: chapter.chapter_title,
+          delete: _this2.deleteChapter.bind(_this2, chapter.chapter_id)
         });
       });
     }
@@ -62980,7 +63010,7 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this3 = this;
 
       if (this.state.editing) {
         return this.renderNewChapter();
@@ -62997,10 +63027,10 @@ function (_Component) {
             }, error.message);
           },
           onSuccess: function onSuccess(data) {
-            console.log(_this2.shape_chapters(data));
+            console.log(_this3.shape_chapters(data));
 
-            _this2.setState({
-              chapters: _this2.shape_chapters(data)
+            _this3.setState({
+              chapters: _this3.shape_chapters(data)
             });
           }
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {

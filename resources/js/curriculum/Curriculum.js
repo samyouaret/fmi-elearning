@@ -43,6 +43,16 @@ export default class Curriculum extends Component {
             })
           })
         };
+        this.deleteChapter = ($id)=>{
+           request("/curriculum/chapter/" + $id,{},"DELETE")
+          .done((message)=>{
+             let pos  = findByAttr(this.state.chapters,"id",$id);
+             this.state.chapters.splice(pos,1);
+            this.setState({
+               chapters :this.state.chapters
+            })
+          })
+        };
    }
    // data is array of obj are ordered by chapter_id
    shape_chapters(data){
@@ -63,7 +73,7 @@ export default class Curriculum extends Component {
          }
          chapters[current_index] = newChapter;
        }
-       if (content.content_id!=null) { 
+       if (content.content_id!=null) {
           chapters[current_index].contents.push(content);
        }
      }
@@ -71,11 +81,13 @@ export default class Curriculum extends Component {
    }
    renderChapters(chapters){
       // console.log(organized_chapters);
-      return chapters.map(function(chapter) {
+      return chapters.map((chapter)=> {
             return (<Chapter key={chapter.chapter_id}
                contents={chapter.contents}
                id={chapter.chapter_id}
-               title={chapter.chapter_title}/>);
+               title={chapter.chapter_title}
+               delete={this.deleteChapter.bind(this,chapter.chapter_id)}
+               />);
       })
    }
    renderNewChapter(){

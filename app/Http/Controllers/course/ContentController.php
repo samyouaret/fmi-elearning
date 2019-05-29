@@ -6,9 +6,13 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use App\Traits\ContentTrait as ContentTrait;
+
+// use App\Helpers\ContentHelper as ContentHelper;
 
 class ContentController extends Controller
 {
+   use ContentTrait;
    protected $allowedFileExtensions = [
       'zip','rar','pdf','doc','docx'
    ];
@@ -104,32 +108,12 @@ class ContentController extends Controller
       response()->json(['status'=>'success','message' =>"content has been updated successfully"],200) :
       response()->json(['status'=>'failed','message' =>"content cannot be updated"],413);
     }
-    /**
-     * delete the specified content.
-     * @return \Illuminate\Http\Response
-     */
-    public function delete(int $id)
-    {
-      $resources = DB::table('resource')
-      ->where('course_chapter_content_id',$id)
-      ->get();
-      if ($resources) {
-         foreach ($resources as $resource) {
-            Storage::delete(str_replace("/storage",'public',$resource->url));
-         }
-         DB::table("resource")->where('course_chapter_content_id',$id)->delete();
-      }
-      $content =  DB::table('course_chapter_content')->select("video_url")
-      ->where('id',$id)->first();
-      if (!$content){
-          response()->json(['status'=>'failed','message' =>"content is undefined."],413);
-      }
-      Storage::delete(str_replace("/storage",'public',$content->video_url));
-      $content =  DB::table('course_chapter_content')
-      ->where('id',$id)->delete();
-      return response()->json(['status'=>'success','message' =>"content deleted."],200);
-    }
 
+    protected function delete(int $id){
+      $message = $this->deleteContent($id);
+      // return $message;
+      return response()->json($message['message'],$message['status']);
+    }
     protected function storeFile($file){
       $fileNameWithExt =$file->getClientOriginalName();
       //get filename

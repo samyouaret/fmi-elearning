@@ -79,7 +79,7 @@ export default class Content extends Component {
           }else {
             state.data = {
                ...this.state.data,
-               video_url : data.data.video_url
+               video_url : data.data.video_url || ""
             }
             var video = document.createElement('video');
             video.setAttribute('src', data.data.video_url);
@@ -92,6 +92,7 @@ export default class Content extends Component {
      }
      this.update = (data,state)=>{
         setTimeout(()=>{
+           data.video_url = data.video_url || "";
           request("/curriculum/content/update/" + this.state.data.content_id,data,"PUT")
           .done((message)=>{
             this.setState({

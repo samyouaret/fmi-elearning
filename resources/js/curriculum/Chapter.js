@@ -33,7 +33,18 @@ export default class Chapter extends Component {
        .done((message)=>{
          this.setState({
             message : message.message,
-            title : data.chapter_title
+            title : data.chapter_title,
+            editing : false
+         })
+       })
+     };
+     this.delete = ()=>{
+        request("/curriculum/chapter/update/" + this.state.id,data,"PUT")
+       .done((message)=>{
+         this.setState({
+            message : message.message,
+            title : data.chapter_title,
+            editing : false
          })
        })
      };
@@ -131,6 +142,8 @@ export default class Chapter extends Component {
          <span className="mr-auto">{this.state.title}</span>
        <button className="btn btn-secondary btn-sm align-self-end"
        onClick={this.editTitle}>edit</button>
+    <button className="btn btn-default btn-sm align-self-end"
+       onClick={this.props.delete}>delete</button>
       </span>
       );
       return (

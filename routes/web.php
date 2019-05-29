@@ -72,7 +72,7 @@ Route::prefix('course')->group(function()
 Route::prefix('curriculum')->group(function()
 {
   Route::get('{id}','course\CurriculumController@show');
-  Route::delete('chapter/{id}','course\CurriculumController@delete');
+  Route::delete('chapter/{id}','course\CurriculumController@deleteChapter');
   Route::post('chapter/create/{id}','course\CurriculumController@createChapter');
   Route::put('chapter/update/{id}','course\CurriculumController@updateChapter');
 });
