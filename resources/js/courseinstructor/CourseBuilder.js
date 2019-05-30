@@ -39,6 +39,7 @@ class CourseBuilder extends Component {
            <Navbar
            showCourseInfo={this.showCourseInfo}
            showCurriculum={this.showCurriculum}
+           publish={this.publish}
            />
            {content}
          </div>

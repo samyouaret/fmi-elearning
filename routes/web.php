@@ -69,6 +69,7 @@ Route::prefix('course')->group(function()
   Route::post('enroll/{id}','course\CourseExplorerController@enroll')
   ->middleware('auth');
 });
+
 Route::prefix('curriculum')->group(function()
 {
   Route::get('{id}','course\CurriculumController@show');

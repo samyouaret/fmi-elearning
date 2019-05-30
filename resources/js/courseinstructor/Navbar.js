@@ -16,7 +16,6 @@ export default class Navbar extends Component {
            <a href="#" className="nav-item nav-link" onClick={this.props.showCourseInfo}>course information</a>
            <a href="#" className="nav-item nav-link" onClick={this.props.showCurriculum}>Curriculum</a>
            <a href="#" className="nav-item nav-link">
-             <button className="btn btn-success" onClick={this.props.publish}>publish</button>
           </a>
         </div>
       )

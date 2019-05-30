@@ -27,7 +27,7 @@ export default class CourseInfo extends Component {
           method:"GET",
           contentType: 'application/json',
       };
-      this.handleSubjectChange = (e,handleChange)=>{
+      this.handleSubjectChange = (e)=>{
          request('/instructor/subSubjects/'+ e.target.value,{},'GET').then((data)=>{
             this.setState({
                sub_subjects : data,
@@ -36,6 +36,22 @@ export default class CourseInfo extends Component {
                   subject_id : data[0].subject_id
                }
             })
+         });
+      }
+      this.publish = ()=>{
+         request('/instructor/'+ this.props.id,{},
+         'POST').then((message)=>{
+            this.setState({
+               course : {
+                  ...this.state.course,
+                  is_published : 1
+               }
+            })
+         }).fail((message)=>{
+            let errors = message.responseJSON.errors || message.responseJSON.message;
+              this.setState({
+                 errors : errors
+              })
          });
       }
    }
@@ -177,19 +193,27 @@ export default class CourseInfo extends Component {
    }
    renderDisplay(){
       let course = this.state.course;
-      return  (
+      let publishButton = null;
+      let publishedStatus = null;
+      if (course.is_published==0) {
+         publishButton = <button className="btn btn-warning" onClick={this.publish}>publish</button>;
+      }else {
+         publishedStatus =  <small className="badge pill-badge badge-success mr-2">published</small>
+      }
+      return(
          <div>
          <img className="card-img" src={"/storage/course_image/" + course.image}/>
          <div className="card-body">
         <h3 className="card-title">{course.title}</h3>
-        <small className="badge pill-badge badge-light">{course.language_name}</small>
-        <small className="badge pill-badge badge-secondary ml-2">{course.label}</small>
+        <small className="badge pill-badge badge-light mr-2">{course.language_name}</small>
+        <small className="badge pill-badge badge-secondary mr-2">{course.label}</small>
+        {publishedStatus}
         <p> {course.description} </p>
-        <button className="btn btn-primary" onClick={this.edit}>edit</button>
+        <button className="btn btn-primary mr-2" onClick={this.edit}>edit</button>
+        {publishButton}
         </div>
       </div>
       )
-     return null;
    }
    edit(){
       this.setState({

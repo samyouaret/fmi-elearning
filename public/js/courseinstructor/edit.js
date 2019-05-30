@@ -61508,7 +61508,8 @@ function (_Component) {
         }
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Navbar__WEBPACK_IMPORTED_MODULE_2__["default"], {
         showCourseInfo: this.showCourseInfo,
-        showCurriculum: this.showCurriculum
+        showCurriculum: this.showCurriculum,
+        publish: this.publish
       }), content));
     }
   }]);
@@ -61607,13 +61608,29 @@ function (_Component) {
       contentType: 'application/json'
     };
 
-    _this.handleSubjectChange = function (e, handleChange) {
+    _this.handleSubjectChange = function (e) {
       Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_8__["default"])('/instructor/subSubjects/' + e.target.value, {}, 'GET').then(function (data) {
         _this.setState({
           sub_subjects: data,
           course: _objectSpread({}, _this.state.course, {
             subject_id: data[0].subject_id
           })
+        });
+      });
+    };
+
+    _this.publish = function () {
+      Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_8__["default"])('/instructor/' + _this.props.id, {}, 'POST').then(function (message) {
+        _this.setState({
+          course: _objectSpread({}, _this.state.course, {
+            is_published: 1
+          })
+        });
+      }).fail(function (message) {
+        var errors = message.responseJSON.errors || message.responseJSON.message;
+
+        _this.setState({
+          errors: errors
         });
       });
     };
@@ -61817,6 +61834,20 @@ function (_Component) {
     key: "renderDisplay",
     value: function renderDisplay() {
       var course = this.state.course;
+      var publishButton = null;
+      var publishedStatus = null;
+
+      if (course.is_published == 0) {
+        publishButton = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          className: "btn btn-warning",
+          onClick: this.publish
+        }, "publish");
+      } else {
+        publishedStatus = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", {
+          className: "badge pill-badge badge-success mr-2"
+        }, "published");
+      }
+
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
         className: "card-img",
         src: "/storage/course_image/" + course.image
@@ -61825,14 +61856,13 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", {
         className: "card-title"
       }, course.title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", {
-        className: "badge pill-badge badge-light"
+        className: "badge pill-badge badge-light mr-2"
       }, course.language_name), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", {
-        className: "badge pill-badge badge-secondary ml-2"
-      }, course.label), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, " ", course.description, " "), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        className: "btn btn-primary",
+        className: "badge pill-badge badge-secondary mr-2"
+      }, course.label), publishedStatus, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, " ", course.description, " "), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        className: "btn btn-primary mr-2",
         onClick: this.edit
-      }, "edit")));
-      return null;
+      }, "edit"), publishButton));
     }
   }, {
     key: "edit",
@@ -61961,10 +61991,7 @@ function (_Component) {
       }, "Curriculum"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "#",
         className: "nav-item nav-link"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        className: "btn btn-success",
-        onClick: this.props.publish
-      }, "publish")));
+      }));
     }
   }]);
 

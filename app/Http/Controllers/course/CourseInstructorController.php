@@ -43,7 +43,7 @@ class CourseInstructorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
     }
 
     /**
@@ -53,9 +53,34 @@ class CourseInstructorController extends Controller
      * @return \Illuminate\Http\ResponseJson
      *
      */
-    public function publish($id)
+    public function publish(int $id)
     {
-       //
+      $course = Course::find($id);
+      if ($course->is_published == 1) {
+         return response()->json(
+           ['status'=>'failed','message' =>"course is already published."],422);
+      }
+      if (!($course->level && $course->description)) {
+         return response()->json(
+           ['status'=>'failed','message' =>"course must have level and a description."],422);
+      }
+      $chapters = DB::table('course_chapter')
+      ->select('course_chapter.id as co_ch_id','video_url')
+      ->leftJoin('course_chapter_content','course_chapter.id','=','course_chapter_content.course_chapter_id')
+      ->where('course_id',"=",$id)->get();
+      // return $chapters;
+      foreach ($chapters as $chapter) {
+         if (!$chapter->video_url) {
+            return response()->json(
+             ['status'=>'failed',
+             'message' =>"chapters cannot be empty,every content must have a video."],422);
+         }
+      }
+      $course->is_published = 1;
+      if ($course->save()) {
+         return response()->json(
+           ['status'=>'success','message' =>"course now published."],200);
+      }
     }
 
     /**
