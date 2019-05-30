@@ -61693,30 +61693,31 @@ function (_Component) {
           return ele[0];
         });
 
+        if (_this2.props.onSuccess) {
+          _this2.props.onSuccess(result);
+        }
+
         _this2.setState(function () {
           return {
             data: result,
             isLoaded: true
           };
         });
-
-        if (_this2.props.onSuccess) {
-          _this2.props.onSuccess(result);
-        }
       }, function (msg) {
         //error has happened
         console.log("called error");
         console.log(msg);
+        var error = msg.responseJSON.errors || msg.responseJSON;
 
         _this2.setState(function () {
           return {
             isLoaded: true,
-            error: msg.responseJSON
+            error: error
           };
         });
 
         if (_this2.props.onError) {
-          _this2.props.onError(msg.responseJSON);
+          _this2.props.onError(error);
         }
       });
     }

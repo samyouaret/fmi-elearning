@@ -6,32 +6,38 @@ import Select from '../formcomponents/Select'
 import levelsList from './levels'
 import DataProvider from '../providers/DataProvider'
 import FileInput from '../providers/FileInput'
+import request from '../helpers/request.js'
+import Loading from '../components/Loading.js'
+import findByAttr from '../helpers/findByAttr.js'
 
 export default class CourseInfo extends Component {
    constructor(props){
       super(props);
       this.state = {
          editing : false,
-         errors : {}
+         errors : {},
+         data : null,
       }
       this.edit = this.edit.bind(this);
       this.cancel = this.cancel.bind(this);
       this.save = this.save.bind(this);
-      this.handleSubjectChange= this.handleSubjectChange.bind(this);
     this.options =
       {
           url : "/instructor/courseinfo/"  + this.props.id,
           method:"GET",
           contentType: 'application/json',
       };
-   }
-   findAttrById(arr,id,attr){
-      for (var i = 0; i < arr.length; i++) {
-            if (arr[i].id == id) {
-               return arr[i][attr]
-            }
-         }
-         return null;
+      this.handleSubjectChange = (e,handleChange)=>{
+         request('/instructor/subSubjects/'+ e.target.value,{},'GET').then((data)=>{
+            this.setState({
+               sub_subjects : data,
+               course : {
+                  ...this.state.course,
+                  subject_id : data[0].subject_id
+               }
+            })
+         });
+      }
    }
    // static getDerivedStateFromProps(nextProps, prevState) {
    //       return {data : nextProps.data};
@@ -46,14 +52,6 @@ export default class CourseInfo extends Component {
       }
       return errors;
    }
-   handleSubjectChange(e,handleChange){
-      loadData('/instructor/subSubjects/'+ e.target.value).then((data)=>{
-         this.setState({
-          sub_subjects : data,
-          sub_subject_id : data[0].id
-       })
-      });
-   }
    renderErrors(errors){
       return (<small className="invalid-feedback d-inline-block">
        { errors.map(function(elem) {
@@ -62,45 +60,50 @@ export default class CourseInfo extends Component {
         }
       </small>)
    }
-   save(data){
-      console.log(data);
-      $.ajaxSetup({
-         headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-         }
-      });
-      var form_data = new FormData();
-      for ( var key in data ) {
-          form_data.append(key,data[key]);
+   save(data,errors){
+      console.log(this.state.sub_subjects);
+      console.log(this.state.languages);
+      console.log(data.sub_subject_id);
+      console.log("------------");
+      let labelPos = findByAttr(this.state.sub_subjects,"subject_id",data.subject_id);
+      let lanPos = findByAttr(this.state.languages,'id',data.language_id);
+      data.label = this.state.sub_subjects[labelPos].label;
+      data.sub_subject_id = this.state.sub_subjects[labelPos].id;
+      data.language_name = this.state.languages[lanPos].language_name;
+      let {subject_id,language_name,label,image,...values} = data;
+      let course =  {
+             subject_id : subject_id,
+             language_name : language_name,
+             label : label,
+             sub_subject_id :data.sub_subject_id
       }
-      form_data.append('_method','PUT');
-      $.ajax({
-      type: 'POST',
-      url: '/instructor/' + this.props.id,
-      contentType: false,
-      processData: false,
-      data: form_data
-   }).done((message)=>{
-      console.log(data);
+      request('/instructor/' + this.props.id,values,'PUT').done((message)=>{
+         course =  {
+                ...this.state.course,
+                image : message.cover_image
+          }
       this.setState({
-         errors : message
+         errors : message.message,
+         course : course
       })
    }).fail((msg)=> {
       console.log("failed");
       console.log(msg);
-      let errors = msg.responseJSON.errors || msg.responseJSON;
+      let errors = msg.responseJSON.errors || msg.responseJSON.message;
         this.setState({
            errors : errors
         })
      })
-     // this.cancel();
+     delete data.cover_image;
    }
    cancel(){
       this.setState({
-         editing : false
+         editing : false,
+         errors : {}
       });
    }
-   renderForm(fullData,error,reload,update){
+   renderForm(){
+      let fullData = this.state;
        var {course,subjects,sub_subjects,languages} = fullData;
        let message  =null;
       if (this.state.errors.message) {
@@ -114,21 +117,7 @@ export default class CourseInfo extends Component {
             <Form
                initialErrors={this.state.errors}
               initialValues={course}
-              onSubmit={(data,errors)=>{
-                  let {subject_id,language_name,label,image,...values} = data;
-                  this.save(values);
-                  delete data.cover_image;
-                  console.log(this.findAttrById(languages,data.language_id,'language_name'));
-                  data.language_name = this.findAttrById(languages,data.language_id,'language_name');
-                  data.label = this.findAttrById(sub_subjects,data.sub_subject_id,'label');
-                  update({
-                     data : {
-                        ...fullData,
-                        course : data
-                     }
-                  });
-
-              }}
+              onSubmit={this.save}
              // validate={this.validate}
             >
            { ({values,handleChange,handleBlur,handleSubmit,errors,touched}) => {
@@ -147,7 +136,8 @@ export default class CourseInfo extends Component {
                 {errors.description && this.renderErrors(errors.description)}
                </div>
                <div className="form-group">
-                  <Select defaultValue= {values.subject_id} name="subject_id" onChange={this.handleSubjectChange}
+                  <Select defaultValue= {values.subject_id} name="subject_id"
+                     onChange={(e)=>{this.handleSubjectChange(e);handleChange(e)}}
                   data={subjects} keys={{value : "label"}}/>
                   {errors.subject_id && this.renderErrors(errors.subject_id)}
                </div>
@@ -183,7 +173,8 @@ export default class CourseInfo extends Component {
        </Form>
    </div>)
    }
-   renderDisplay(course){
+   renderDisplay(){
+      let course = this.state.course;
       return  (
          <div>
          <img className="card-img" src={"/storage/course_image/" + course.image}/>
@@ -207,34 +198,32 @@ export default class CourseInfo extends Component {
       return (
         <div className="card col-sm-8"  style={{minHeight:500 + "px"}}>
            <DataProvider options={this.options}
-                renderLoading={()=>{
-                   return (<div className="d-flex justify-content-center">
-                           <div className="spinner-border" role="status">
-                             <span className="sr-only">Loading...</span>
-                           </div>
-                         </div>)
-                }}
+                renderLoading={()=>{ return <Loading/>}}
                 renderError={(error)=>{
-                   // this.updateError(error);
                    return (<div className="alert alert-danger">{error.message}</div>)
                 }}
-                Onsuccess={(data)=>{
+                onSuccess={(data)=>{
                    this.setState({
-                      data : data.course
+                      data : data,
+                      course : data.course,
+                      subjects : data.subjects,
+                      sub_subjects : data.sub_subjects,
+                      languages : data.languages
                    })
                 }}
-                OnError={(error)=>{
+                onError={(error)=>{
                    this.setState({
                       error : error
                    })
                 }}
                 >
-            {(result,error,reload,update)=>{
-              return this.state.editing ? this.renderForm(result,error,reload,update) :
-              this.renderDisplay(result.course);
-            }}
+                {(result)=>{
+                   return this.state.editing ? this.renderForm() :
+                   this.renderDisplay();
+                }}
          </DataProvider>
         </div>
       )
    }
 }
+// {content}

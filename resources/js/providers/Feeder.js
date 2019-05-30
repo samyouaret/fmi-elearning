@@ -34,13 +34,13 @@ export default class DataProvider extends Component{
            let result = requests.length < 2 ? data[0] : data.map(function(ele) {
               return ele[0];
            });
-           if (this.props.onSuccess) {
-             this.props.onSuccess(result);
-          }
-          this.setState(()=>({
+           this.setState(()=>({
              data : result,
              isLoaded: true
         }))
+        if (this.props.onSuccess) {
+           this.props.onSuccess(result);
+        }
      },
      (msg)=>{
         //error has happened

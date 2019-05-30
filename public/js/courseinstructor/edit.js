@@ -61580,17 +61580,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _levels__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./levels */ "./resources/js/courseinstructor/levels.js");
 /* harmony import */ var _providers_DataProvider__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../providers/DataProvider */ "./resources/js/providers/DataProvider.js");
 /* harmony import */ var _providers_FileInput__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../providers/FileInput */ "./resources/js/providers/FileInput.js");
+/* harmony import */ var _helpers_request_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../helpers/request.js */ "./resources/js/helpers/request.js");
+/* harmony import */ var _components_Loading_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../components/Loading.js */ "./resources/js/components/Loading.js");
+/* harmony import */ var _helpers_findByAttr_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../helpers/findByAttr.js */ "./resources/js/helpers/findByAttr.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
 
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -61617,6 +61620,9 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
+
+
 var CourseInfo =
 /*#__PURE__*/
 function (_Component) {
@@ -61630,35 +61636,36 @@ function (_Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(CourseInfo).call(this, props));
     _this.state = {
       editing: false,
-      errors: {}
+      errors: {},
+      data: null
     };
     _this.edit = _this.edit.bind(_assertThisInitialized(_this));
     _this.cancel = _this.cancel.bind(_assertThisInitialized(_this));
     _this.save = _this.save.bind(_assertThisInitialized(_this));
-    _this.handleSubjectChange = _this.handleSubjectChange.bind(_assertThisInitialized(_this));
     _this.options = {
       url: "/instructor/courseinfo/" + _this.props.id,
       method: "GET",
       contentType: 'application/json'
     };
+
+    _this.handleSubjectChange = function (e, handleChange) {
+      Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_8__["default"])('/instructor/subSubjects/' + e.target.value, {}, 'GET').then(function (data) {
+        _this.setState({
+          sub_subjects: data,
+          course: _objectSpread({}, _this.state.course, {
+            subject_id: data[0].subject_id
+          })
+        });
+      });
+    };
+
     return _this;
-  }
+  } // static getDerivedStateFromProps(nextProps, prevState) {
+  //       return {data : nextProps.data};
+  // }
+
 
   _createClass(CourseInfo, [{
-    key: "findAttrById",
-    value: function findAttrById(arr, id, attr) {
-      for (var i = 0; i < arr.length; i++) {
-        if (arr[i].id == id) {
-          return arr[i][attr];
-        }
-      }
-
-      return null;
-    } // static getDerivedStateFromProps(nextProps, prevState) {
-    //       return {data : nextProps.data};
-    // }
-
-  }, {
     key: "validate",
     value: function validate(values) {
       var errors = {};
@@ -61672,18 +61679,6 @@ function (_Component) {
       return errors;
     }
   }, {
-    key: "handleSubjectChange",
-    value: function handleSubjectChange(e, handleChange) {
-      var _this2 = this;
-
-      Object(_dataLoader__WEBPACK_IMPORTED_MODULE_1__["default"])('/instructor/subSubjects/' + e.target.value).then(function (data) {
-        _this2.setState({
-          sub_subjects: data,
-          sub_subject_id: data[0].id
-        });
-      });
-    }
-  }, {
     key: "renderErrors",
     value: function renderErrors(errors) {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", {
@@ -61694,56 +61689,65 @@ function (_Component) {
     }
   }, {
     key: "save",
-    value: function save(data) {
-      var _this3 = this;
+    value: function save(data, errors) {
+      var _this2 = this;
 
-      console.log(data);
-      $.ajaxSetup({
-        headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-      });
-      var form_data = new FormData();
+      console.log(this.state.sub_subjects);
+      console.log(this.state.languages);
+      console.log(data.sub_subject_id);
+      console.log("------------");
+      var labelPos = Object(_helpers_findByAttr_js__WEBPACK_IMPORTED_MODULE_10__["default"])(this.state.sub_subjects, "subject_id", data.subject_id);
+      var lanPos = Object(_helpers_findByAttr_js__WEBPACK_IMPORTED_MODULE_10__["default"])(this.state.languages, 'id', data.language_id);
+      data.label = this.state.sub_subjects[labelPos].label;
+      data.sub_subject_id = this.state.sub_subjects[labelPos].id;
+      data.language_name = this.state.languages[lanPos].language_name;
 
-      for (var key in data) {
-        form_data.append(key, data[key]);
-      }
+      var subject_id = data.subject_id,
+          language_name = data.language_name,
+          label = data.label,
+          image = data.image,
+          values = _objectWithoutProperties(data, ["subject_id", "language_name", "label", "image"]);
 
-      form_data.append('_method', 'PUT');
-      $.ajax({
-        type: 'POST',
-        url: '/instructor/' + this.props.id,
-        contentType: false,
-        processData: false,
-        data: form_data
-      }).done(function (message) {
-        console.log(data);
+      var course = {
+        subject_id: subject_id,
+        language_name: language_name,
+        label: label,
+        sub_subject_id: data.sub_subject_id
+      };
+      Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_8__["default"])('/instructor/' + this.props.id, values, 'PUT').done(function (message) {
+        course = _objectSpread({}, _this2.state.course, {
+          image: message.cover_image
+        });
 
-        _this3.setState({
-          errors: message
+        _this2.setState({
+          errors: message.message,
+          course: course
         });
       }).fail(function (msg) {
         console.log("failed");
         console.log(msg);
-        var errors = msg.responseJSON.errors || msg.responseJSON;
+        var errors = msg.responseJSON.errors || msg.responseJSON.message;
 
-        _this3.setState({
+        _this2.setState({
           errors: errors
         });
-      }); // this.cancel();
+      });
+      delete data.cover_image;
     }
   }, {
     key: "cancel",
     value: function cancel() {
       this.setState({
-        editing: false
+        editing: false,
+        errors: {}
       });
     }
   }, {
     key: "renderForm",
-    value: function renderForm(fullData, error, reload, update) {
-      var _this4 = this;
+    value: function renderForm() {
+      var _this3 = this;
 
+      var fullData = this.state;
       var course = fullData.course,
           subjects = fullData.subjects,
           sub_subjects = fullData.sub_subjects,
@@ -61762,25 +61766,7 @@ function (_Component) {
       }, message, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_formcomponents_Form__WEBPACK_IMPORTED_MODULE_2__["default"], {
         initialErrors: this.state.errors,
         initialValues: course,
-        onSubmit: function onSubmit(data, errors) {
-          var subject_id = data.subject_id,
-              language_name = data.language_name,
-              label = data.label,
-              image = data.image,
-              values = _objectWithoutProperties(data, ["subject_id", "language_name", "label", "image"]);
-
-          _this4.save(values);
-
-          delete data.cover_image;
-          console.log(_this4.findAttrById(languages, data.language_id, 'language_name'));
-          data.language_name = _this4.findAttrById(languages, data.language_id, 'language_name');
-          data.label = _this4.findAttrById(sub_subjects, data.sub_subject_id, 'label');
-          update({
-            data: _objectSpread({}, fullData, {
-              course: data
-            })
-          });
-        } // validate={this.validate}
+        onSubmit: this.save // validate={this.validate}
 
       }, function (_ref) {
         var values = _ref.values,
@@ -61801,24 +61787,28 @@ function (_Component) {
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_formcomponents_Input__WEBPACK_IMPORTED_MODULE_3__["default"], _extends({
           name: "title",
           value: values.title
-        }, handlers)), errors.title && _this4.renderErrors(errors.title)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        }, handlers)), errors.title && _this3.renderErrors(errors.title)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "form-group"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", _extends({
           rows: "7",
           className: "form-control",
           name: "description",
           value: values.description
-        }, handlers)), errors.description && _this4.renderErrors(errors.description)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        }, handlers)), errors.description && _this3.renderErrors(errors.description)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "form-group"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_formcomponents_Select__WEBPACK_IMPORTED_MODULE_4__["default"], {
           defaultValue: values.subject_id,
           name: "subject_id",
-          onChange: _this4.handleSubjectChange,
+          onChange: function onChange(e) {
+            _this3.handleSubjectChange(e);
+
+            handleChange(e);
+          },
           data: subjects,
           keys: {
             value: "label"
           }
-        }), errors.subject_id && _this4.renderErrors(errors.subject_id)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        }), errors.subject_id && _this3.renderErrors(errors.subject_id)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "form-group"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_formcomponents_Select__WEBPACK_IMPORTED_MODULE_4__["default"], _extends({
           defaultValue: values.sub_subject_id,
@@ -61828,7 +61818,7 @@ function (_Component) {
           keys: {
             value: "label"
           }
-        })), errors.sub_subject_id && _this4.renderErrors(errors.sub_subject_id)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        })), errors.sub_subject_id && _this3.renderErrors(errors.sub_subject_id)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "form-group"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_formcomponents_Select__WEBPACK_IMPORTED_MODULE_4__["default"], _extends({
           defaultValue: values.language_id,
@@ -61838,33 +61828,34 @@ function (_Component) {
           keys: {
             value: "language_name"
           }
-        })), errors.language_id && _this4.renderErrors(errors.language_id)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        })), errors.language_id && _this3.renderErrors(errors.language_id)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "form-group"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_formcomponents_Select__WEBPACK_IMPORTED_MODULE_4__["default"], _extends({
           defaultValue: values.level,
           name: "level"
         }, handlers, {
           data: _levels__WEBPACK_IMPORTED_MODULE_5__["default"]
-        })), errors.level && _this4.renderErrors(errors.level)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        })), errors.level && _this3.renderErrors(errors.level)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "form-group"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, "Price"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_formcomponents_Input__WEBPACK_IMPORTED_MODULE_3__["default"], _extends({
           name: "course_fee",
           value: values.course_fee
-        }, handlers)), errors.course_fee && _this4.renderErrors(errors.course_fee)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_FileInput__WEBPACK_IMPORTED_MODULE_7__["default"], _extends({
+        }, handlers)), errors.course_fee && _this3.renderErrors(errors.course_fee)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_FileInput__WEBPACK_IMPORTED_MODULE_7__["default"], _extends({
           name: "cover_image",
           error: errors.cover_image
-        }, handlers), errors.cover_image && _this4.renderErrors(errors.cover_image)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        }, handlers), errors.cover_image && _this3.renderErrors(errors.cover_image)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
           className: "btn btn-success mr-3",
           type: "submit"
         }, "save"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
           className: "btn btn-danger",
-          onClick: _this4.cancel
+          onClick: _this3.cancel
         }, "cancel"));
       }));
     }
   }, {
     key: "renderDisplay",
-    value: function renderDisplay(course) {
+    value: function renderDisplay() {
+      var course = this.state.course;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
         className: "card-img",
         src: "/storage/course_image/" + course.image
@@ -61892,7 +61883,7 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this5 = this;
+      var _this4 = this;
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "card col-sm-8",
@@ -61902,39 +61893,36 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_DataProvider__WEBPACK_IMPORTED_MODULE_6__["default"], {
         options: this.options,
         renderLoading: function renderLoading() {
-          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-            className: "d-flex justify-content-center"
-          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-            className: "spinner-border",
-            role: "status"
-          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-            className: "sr-only"
-          }, "Loading...")));
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Loading_js__WEBPACK_IMPORTED_MODULE_9__["default"], null);
         },
         renderError: function renderError(error) {
-          // this.updateError(error);
           return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
             className: "alert alert-danger"
           }, error.message);
         },
-        Onsuccess: function Onsuccess(data) {
-          _this5.setState({
-            data: data.course
+        onSuccess: function onSuccess(data) {
+          _this4.setState({
+            data: data,
+            course: data.course,
+            subjects: data.subjects,
+            sub_subjects: data.sub_subjects,
+            languages: data.languages
           });
         },
-        OnError: function OnError(error) {
-          _this5.setState({
+        onError: function onError(error) {
+          _this4.setState({
             error: error
           });
         }
-      }, function (result, error, reload, update) {
-        return _this5.state.editing ? _this5.renderForm(result, error, reload, update) : _this5.renderDisplay(result.course);
+      }, function (result) {
+        return _this4.state.editing ? _this4.renderForm() : _this4.renderDisplay();
       }));
     }
   }]);
 
   return CourseInfo;
-}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
+}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]); // {content}
+
 
 
 
@@ -62567,10 +62555,6 @@ function (_Component) {
   }
 
   _createClass(Content, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {// this.create();
-    }
-  }, {
     key: "renderDisplay",
     value: function renderDisplay() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
@@ -63713,30 +63697,31 @@ function (_Component) {
           return ele[0];
         });
 
+        if (_this2.props.onSuccess) {
+          _this2.props.onSuccess(result);
+        }
+
         _this2.setState(function () {
           return {
             data: result,
             isLoaded: true
           };
         });
-
-        if (_this2.props.onSuccess) {
-          _this2.props.onSuccess(result);
-        }
       }, function (msg) {
         //error has happened
         console.log("called error");
         console.log(msg);
+        var error = msg.responseJSON.errors || msg.responseJSON;
 
         _this2.setState(function () {
           return {
             isLoaded: true,
-            error: msg.responseJSON
+            error: error
           };
         });
 
         if (_this2.props.onError) {
-          _this2.props.onError(msg.responseJSON);
+          _this2.props.onError(error);
         }
       });
     }

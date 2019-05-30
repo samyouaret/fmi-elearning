@@ -70,7 +70,9 @@ export default class Form extends Component {
       };
    }
    static getDerivedStateFromProps(nextProps,nextState){
-      return {errors : nextProps.initialErrors}
+      return {
+         errors : nextProps.initialErrors,
+      }
    }
   render() {
      return  (
@@ -78,7 +80,7 @@ export default class Form extends Component {
          {...this.state,
          handleChange:this.handleChange,
          handleBlur : this.handleBlur,
-         handleSubmit : this.handleSubmit
+         handleSubmit : this.handleSubmit,
       })
     )
   }

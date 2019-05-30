@@ -135,9 +135,6 @@ export default class Content extends Component {
         }).fail(this.setMessage);
    }
   }
-  componentDidMount(){
-     // this.create();
- }
    renderDisplay(){
      return (
          <li className="list-group-item d-flex justify-content-between align-items-center">

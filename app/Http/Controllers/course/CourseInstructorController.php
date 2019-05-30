@@ -169,13 +169,13 @@ class CourseInstructorController extends Controller
           if ($course->cover_image !== 'no_image.png')
             Storage::delete('public/course_image/' . $course->cover_image);
       }
-      // $resp = DB::table('course')->updateOrInsert(['id'=>$id],$data) ? ['status'=>'success','msg' =>"course has been updated successfully"] : ['status'=>'failed','msg' =>"oops something went wrong"];
-      $resp  = DB::table('course')->where('id',$id);
-      response()->json($resp);
       return DB::table('course')->where('id',$id)->update($data) ?
-      response()->json(['status'=>'success','message' =>"course has been updated successfully"],200) :
-      response()->json(['status'=>'failed','message' =>"course has not been updated"],413);
-      // return response()->json($request->all());
+      response()->json([
+       "message"=>['status'=>'success','message' =>"course has been updated successfully"],
+       "cover_image"=>$data['cover_image']],200) :
+      response()->json([
+      "message"=>['status'=>'failed','message' =>"course has not been updated"],
+      "cover_image"=>NULL],413);
     }
 
     /**
