@@ -55,7 +55,7 @@ class CourseInstructorController extends Controller
      */
     public function publish($id)
     {
-        //
+       //
     }
 
     /**

@@ -61421,6 +61421,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Navbar__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Navbar */ "./resources/js/courseinstructor/Navbar.js");
 /* harmony import */ var _curriculum_Curriculum__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../curriculum/Curriculum */ "./resources/js/curriculum/Curriculum.js");
 /* harmony import */ var _dataLoader__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./dataLoader */ "./resources/js/courseinstructor/dataLoader.js");
+/* harmony import */ var _helpers_request_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../helpers/request.js */ "./resources/js/helpers/request.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -61445,6 +61446,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
 var CourseBuilder =
 /*#__PURE__*/
 function (_Component) {
@@ -61460,28 +61462,14 @@ function (_Component) {
     _this.state = {
       display: 0
     };
-    _this.id = _this.getCourseId(); // this.loadCourse();
-
+    _this.id = _this.getCourseId();
     _this.showCourseInfo = _this.showCourseInfo.bind(_assertThisInitialized(_this));
     _this.showCurriculum = _this.showCurriculum.bind(_assertThisInitialized(_this));
-    _this.save = _this.save.bind(_assertThisInitialized(_this));
     return _this;
   } // componentDidMount will not work because id conditional rendering
 
 
   _createClass(CourseBuilder, [{
-    key: "loadCourse",
-    value: function loadCourse() {
-      var _this2 = this;
-
-      var id = this.getCourseId();
-      $.getJSON('/instructor/' + id, null, function (data, textStatus, jqxhr) {
-        _this2.setState({
-          data: data
-        });
-      });
-    }
-  }, {
     key: "getCourseId",
     value: function getCourseId() {
       return location.pathname.split("/")[2];
@@ -61498,35 +61486,6 @@ function (_Component) {
     value: function showCurriculum() {
       this.setState({
         display: 1
-      });
-    }
-  }, {
-    key: "save",
-    value: function save(data) {
-      var _this3 = this;
-
-      console.log(data);
-      $.ajaxSetup({
-        headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-      });
-      $.ajax({
-        type: 'PUT',
-        url: '/instructor/' + this.state.data.id,
-        contentType: 'application/json',
-        data: JSON.stringify(data)
-      }).done(function (data) {
-        console.log('SUCCESS');
-
-        _this3.loadCourse();
-
-        console.log(data);
-      }).fail(function (msg, var1, var2) {
-        console.log(msg.responseJSON.errors);
-        console.log('FAIL');
-      }).always(function (msg) {
-        console.log('ALWAYS');
       });
     }
   }, {
@@ -61999,7 +61958,13 @@ function (_Component) {
         href: "#",
         className: "nav-item nav-link",
         onClick: this.props.showCurriculum
-      }, "Curriculum"));
+      }, "Curriculum"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        href: "#",
+        className: "nav-item nav-link"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        className: "btn btn-success",
+        onClick: this.props.publish
+      }, "publish")));
     }
   }]);
 
