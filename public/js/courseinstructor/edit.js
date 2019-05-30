@@ -61705,28 +61705,30 @@ function (_Component) {
       var subject_id = data.subject_id,
           language_name = data.language_name,
           label = data.label,
-          image = data.image,
-          values = _objectWithoutProperties(data, ["subject_id", "language_name", "label", "image"]);
+          values = _objectWithoutProperties(data, ["subject_id", "language_name", "label"]); // let {cover_image,...values} = data;
 
-      var course = {
+
+      var course = _objectSpread({}, values, {
+        title: data.title,
         subject_id: subject_id,
         language_name: language_name,
         label: label,
         sub_subject_id: data.sub_subject_id
-      };
+      });
+
+      delete course.cover_image;
       Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_8__["default"])('/instructor/' + this.props.id, values, 'PUT').done(function (message) {
-        course = _objectSpread({}, _this2.state.course, {
-          image: message.cover_image
-        });
+        course.image = message.cover_image || course.image;
 
         _this2.setState({
           errors: message.message,
           course: course
         });
-      }).fail(function (msg) {
+      }).fail(function (message) {
         console.log("failed");
-        console.log(msg);
-        var errors = msg.responseJSON.errors || msg.responseJSON.message;
+        console.log(message);
+        course.image = message.cover_image || course.image;
+        var errors = message.responseJSON.errors || message.responseJSON.message;
 
         _this2.setState({
           errors: errors

@@ -70,26 +70,28 @@ export default class CourseInfo extends Component {
       data.label = this.state.sub_subjects[labelPos].label;
       data.sub_subject_id = this.state.sub_subjects[labelPos].id;
       data.language_name = this.state.languages[lanPos].language_name;
-      let {subject_id,language_name,label,image,...values} = data;
+      let {subject_id,language_name,label,...values} = data;
+      // let {cover_image,...values} = data;
       let course =  {
+             ...values,
+             title : data.title,
              subject_id : subject_id,
              language_name : language_name,
              label : label,
-             sub_subject_id :data.sub_subject_id
+             sub_subject_id :data.sub_subject_id,
       }
+      delete course.cover_image;
       request('/instructor/' + this.props.id,values,'PUT').done((message)=>{
-         course =  {
-                ...this.state.course,
-                image : message.cover_image
-          }
+         course.image = message.cover_image || course.image
       this.setState({
          errors : message.message,
          course : course
       })
-   }).fail((msg)=> {
+   }).fail((message)=> {
       console.log("failed");
-      console.log(msg);
-      let errors = msg.responseJSON.errors || msg.responseJSON.message;
+      console.log(message);
+      course.image = message.cover_image || course.image
+      let errors = message.responseJSON.errors || message.responseJSON.message;
         this.setState({
            errors : errors
         })

@@ -155,7 +155,9 @@ class CourseInstructorController extends Controller
          "level"=>"required|nullable|integer|max:3",
       ]);
       $data = $request->all();
+      $cover_image = $data['image'];
       unset($data['_method']);
+      unset($data['image']);
       if ($request->hasFile('cover_image')) {
           $fileNameWithExt = $request->file('cover_image')->getClientOriginalName();
           //get filename
@@ -168,14 +170,15 @@ class CourseInstructorController extends Controller
           $course =  Course::find($id);
           if ($course->cover_image !== 'no_image.png')
             Storage::delete('public/course_image/' . $course->cover_image);
+          $cover_image = $data['cover_image'];
       }
       return DB::table('course')->where('id',$id)->update($data) ?
       response()->json([
        "message"=>['status'=>'success','message' =>"course has been updated successfully"],
-       "cover_image"=>$data['cover_image']],200) :
+       "cover_image"=>$cover_image],200) :
       response()->json([
       "message"=>['status'=>'failed','message' =>"course has not been updated"],
-      "cover_image"=>NULL],413);
+      "cover_image"=>$cover_image],413);
     }
 
     /**
