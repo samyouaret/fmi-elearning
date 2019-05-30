@@ -61635,6 +61635,22 @@ function (_Component) {
       });
     };
 
+    _this.unpublish = function () {
+      Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_8__["default"])('/instructor/unpublish/' + _this.props.id, {}, 'PUT').then(function (message) {
+        _this.setState({
+          course: _objectSpread({}, _this.state.course, {
+            is_published: 0
+          })
+        });
+      }).fail(function (message) {
+        var errors = message.responseJSON.errors || message.responseJSON.message;
+
+        _this.setState({
+          errors: errors
+        });
+      });
+    };
+
     return _this;
   } // static getDerivedStateFromProps(nextProps, prevState) {
   //       return {data : nextProps.data};
@@ -61843,6 +61859,10 @@ function (_Component) {
           onClick: this.publish
         }, "publish");
       } else {
+        publishButton = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          className: "btn btn-warning",
+          onClick: this.unpublish
+        }, "unpublish");
         publishedStatus = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", {
           className: "badge pill-badge badge-success mr-2"
         }, "published");

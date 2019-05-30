@@ -54,6 +54,22 @@ export default class CourseInfo extends Component {
               })
          });
       }
+      this.unpublish = ()=>{
+         request('/instructor/unpublish/'+ this.props.id,{},
+         'PUT').then((message)=>{
+            this.setState({
+               course : {
+                  ...this.state.course,
+                  is_published :0
+               }
+            })
+         }).fail((message)=>{
+            let errors = message.responseJSON.errors || message.responseJSON.message;
+              this.setState({
+                 errors : errors
+              })
+         });
+      }
    }
    // static getDerivedStateFromProps(nextProps, prevState) {
    //       return {data : nextProps.data};
@@ -198,6 +214,7 @@ export default class CourseInfo extends Component {
       if (course.is_published==0) {
          publishButton = <button className="btn btn-warning" onClick={this.publish}>publish</button>;
       }else {
+         publishButton = <button className="btn btn-warning" onClick={this.unpublish}>unpublish</button>;
          publishedStatus =  <small className="badge pill-badge badge-success mr-2">published</small>
       }
       return(

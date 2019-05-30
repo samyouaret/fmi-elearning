@@ -49,6 +49,7 @@ Route::get('/dashboard', 'HomeController@dashboard')->middleware('auth')
 // Route::match(['get','head'],'instructor/{courses}','course\CourseInstructorController');
 
 Route::post('instructor/{course}','course\CourseInstructorController@publish');
+Route::put('instructor/unpublish/{course}','course\CourseInstructorController@unpublish');
 Route::get('instructor/subSubjects/{subject}','course\CourseInstructorController@subSubjects');
 Route::get('instructor/subjects','course\CourseInstructorController@subjects');
 Route::get('instructor/languages','course\CourseInstructorController@languages');

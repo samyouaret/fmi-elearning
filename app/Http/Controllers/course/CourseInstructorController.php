@@ -82,6 +82,21 @@ class CourseInstructorController extends Controller
            ['status'=>'success','message' =>"course now published."],200);
       }
     }
+    public function unpublish(int $id)
+    {
+      $course = Course::find($id);
+      if ($course->is_published == 0) {
+         return response()->json(
+           ['status'=>'failed','message' =>"course is already unpublished."],422);
+      }
+      $course->is_published = 0;
+      if ($course->save()) {
+         return response()->json(
+           ['status'=>'success','message' =>"course now is unpublished."],200);
+      }
+      return response()->json(
+         ['status'=>'failed','message' =>"somthing went wrong try again."],422);
+    }
 
     /**
      * Show the form for editing the specified resource.
