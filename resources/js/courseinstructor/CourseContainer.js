@@ -24,9 +24,7 @@ class CourseContainer extends Component {
    }
    render(){
       const courses = this.state.courses.map(function(course) {
-           return <Course key={course.id}
-           id={course.id} status={course.is_published}
-           title={course.title} description={course.description}>
+           return <Course key={course.id} data={course}>
            </Course>;
       });
       return (

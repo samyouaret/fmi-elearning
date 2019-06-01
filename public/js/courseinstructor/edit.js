@@ -61729,7 +61729,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
-
+ // TODO: fix bug unauthenticated routes errors
 
 var CourseInfo =
 /*#__PURE__*/
@@ -61751,7 +61751,7 @@ function (_Component) {
     _this.cancel = _this.cancel.bind(_assertThisInitialized(_this));
     _this.save = _this.save.bind(_assertThisInitialized(_this));
     _this.options = {
-      url: "/instructor/courseinfo/" + _this.props.id,
+      url: "/instructor/course/" + _this.props.id,
       method: "GET",
       contentType: 'application/json'
     };
@@ -62342,8 +62342,13 @@ function (_Component) {
         });
 
         _this.props.showDialog(message, "success");
-      }).fail(function (jqXHR) {
-        var message = jqXHR.responseJSON;
+      }).fail(function (_ref) {
+        var responseJSON = _ref.responseJSON;
+        var message = responseJSON;
+
+        if (responseJSON.errors) {
+          message.status = "invalid data", message.message = responseJSON.errors.chapter_title;
+        }
 
         _this.props.showDialog(message, "error");
       });
@@ -62450,13 +62455,13 @@ function (_Component) {
         onSubmit: function onSubmit(values, errors) {
           _this4.save(values);
         }
-      }, function (_ref) {
-        var values = _ref.values,
-            handleChange = _ref.handleChange,
-            handleBlur = _ref.handleBlur,
-            handleSubmit = _ref.handleSubmit,
-            errors = _ref.errors,
-            touched = _ref.touched;
+      }, function (_ref2) {
+        var values = _ref2.values,
+            handleChange = _ref2.handleChange,
+            handleBlur = _ref2.handleBlur,
+            handleSubmit = _ref2.handleSubmit,
+            errors = _ref2.errors,
+            touched = _ref2.touched;
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
           onSubmit: handleSubmit,
           method: "POST"
@@ -62540,7 +62545,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_Loading_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../components/Loading.js */ "./resources/js/components/Loading.js");
 /* harmony import */ var _ResourceList__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./ResourceList */ "./resources/js/curriculum/ResourceList.js");
 /* harmony import */ var _helpers_request_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../helpers/request.js */ "./resources/js/helpers/request.js");
-/* harmony import */ var _helpers_findByAttr_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../helpers/findByAttr.js */ "./resources/js/helpers/findByAttr.js");
+/* harmony import */ var _helpers_isEqual_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../helpers/isEqual.js */ "./resources/js/helpers/isEqual.js");
+/* harmony import */ var _helpers_findByAttr_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../helpers/findByAttr.js */ "./resources/js/helpers/findByAttr.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
@@ -62584,6 +62590,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
 var Content =
 /*#__PURE__*/
 function (_Component) {
@@ -62600,7 +62607,7 @@ function (_Component) {
       data: _this.props.data || {},
       fileList: [],
       multiple: true,
-      message: {},
+      errors: {},
       hasMessage: false
     };
 
@@ -62648,17 +62655,21 @@ function (_Component) {
 
       var data = _objectSpread({}, _this.state.data, _defineProperty({}, target.name, value));
 
+      console.log(Object(_helpers_isEqual_js__WEBPACK_IMPORTED_MODULE_11__["default"])(data, _this.state.data));
       clearTimeout(_this.timer);
       _this.timer = null;
+      console.log(data, _this.state.data);
 
-      _this.setState({
-        data: data
-      });
+      if (!Object(_helpers_isEqual_js__WEBPACK_IMPORTED_MODULE_11__["default"])(data, _this.state.data)) {
+        _this.setState({
+          data: data
+        });
 
-      data.is_open_for_free *= 1;
-      data.is_mandatory *= 1;
+        data.is_open_for_free *= 1;
+        data.is_mandatory *= 1;
 
-      _this.update(data);
+        _this.update(data);
+      }
     };
 
     _this.onupload = function (data) {
@@ -62690,17 +62701,35 @@ function (_Component) {
       _this.setState(state);
     };
 
-    _this.update = function (data, state) {
+    _this.update = function (data) {
       _this.timer = setTimeout(function () {
         data.video_url = data.video_url || "";
         Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_10__["default"])("/curriculum/content/update/" + _this.state.data.content_id, data, "PUT").done(function (message) {
-          _this.setState(_objectSpread({
+          _this.setState({
             hasMessage: true,
             message: message,
             data: data
-          }, state));
+          });
+        }).fail(function (_ref) {
+          var responseJSON = _ref.responseJSON;
+          var message = responseJSON.message;
+
+          if (responseJSON.errors) {
+            var errors = responseJSON.errors;
+            message = errors.content_title || errors.is_mandatory || errors.is_open_for_free || message;
+          }
+
+          console.log(message);
+
+          _this.setState({
+            hasMessage: true,
+            message: {
+              message: message,
+              status: "error"
+            }
+          });
         });
-      }, 3000);
+      }, 2000);
     };
 
     _this.deleteVideo = function () {
@@ -62723,9 +62752,9 @@ function (_Component) {
     };
 
     _this.deleteResource = function ($id) {
-      console.log(Object(_helpers_findByAttr_js__WEBPACK_IMPORTED_MODULE_11__["default"])(_this.state.fileList, "id", $id));
+      console.log(Object(_helpers_findByAttr_js__WEBPACK_IMPORTED_MODULE_12__["default"])(_this.state.fileList, "id", $id));
       Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_10__["default"])("/curriculum/content/resource/remove/" + $id, {}, "DELETE").done(function (message) {
-        var pos = Object(_helpers_findByAttr_js__WEBPACK_IMPORTED_MODULE_11__["default"])(_this.state.fileList, "id", $id);
+        var pos = Object(_helpers_findByAttr_js__WEBPACK_IMPORTED_MODULE_12__["default"])(_this.state.fileList, "id", $id);
 
         _this.state.fileList.splice(pos, 1);
 
@@ -62794,13 +62823,13 @@ function (_Component) {
         className: "form-control",
         defaultValue: this.state.data.content_title,
         name: "content_title",
-        onChange: this.handleChange
+        onBlur: this.handleChange
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "custom-control custom-checkbox"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", (_React$createElement = {
         type: "checkbox",
         className: "form-control",
-        onChange: this.handleChange,
+        onBlur: this.handleChange,
         name: "is_open_for_free",
         defaultChecked: this.state.data.is_open_for_free
       }, _defineProperty(_React$createElement, "className", "custom-control-input"), _defineProperty(_React$createElement, "id", "is_open_for_free"), _React$createElement)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
@@ -62811,7 +62840,7 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", (_React$createElement2 = {
         type: "checkbox",
         className: "form-control",
-        onChange: this.handleChange,
+        onBlur: this.handleChange,
         name: "is_mandatory",
         defaultChecked: this.state.data.is_mandatory
       }, _defineProperty(_React$createElement2, "className", "custom-control-input"), _defineProperty(_React$createElement2, "id", "is_mandatory"), _React$createElement2)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
@@ -62890,12 +62919,12 @@ function (_Component) {
           });
         },
         onupload: this.onupload
-      }, function (_ref) {
-        var upload = _ref.upload,
-            handleChange = _ref.handleChange,
-            progressValue = _ref.progressValue,
-            hasFile = _ref.hasFile,
-            errors = _ref.errors;
+      }, function (_ref2) {
+        var upload = _ref2.upload,
+            handleChange = _ref2.handleChange,
+            progressValue = _ref2.progressValue,
+            hasFile = _ref2.hasFile,
+            errors = _ref2.errors;
         var cls = hasFile ? "btn btn-secondary btn-sm mr-1" : "btn btn-secondary btn-sm mr-1 disabled";
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "w-100"
@@ -63766,6 +63795,42 @@ function findByAttr(arr, attr, val) {
   }
 
   return pos;
+}
+
+/***/ }),
+
+/***/ "./resources/js/helpers/isEqual.js":
+/*!*****************************************!*\
+  !*** ./resources/js/helpers/isEqual.js ***!
+  \*****************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return isEqual; });
+function isEqual(a, b) {
+  // Create arrays of property names
+  var aProps = Object.getOwnPropertyNames(a);
+  var bProps = Object.getOwnPropertyNames(b); // If number of properties is different,
+  // objects are not equivalent
+
+  if (aProps.length != bProps.length) {
+    return false;
+  }
+
+  for (var i = 0; i < aProps.length; i++) {
+    var propName = aProps[i]; // If values of same property are not equal,
+    // objects are not equivalent
+
+    if (a[propName] !== b[propName]) {
+      return false;
+    }
+  } // If we made it this far, objects
+  // are considered equivalent
+
+
+  return true;
 }
 
 /***/ }),

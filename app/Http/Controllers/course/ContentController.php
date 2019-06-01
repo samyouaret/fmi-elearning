@@ -19,6 +19,11 @@ class ContentController extends Controller
    protected $allowedVideoExtensions = [
       'mp4','mkv','mpg'
    ];
+
+   public function __construct (){
+      $this->middleware('auth');
+   }
+
    protected function isAllowedFile($file) {
       return in_array(
            strtolower($file->getClientOriginalExtension()),

@@ -10,6 +10,10 @@ use App\Traits\ContentTrait as ContentTrait;
 class CurriculumController extends Controller
 {
    use ContentTrait;
+   
+   public function __construct (){
+      $this->middleware('auth');
+   }
    /**
     * get the curriculum of a given course
     * @var int $id

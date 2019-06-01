@@ -9,6 +9,7 @@ import ProgressBar from '../components/ProgressBar.js'
 import Loading from '../components/Loading.js'
 import ResourceList from './ResourceList'
 import request from '../helpers/request.js'
+import isEqual from '../helpers/isEqual.js'
 import findByAttr from '../helpers/findByAttr.js'
 
 export default class Content extends Component {
@@ -19,8 +20,8 @@ export default class Content extends Component {
          data : this.props.data || {},
          fileList : [],
          multiple : true,
-         message : {},
-         hasMessage : false
+         errors : {},
+         hasMessage : false,
       };
       this.updateEditing= (val,data)=>{
          this.setState({
@@ -57,14 +58,18 @@ export default class Content extends Component {
           ...this.state.data,
         [target.name] : value
         }
+        console.log(isEqual(data,this.state.data));
         clearTimeout(this.timer);
         this.timer = null;
-        this.setState({
-           data : data
-        })
-        data.is_open_for_free *=1;
-        data.is_mandatory *=1;
-        this.update(data);
+        console.log(data,this.state.data);
+        if(!isEqual(data,this.state.data)){
+           this.setState({
+             data : data
+          })
+          data.is_open_for_free *=1;
+          data.is_mandatory *=1;
+          this.update(data);
+        }
      };
      this.onupload = (data)=>{
         let state = {
@@ -92,7 +97,7 @@ export default class Content extends Component {
         console.log(state);
        this.setState(state);
      }
-     this.update = (data,state)=>{
+     this.update = (data)=>{
         this.timer = setTimeout(()=>{
            data.video_url = data.video_url || "";
           request("/curriculum/content/update/" + this.state.data.content_id,data,"PUT")
@@ -100,11 +105,25 @@ export default class Content extends Component {
             this.setState({
                hasMessage:true,
                message : message,
-               data : data,
-               ...state
+               data : data
             });
-         })
-      },3000);
+         }).fail(({responseJSON})=>{
+            let message = responseJSON.message;
+           if (responseJSON.errors) {
+             let errors = responseJSON.errors;
+             message = errors.content_title ||  errors.is_mandatory ||
+             errors.is_open_for_free || message;
+           }
+           console.log(message);
+           this.setState({
+               hasMessage:true,
+               message : {
+                  message : message,
+                  status : "error"
+               }
+          });
+        });
+     },2000);
      }
      this.deleteVideo = ()=>{
         request("/curriculum/content/removevideo/" + this.state.data.content_id,{},"DELETE").done((message)=>{
@@ -156,7 +175,8 @@ export default class Content extends Component {
            src={this.state.data.video_url} controls>
         </video>
        <button className="btn btn-danger btn-sm align-self-end"
-        onClick={this.deleteVideo}>delete video</button></React.Fragment>) :
+        onClick={this.deleteVideo}>delete video</button>
+       </React.Fragment>) :
         <h5>this content has no video</h5>;
    }
    renderContentEdit(){
@@ -173,16 +193,16 @@ export default class Content extends Component {
          <React.Fragment>
             <div className="w-100 my-2">
              <input className="form-control" defaultValue={this.state.data.content_title} name='content_title'
-                onChange={this.handleChange}/>
+                onBlur={this.handleChange}/>
              <div className="custom-control custom-checkbox">
-                  <input type="checkbox" className="form-control" onChange={this.handleChange}
+                  <input type="checkbox" className="form-control" onBlur={this.handleChange}
                      name="is_open_for_free"
                      defaultChecked={this.state.data.is_open_for_free}
                      className="custom-control-input" id="is_open_for_free"/>
                   <label className="custom-control-label" htmlFor="is_open_for_free">open for free</label>
               </div>
              <div className="custom-control custom-checkbox">
-                  <input type="checkbox" className="form-control" onChange={this.handleChange}
+                  <input type="checkbox" className="form-control" onBlur={this.handleChange}
                      name="is_mandatory"
                      defaultChecked={this.state.data.is_mandatory}
                      className="custom-control-input" id="is_mandatory"/>

@@ -42,8 +42,12 @@ export default class Chapter extends Component {
             editing : false
          })
         this.props.showDialog(message,"success");
-       }).fail((jqXHR)=>{
-          let message = jqXHR.responseJSON;
+       }).fail(({responseJSON})=>{
+          let message = responseJSON;
+          if (responseJSON.errors) {
+             message.status = "invalid data",
+             message.message = responseJSON.errors.chapter_title;
+          }
           this.props.showDialog(message,"error");
        });
      };

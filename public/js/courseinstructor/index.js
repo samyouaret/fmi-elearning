@@ -61315,25 +61315,31 @@ function (_Component) {
   _createClass(Course, [{
     key: "render",
     value: function render() {
-      var status = null;
-
-      if (this.props.status == 0) {
-        status = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-          className: "badge badge-warning badge-pill m-1 text-gray"
-        }, " draft");
-      }
-
-      console.log(status);
+      var course = this.props.data;
+      var style = {
+        fontSize: 13 + "px"
+      };
+      var statusContent = course.is_published == 0 ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        style: style,
+        className: "badge badge-warning badge-pill m-1 text-gray"
+      }, " draft") : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        style: style,
+        className: "badge badge-success badge-pill m-1 text-white"
+      }, " published");
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "card"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "card-body"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
+        class: "card-img-top",
+        src: "/storage/course_image/" + course.cover_image,
+        alt: "course image"
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", {
         className: "card-title"
-      }, this.props.title, status), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, this.props.description), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      }, course.title, statusContent), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, course.description), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         className: "btn btn-secondary",
-        href: "/instructor/" + this.props.id + "/edit"
-      }, "continue")));
+        href: "/instructor/" + course.id + "/edit"
+      }, "explore")));
     }
   }]);
 
@@ -61421,10 +61427,7 @@ function (_Component) {
       var courses = this.state.courses.map(function (course) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Course__WEBPACK_IMPORTED_MODULE_1__["default"], {
           key: course.id,
-          id: course.id,
-          status: course.is_published,
-          title: course.title,
-          description: course.description
+          data: course
         });
       });
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {

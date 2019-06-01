@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Storage;
 
 class CourseInstructorController extends Controller
 {
+
+    public function __construct (){
+         $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -126,7 +130,7 @@ class CourseInstructorController extends Controller
         return response()->json($course);
     }
 
-    public function courseinfo($id)
+    public function getCourse($id)
     {
       $course = Course::select("course.id as id","language_name","label","subject_id",
        "description","title","course_fee","is_published","level","language_id","sub_subject_id",

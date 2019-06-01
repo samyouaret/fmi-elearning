@@ -53,16 +53,38 @@ Route::put('instructor/unpublish/{course}','course\CourseInstructorController@un
 Route::get('instructor/subSubjects/{subject}','course\CourseInstructorController@subSubjects');
 Route::get('instructor/subjects','course\CourseInstructorController@subjects');
 Route::get('instructor/languages','course\CourseInstructorController@languages');
-Route::get('instructor/courseinfo/{course}','course\CourseInstructorController@courseinfo');
+Route::get('instructor/course/{course}','course\CourseInstructorController@getCourse');
 Route::get('instructor/courses', 'course\CourseInstructorController@courses');
 Route::resource('instructor', 'course\CourseInstructorController',['parameters' => [
   'instructor' => 'course',
 ]]);
-
+/**
+ * curriculum routes
+*/
+Route::prefix('curriculum')->group(function()
+{
+  Route::get('{id}','course\CurriculumController@show');
+  Route::delete('chapter/{id}','course\CurriculumController@deleteChapter');
+  Route::post('chapter/create/{id}','course\CurriculumController@createChapter');
+  Route::put('chapter/update/{id}','course\CurriculumController@updateChapter');
+  /**
+   * curriculum_content routes
+  */
+  Route::post('content/create/{chapter_id}','course\ContentController@create');
+  Route::put('content/update/{id}','course\ContentController@update');
+  Route::delete('content/{id}','course\ContentController@delete');
+  /**
+   * curriculum_content resources routes
+  */
+  Route::get('content/resource/{id}','course\ContentController@resource');
+  Route::get('content/resources/{id}','course\ContentController@resources');
+  Route::post('content/resource/upload','course\ContentController@upload');
+  Route::delete('content/resource/remove/{id}','course\ContentController@deleteResource');
+  Route::delete('content/removevideo/{content_id}','course\ContentController@deleteVideo');
+});
 /**
  * course explorer
  */
-
 Route::prefix('course')->group(function()
 {
   Route::get('{id}','course\CourseExplorerController@show');
@@ -70,32 +92,7 @@ Route::prefix('course')->group(function()
   Route::post('enroll/{id}','course\CourseExplorerController@enroll')
   ->middleware('auth');
 });
-
-Route::prefix('curriculum')->group(function()
-{
-  Route::get('{id}','course\CurriculumController@show');
-  Route::delete('chapter/{id}','course\CurriculumController@deleteChapter');
-  Route::post('chapter/create/{id}','course\CurriculumController@createChapter');
-  Route::put('chapter/update/{id}','course\CurriculumController@updateChapter');
-});
-
-/**
- * curriculum_content routes
-*/
-Route::prefix('curriculum/content')->group(function()
-{
-  Route::post('/create/{chapter_id}','course\ContentController@create');
-  Route::put('/update/{id}','course\ContentController@update');
-  Route::delete('/{id}','course\ContentController@delete');
-
-  Route::get('resource/{id}','course\ContentController@resource');
-  Route::get('resources/{id}','course\ContentController@resources');
-  Route::post('resource/upload','course\ContentController@upload');
-  Route::delete('resource/remove/{id}','course\ContentController@deleteResource');
-  Route::delete('removevideo/{content_id}','course\ContentController@deleteVideo');
-});
 /**
  * Profile routes
  */
-
 Route::resource('profile',"User\ProfileController");
