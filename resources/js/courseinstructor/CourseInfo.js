@@ -8,6 +8,7 @@ import DataProvider from '../providers/DataProvider'
 import FileInput from '../providers/FileInput'
 import request from '../helpers/request.js'
 import Loading from '../components/Loading.js'
+import Dialog from '../components/Dialog.js'
 import findByAttr from '../helpers/findByAttr.js'
 
 export default class CourseInfo extends Component {
@@ -28,15 +29,27 @@ export default class CourseInfo extends Component {
           contentType: 'application/json',
       };
       this.handleSubjectChange = (e)=>{
-         request('/instructor/subSubjects/'+ e.target.value,{},'GET').then((data)=>{
+         let value = e.target.value;
+         request('/instructor/subSubjects/'+ value,{},'GET').done((data)=>{
+            let pos = findByAttr(data,"subject_id",value);
             this.setState({
                sub_subjects : data,
                course : {
                   ...this.state.course,
-                  subject_id : data[0].subject_id
+                  subject_id :value,
+                  sub_subject_id : data[pos].id
                }
             })
          });
+      }
+      this.handleSubSubjectChange = (e)=>{
+         let value = e.target.value;
+            this.setState({
+               course : {
+                  ...this.state.course,
+                  sub_subject_id : value
+               }
+            })
       }
       this.publish = ()=>{
          request('/instructor/'+ this.props.id,{},
@@ -47,11 +60,10 @@ export default class CourseInfo extends Component {
                   is_published : 1
                }
             })
-         }).fail((message)=>{
-            let errors = message.responseJSON.errors || message.responseJSON.message;
-              this.setState({
-                 errors : errors
-              })
+           this.showDialog(message,"success");
+         }).fail((jqXHR)=>{
+            let message = jqXHR.responseJSON;
+            this.showDialog(message,"error");
          });
       }
       this.unpublish = ()=>{
@@ -63,11 +75,10 @@ export default class CourseInfo extends Component {
                   is_published :0
                }
             })
-         }).fail((message)=>{
-            let errors = message.responseJSON.errors || message.responseJSON.message;
-              this.setState({
-                 errors : errors
-              })
+            this.showDialog(message,"warning");
+         }).fail((jqXHR)=>{
+            let message = jqXHR.responseJSON;
+            this.showDialog(message,"error");
          });
       }
    }
@@ -93,42 +104,42 @@ export default class CourseInfo extends Component {
       </small>)
    }
    save(data,errors){
-      console.log(this.state.sub_subjects);
-      console.log(this.state.languages);
-      console.log(data.sub_subject_id);
-      console.log("------------");
-      let labelPos = findByAttr(this.state.sub_subjects,"subject_id",data.subject_id);
+      let subject_id = this.state.course.subject_id;
+      let sub_subject_id = this.state.course.sub_subject_id;
+      data.sub_subject_id = sub_subject_id;
+      request('/instructor/' + this.props.id,data,'PUT').done((message)=>{
+      let labelPos = findByAttr(this.state.sub_subjects,"id",sub_subject_id);
       let lanPos = findByAttr(this.state.languages,'id',data.language_id);
-      data.label = this.state.sub_subjects[labelPos].label;
-      data.sub_subject_id = this.state.sub_subjects[labelPos].id;
-      data.language_name = this.state.languages[lanPos].language_name;
-      let {subject_id,language_name,label,...values} = data;
-      // let {cover_image,...values} = data;
+      let label = this.state.sub_subjects[labelPos].label;
+      let language_name = this.state.languages[lanPos].language_name;
       let course =  {
-             ...values,
-             title : data.title,
-             subject_id : subject_id,
+             ...data,
              language_name : language_name,
              label : label,
-             sub_subject_id :data.sub_subject_id,
+             image : message.cover_image || this.state.course.image
       }
       delete course.cover_image;
-      request('/instructor/' + this.props.id,values,'PUT').done((message)=>{
-         course.image = message.cover_image || course.image
       this.setState({
-         errors : message.message,
          course : course
       })
-   }).fail((message)=> {
-      console.log("failed");
-      console.log(message);
-      course.image = message.cover_image || course.image
-      let errors = message.responseJSON.errors || message.responseJSON.message;
-        this.setState({
-           errors : errors
-        })
+      this.showDialog(message,"success");
+   }).fail(({responseJSON})=> {
+      if (responseJSON.errors) {
+         this.setState({
+            errors : responseJSON.errors
+         })
+      }else {
+         this.showDialog(responseJSON,"error");
+      }
      })
-     delete data.cover_image;
+   }
+   showDialog(message,type){
+      console.log(message);
+      this.props.toggleDialog(true,{
+         title : message.status,
+         body : message.message,
+         type : type
+      })
    }
    cancel(){
       this.setState({
@@ -138,16 +149,18 @@ export default class CourseInfo extends Component {
    }
    renderForm(){
       let fullData = this.state;
-       var {course,subjects,sub_subjects,languages} = fullData;
-       let message  =null;
-      if (this.state.errors.message) {
-         let className  = this.state.errors.status == "success" ? "alert my-2 alert-success" :
-         "alert my-2 alert-danger";
-         message  = (<div className={className}>{this.state.errors.message}</div>)
-      }
+       var {subjects,sub_subjects,languages} = fullData;
+       let course  = {
+          course_fee : fullData.course.course_fee,
+          title : fullData.course.title,
+          description : fullData.course.description,
+          language_id : fullData.course.language_id,
+          level : fullData.course.level,
+          // for error reporting puropse only code is not handling the change of it
+          sub_subject_id : fullData.course.sub_subject_id,
+       }
       return (
          <div className="card-body">
-            {message}
             <Form
                initialErrors={this.state.errors}
               initialValues={course}
@@ -170,13 +183,13 @@ export default class CourseInfo extends Component {
                 {errors.description && this.renderErrors(errors.description)}
                </div>
                <div className="form-group">
-                  <Select defaultValue= {values.subject_id} name="subject_id"
-                     onChange={(e)=>{this.handleSubjectChange(e);handleChange(e)}}
+                  <Select defaultValue= {this.state.course.subject_id} name="subject_id"
+                     onChange={this.handleSubjectChange}
                   data={subjects} keys={{value : "label"}}/>
-                  {errors.subject_id && this.renderErrors(errors.subject_id)}
                </div>
                <div className="form-group">
-                <Select defaultValue= {values.sub_subject_id} name="sub_subject_id" {...handlers}
+                <Select defaultValue= {this.state.course.sub_subject_id} name="sub_subject_id"
+                   onChange={this.handleSubSubjectChange}
                 data={sub_subjects} keys={{value : "label"}}/>
                 {errors.sub_subject_id && this.renderErrors(errors.sub_subject_id)}
                </div>
@@ -239,7 +252,7 @@ export default class CourseInfo extends Component {
    }
    render(){
       return (
-        <div className="card col-sm-8"  style={{minHeight:500 + "px"}}>
+        <div className="card col-sm-8 position-relative"  style={{minHeight:500 + "px"}}>
            <DataProvider options={this.options}
                 renderLoading={()=>{ return <Loading/>}}
                 renderError={(error)=>{

@@ -6,6 +6,7 @@ import FileInput from '../providers/FileInput'
 import Content from './Content'
 import ResourceList from './ResourceList'
 import request from '../helpers/request.js'
+import findByAttr from '../helpers/findByAttr.js'
 
 export default class Chapter extends Component {
    constructor(props){
@@ -26,7 +27,11 @@ export default class Chapter extends Component {
                message.data
             ]
          })
-       })
+         this.props.showDialog(message,"success");
+       }).fail((jqXHR)=>{
+          let message = jqXHR.responseJSON;
+          this.props.showDialog(message,"error");
+       });
      };
      this.save = (data)=>{
         request("/curriculum/chapter/update/" + this.state.id,data,"PUT")
@@ -36,7 +41,11 @@ export default class Chapter extends Component {
             title : data.chapter_title,
             editing : false
          })
-       })
+        this.props.showDialog(message,"success");
+       }).fail((jqXHR)=>{
+          let message = jqXHR.responseJSON;
+          this.props.showDialog(message,"error");
+       });
      };
      this.delete = ()=>{
         request("/curriculum/chapter/update/" + this.state.id,data,"PUT")
@@ -46,7 +55,11 @@ export default class Chapter extends Component {
             title : data.chapter_title,
             editing : false
          })
-       })
+         this.props.showDialog(message,"success");
+       }).fail((jqXHR)=>{
+          let message = jqXHR.responseJSON;
+          this.props.showDialog(message,"error");
+       });
      };
      this.editTitle = ()=>{
         this.setState({
@@ -68,12 +81,16 @@ export default class Chapter extends Component {
     deleteContent(id){
       request("/curriculum/content/" + id,{},"DELETE")
      .done((message)=>{
-        let pos  = this.findContentById(id);
+        let pos  = findByAttr(this.state.contents,"id",id);
         this.state.contents.splice(pos,1);
         this.setState({
            contents : this.state.contents
         })
-     })
+       this.props.showDialog(message,"success");
+     }).fail((jqXHR)=>{
+        let message = jqXHR.responseJSON;
+        this.props.showDialog(message,"error");
+     });
    };
 
    renderContents(){
@@ -87,22 +104,11 @@ export default class Chapter extends Component {
    }
 
    updateContent(id,content){
-      let pos  = this.findContentById(id);
+      let pos  = findByAttr(this.state.contents,"id",id);
       this.state.contents[pos] = content;
       this.setState({
          contents : this.state.contents
       })
-   }
-
-   findContentById(id){
-      let pos = -1;
-      for (var i = 0; i < this.state.contents.length; i++) {
-         if (this.state.contents[i].content_id ==id) {
-            pos = i;
-            break;
-         }
-      }
-      return pos;
    }
 
    randomInteger(){

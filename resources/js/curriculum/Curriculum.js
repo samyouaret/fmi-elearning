@@ -41,7 +41,11 @@ export default class Curriculum extends Component {
                   newChapter
                ]
             })
-          })
+            this.showDialog(message,"success");
+          }).fail((jqXHR)=>{
+             let message = jqXHR.responseJSON;
+             this.showDialog(message,"error");
+          });
         };
         this.deleteChapter = ($id)=>{
            request("/curriculum/chapter/" + $id,{},"DELETE")
@@ -51,8 +55,20 @@ export default class Curriculum extends Component {
             this.setState({
                chapters :this.state.chapters
             })
-          })
+            this.showDialog(message,"success");
+         }).fail((jqXHR)=>{
+            let message = jqXHR.responseJSON;
+            this.showDialog(message,"error");
+         });
+
         };
+   }
+   showDialog(message,type){
+      this.props.toggleDialog(true,{
+         title : message.status,
+         body : message.message,
+         type : type
+      })
    }
    // data is array of obj are ordered by chapter_id
    shape_chapters(data){
@@ -87,6 +103,7 @@ export default class Curriculum extends Component {
                id={chapter.chapter_id}
                title={chapter.chapter_title}
                delete={this.deleteChapter.bind(this,chapter.chapter_id)}
+               showDialog={this.showDialog.bind(this)}
                />);
       })
    }

@@ -4,13 +4,16 @@ import Navbar from './Navbar'
 import Curriculum from '../curriculum/Curriculum'
 import loadData from "./dataLoader"
 import request from '../helpers/request.js'
+import Dialog from '../components/Dialog.js'
 
 class CourseBuilder extends Component {
    constructor(props) {
       super(props);
       // console.log(props);
       this.state = {
-         display : 0
+         display : 0,
+        displayDialog : false,
+        dialogData :{}
       }
       this.id =  this.getCourseId();
       this.showCourseInfo = this.showCourseInfo.bind(this);
@@ -30,9 +33,32 @@ class CourseBuilder extends Component {
          display : 1
       });
    }
+   toggleDialog(bool,dialogData){
+      this.setState({
+        displayDialog :bool,
+        dialogData:{
+           ...this.state.dialogData,
+           ...dialogData
+        }
+      })
+      if (bool) {
+         setTimeout(()=>{
+            this.setState({
+               displayDialog :false
+            })
+         }, 2000);
+      }
+   }
+   renderDialog(){
+      return this.state.displayDialog ?
+      <Dialog  dismiss={this.toggleDialog.bind(this,false,{})}
+         {...this.state.dialogData}></Dialog> : null;
+   }
    render(){
-      const content = this.state.display == 0 ? <CourseInfo id={this.id}/> :
-      <Curriculum id={this.id}/>;
+      let boundFunc = this.toggleDialog.bind(this);
+      const content = this.state.display == 0 ?
+      <CourseInfo id={this.id} toggleDialog={boundFunc}/> :
+      <Curriculum id={this.id} toggleDialog={boundFunc}/>;
       return (
          <div className="container-fluid border border-secondary h-100" style={{minHeight:500 + "px"}}>
          <div className="row flex-row justify-content-end" style={{minHeight:500 + "px"}}>
@@ -43,6 +69,7 @@ class CourseBuilder extends Component {
            />
            {content}
          </div>
+         {this.renderDialog()}
         </div>
       )
    }

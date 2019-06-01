@@ -53,8 +53,8 @@ class CurriculumController extends Controller
       $data = $request->all();
       unset($data["_method"]);
       return DB::table('course_chapter')->where('id',$id)->update($data) ?
-      response()->json(['status'=>'success','message' =>"chapter has been updated successfully"],200) :
-      response()->json(['status'=>'failed','message' =>"chapter cannot be updated"],413);
+      response()->json(['status'=>'success','message' =>"title has been updated successfully"],200) :
+      response()->json(['status'=>'failed','message' =>"title has not been changed"],413);
    }
 
    public function deleteChapter(int $id){

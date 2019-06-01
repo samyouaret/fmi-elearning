@@ -61270,6 +61270,118 @@ if (token) {
 
 /***/ }),
 
+/***/ "./resources/js/components/Dialog.js":
+/*!*******************************************!*\
+  !*** ./resources/js/components/Dialog.js ***!
+  \*******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Dialog; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+var Dialog =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(Dialog, _Component);
+
+  function Dialog(props) {
+    var _this;
+
+    _classCallCheck(this, Dialog);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Dialog).call(this, props)); // display must be handled by parent Component
+
+    _this.state = {
+      title: _this.props.title || "",
+      subTitle: _this.props.subTitle || "",
+      body: _this.props.body || "",
+      type: _this.props.type || "message"
+    };
+    return _this;
+  }
+
+  _createClass(Dialog, [{
+    key: "getMessageImage",
+    value: function getMessageImage() {
+      var image = "/storage/images/";
+      var type = this.state.type;
+
+      if (type != "success" && type != "error" && type != "warning") {
+        type = "message";
+      }
+
+      return image + type + ".png";
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "toast w-100",
+        style: {
+          position: "fixed",
+          top: 50 + "%",
+          left: 50 + "%",
+          opacity: 1,
+          zIndex: 99999,
+          transform: "translate(-50%,-50%)"
+        },
+        role: "alert",
+        "aria-live": "assertive",
+        "aria-atomic": "true"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "toast-header"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
+        style: {
+          width: 24 + "px"
+        },
+        src: this.getMessageImage(),
+        className: "rounded mr-2",
+        alt: "..."
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", {
+        className: "mr-auto"
+      }, this.state.title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, this.state.subTitle), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "button",
+        className: "ml-2 mb-1 close",
+        onClick: this.props.dismiss,
+        "aria-label": "Close"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        "aria-hidden": "true"
+      }, "\xD7"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "toast-body"
+      }, this.state.body));
+    }
+  }]);
+
+  return Dialog;
+}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
+
+
+
+/***/ }),
+
 /***/ "./resources/js/components/Loading.js":
 /*!********************************************!*\
   !*** ./resources/js/components/Loading.js ***!
@@ -61422,7 +61534,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _curriculum_Curriculum__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../curriculum/Curriculum */ "./resources/js/curriculum/Curriculum.js");
 /* harmony import */ var _dataLoader__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./dataLoader */ "./resources/js/courseinstructor/dataLoader.js");
 /* harmony import */ var _helpers_request_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../helpers/request.js */ "./resources/js/helpers/request.js");
+/* harmony import */ var _components_Dialog_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../components/Dialog.js */ "./resources/js/components/Dialog.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -61447,6 +61566,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
 var CourseBuilder =
 /*#__PURE__*/
 function (_Component) {
@@ -61460,7 +61580,9 @@ function (_Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(CourseBuilder).call(this, props)); // console.log(props);
 
     _this.state = {
-      display: 0
+      display: 0,
+      displayDialog: false,
+      dialogData: {}
     };
     _this.id = _this.getCourseId();
     _this.showCourseInfo = _this.showCourseInfo.bind(_assertThisInitialized(_this));
@@ -61489,12 +61611,40 @@ function (_Component) {
       });
     }
   }, {
+    key: "toggleDialog",
+    value: function toggleDialog(bool, dialogData) {
+      var _this2 = this;
+
+      this.setState({
+        displayDialog: bool,
+        dialogData: _objectSpread({}, this.state.dialogData, dialogData)
+      });
+
+      if (bool) {
+        setTimeout(function () {
+          _this2.setState({
+            displayDialog: false
+          });
+        }, 2000);
+      }
+    }
+  }, {
+    key: "renderDialog",
+    value: function renderDialog() {
+      return this.state.displayDialog ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Dialog_js__WEBPACK_IMPORTED_MODULE_6__["default"], _extends({
+        dismiss: this.toggleDialog.bind(this, false, {})
+      }, this.state.dialogData)) : null;
+    }
+  }, {
     key: "render",
     value: function render() {
+      var boundFunc = this.toggleDialog.bind(this);
       var content = this.state.display == 0 ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_CourseInfo__WEBPACK_IMPORTED_MODULE_1__["default"], {
-        id: this.id
+        id: this.id,
+        toggleDialog: boundFunc
       }) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_curriculum_Curriculum__WEBPACK_IMPORTED_MODULE_3__["default"], {
-        id: this.id
+        id: this.id,
+        toggleDialog: boundFunc
       });
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "container-fluid border border-secondary h-100",
@@ -61510,7 +61660,7 @@ function (_Component) {
         showCourseInfo: this.showCourseInfo,
         showCurriculum: this.showCurriculum,
         publish: this.publish
-      }), content));
+      }), content), this.renderDialog());
     }
   }]);
 
@@ -61542,14 +61692,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _providers_FileInput__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../providers/FileInput */ "./resources/js/providers/FileInput.js");
 /* harmony import */ var _helpers_request_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../helpers/request.js */ "./resources/js/helpers/request.js");
 /* harmony import */ var _components_Loading_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../components/Loading.js */ "./resources/js/components/Loading.js");
-/* harmony import */ var _helpers_findByAttr_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../helpers/findByAttr.js */ "./resources/js/helpers/findByAttr.js");
+/* harmony import */ var _components_Dialog_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../components/Dialog.js */ "./resources/js/components/Dialog.js");
+/* harmony import */ var _helpers_findByAttr_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../helpers/findByAttr.js */ "./resources/js/helpers/findByAttr.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
-function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
-
-function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
@@ -61570,6 +61717,7 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -61609,13 +61757,27 @@ function (_Component) {
     };
 
     _this.handleSubjectChange = function (e) {
-      Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_8__["default"])('/instructor/subSubjects/' + e.target.value, {}, 'GET').then(function (data) {
+      var value = e.target.value;
+      Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_8__["default"])('/instructor/subSubjects/' + value, {}, 'GET').done(function (data) {
+        var pos = Object(_helpers_findByAttr_js__WEBPACK_IMPORTED_MODULE_11__["default"])(data, "subject_id", value);
+
         _this.setState({
           sub_subjects: data,
           course: _objectSpread({}, _this.state.course, {
-            subject_id: data[0].subject_id
+            subject_id: value,
+            sub_subject_id: data[pos].id
           })
         });
+      });
+    };
+
+    _this.handleSubSubjectChange = function (e) {
+      var value = e.target.value;
+
+      _this.setState({
+        course: _objectSpread({}, _this.state.course, {
+          sub_subject_id: value
+        })
       });
     };
 
@@ -61626,12 +61788,12 @@ function (_Component) {
             is_published: 1
           })
         });
-      }).fail(function (message) {
-        var errors = message.responseJSON.errors || message.responseJSON.message;
 
-        _this.setState({
-          errors: errors
-        });
+        _this.showDialog(message, "success");
+      }).fail(function (jqXHR) {
+        var message = jqXHR.responseJSON;
+
+        _this.showDialog(message, "error");
       });
     };
 
@@ -61642,12 +61804,12 @@ function (_Component) {
             is_published: 0
           })
         });
-      }).fail(function (message) {
-        var errors = message.responseJSON.errors || message.responseJSON.message;
 
-        _this.setState({
-          errors: errors
-        });
+        _this.showDialog(message, "warning");
+      }).fail(function (jqXHR) {
+        var message = jqXHR.responseJSON;
+
+        _this.showDialog(message, "error");
       });
     };
 
@@ -61684,49 +61846,49 @@ function (_Component) {
     value: function save(data, errors) {
       var _this2 = this;
 
-      console.log(this.state.sub_subjects);
-      console.log(this.state.languages);
-      console.log(data.sub_subject_id);
-      console.log("------------");
-      var labelPos = Object(_helpers_findByAttr_js__WEBPACK_IMPORTED_MODULE_10__["default"])(this.state.sub_subjects, "subject_id", data.subject_id);
-      var lanPos = Object(_helpers_findByAttr_js__WEBPACK_IMPORTED_MODULE_10__["default"])(this.state.languages, 'id', data.language_id);
-      data.label = this.state.sub_subjects[labelPos].label;
-      data.sub_subject_id = this.state.sub_subjects[labelPos].id;
-      data.language_name = this.state.languages[lanPos].language_name;
+      var subject_id = this.state.course.subject_id;
+      var sub_subject_id = this.state.course.sub_subject_id;
+      data.sub_subject_id = sub_subject_id;
+      Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_8__["default"])('/instructor/' + this.props.id, data, 'PUT').done(function (message) {
+        var labelPos = Object(_helpers_findByAttr_js__WEBPACK_IMPORTED_MODULE_11__["default"])(_this2.state.sub_subjects, "id", sub_subject_id);
+        var lanPos = Object(_helpers_findByAttr_js__WEBPACK_IMPORTED_MODULE_11__["default"])(_this2.state.languages, 'id', data.language_id);
+        var label = _this2.state.sub_subjects[labelPos].label;
+        var language_name = _this2.state.languages[lanPos].language_name;
 
-      var subject_id = data.subject_id,
-          language_name = data.language_name,
-          label = data.label,
-          values = _objectWithoutProperties(data, ["subject_id", "language_name", "label"]); // let {cover_image,...values} = data;
+        var course = _objectSpread({}, data, {
+          language_name: language_name,
+          label: label,
+          image: message.cover_image || _this2.state.course.image
+        });
 
-
-      var course = _objectSpread({}, values, {
-        title: data.title,
-        subject_id: subject_id,
-        language_name: language_name,
-        label: label,
-        sub_subject_id: data.sub_subject_id
-      });
-
-      delete course.cover_image;
-      Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_8__["default"])('/instructor/' + this.props.id, values, 'PUT').done(function (message) {
-        course.image = message.cover_image || course.image;
+        delete course.cover_image;
 
         _this2.setState({
-          errors: message.message,
           course: course
         });
-      }).fail(function (message) {
-        console.log("failed");
-        console.log(message);
-        course.image = message.cover_image || course.image;
-        var errors = message.responseJSON.errors || message.responseJSON.message;
 
-        _this2.setState({
-          errors: errors
-        });
+        _this2.showDialog(message, "success");
+      }).fail(function (_ref) {
+        var responseJSON = _ref.responseJSON;
+
+        if (responseJSON.errors) {
+          _this2.setState({
+            errors: responseJSON.errors
+          });
+        } else {
+          _this2.showDialog(responseJSON, "error");
+        }
       });
-      delete data.cover_image;
+    }
+  }, {
+    key: "showDialog",
+    value: function showDialog(message, type) {
+      console.log(message);
+      this.props.toggleDialog(true, {
+        title: message.status,
+        body: message.message,
+        type: type
+      });
     }
   }, {
     key: "cancel",
@@ -61742,33 +61904,32 @@ function (_Component) {
       var _this3 = this;
 
       var fullData = this.state;
-      var course = fullData.course,
-          subjects = fullData.subjects,
+      var subjects = fullData.subjects,
           sub_subjects = fullData.sub_subjects,
           languages = fullData.languages;
-      var message = null;
-
-      if (this.state.errors.message) {
-        var className = this.state.errors.status == "success" ? "alert my-2 alert-success" : "alert my-2 alert-danger";
-        message = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          className: className
-        }, this.state.errors.message);
-      }
-
+      var course = {
+        course_fee: fullData.course.course_fee,
+        title: fullData.course.title,
+        description: fullData.course.description,
+        language_id: fullData.course.language_id,
+        level: fullData.course.level,
+        // for error reporting puropse only code is not handling the change of it
+        sub_subject_id: fullData.course.sub_subject_id
+      };
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "card-body"
-      }, message, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_formcomponents_Form__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_formcomponents_Form__WEBPACK_IMPORTED_MODULE_2__["default"], {
         initialErrors: this.state.errors,
         initialValues: course,
         onSubmit: this.save // validate={this.validate}
 
-      }, function (_ref) {
-        var values = _ref.values,
-            handleChange = _ref.handleChange,
-            handleBlur = _ref.handleBlur,
-            handleSubmit = _ref.handleSubmit,
-            errors = _ref.errors,
-            touched = _ref.touched;
+      }, function (_ref2) {
+        var values = _ref2.values,
+            handleChange = _ref2.handleChange,
+            handleBlur = _ref2.handleBlur,
+            handleSubmit = _ref2.handleSubmit,
+            errors = _ref2.errors,
+            touched = _ref2.touched;
         var handlers = {
           onChange: handleChange,
           onBlur: handleBlur
@@ -61791,28 +61952,24 @@ function (_Component) {
         }, handlers)), errors.description && _this3.renderErrors(errors.description)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "form-group"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_formcomponents_Select__WEBPACK_IMPORTED_MODULE_4__["default"], {
-          defaultValue: values.subject_id,
+          defaultValue: _this3.state.course.subject_id,
           name: "subject_id",
-          onChange: function onChange(e) {
-            _this3.handleSubjectChange(e);
-
-            handleChange(e);
-          },
+          onChange: _this3.handleSubjectChange,
           data: subjects,
           keys: {
             value: "label"
           }
-        }), errors.subject_id && _this3.renderErrors(errors.subject_id)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "form-group"
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_formcomponents_Select__WEBPACK_IMPORTED_MODULE_4__["default"], _extends({
-          defaultValue: values.sub_subject_id,
-          name: "sub_subject_id"
-        }, handlers, {
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_formcomponents_Select__WEBPACK_IMPORTED_MODULE_4__["default"], {
+          defaultValue: _this3.state.course.sub_subject_id,
+          name: "sub_subject_id",
+          onChange: _this3.handleSubSubjectChange,
           data: sub_subjects,
           keys: {
             value: "label"
           }
-        })), errors.sub_subject_id && _this3.renderErrors(errors.sub_subject_id)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        }), errors.sub_subject_id && _this3.renderErrors(errors.sub_subject_id)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "form-group"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_formcomponents_Select__WEBPACK_IMPORTED_MODULE_4__["default"], _extends({
           defaultValue: values.language_id,
@@ -61897,7 +62054,7 @@ function (_Component) {
       var _this4 = this;
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "card col-sm-8",
+        className: "card col-sm-8 position-relative",
         style: {
           minHeight: 500 + "px"
         }
@@ -62105,6 +62262,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Content__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Content */ "./resources/js/curriculum/Content.js");
 /* harmony import */ var _ResourceList__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./ResourceList */ "./resources/js/curriculum/ResourceList.js");
 /* harmony import */ var _helpers_request_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../helpers/request.js */ "./resources/js/helpers/request.js");
+/* harmony import */ var _helpers_findByAttr_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../helpers/findByAttr.js */ "./resources/js/helpers/findByAttr.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -62142,6 +62300,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
 var Chapter =
 /*#__PURE__*/
 function (_Component) {
@@ -62165,6 +62324,12 @@ function (_Component) {
         _this.setState({
           contents: [].concat(_toConsumableArray(_this.state.contents), [message.data])
         });
+
+        _this.props.showDialog(message, "success");
+      }).fail(function (jqXHR) {
+        var message = jqXHR.responseJSON;
+
+        _this.props.showDialog(message, "error");
       });
     };
 
@@ -62175,6 +62340,12 @@ function (_Component) {
           title: data.chapter_title,
           editing: false
         });
+
+        _this.props.showDialog(message, "success");
+      }).fail(function (jqXHR) {
+        var message = jqXHR.responseJSON;
+
+        _this.props.showDialog(message, "error");
       });
     };
 
@@ -62185,6 +62356,12 @@ function (_Component) {
           title: data.chapter_title,
           editing: false
         });
+
+        _this.props.showDialog(message, "success");
+      }).fail(function (jqXHR) {
+        var message = jqXHR.responseJSON;
+
+        _this.props.showDialog(message, "error");
       });
     };
 
@@ -62215,13 +62392,19 @@ function (_Component) {
       var _this2 = this;
 
       Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_7__["default"])("/curriculum/content/" + id, {}, "DELETE").done(function (message) {
-        var pos = _this2.findContentById(id);
+        var pos = Object(_helpers_findByAttr_js__WEBPACK_IMPORTED_MODULE_8__["default"])(_this2.state.contents, "id", id);
 
         _this2.state.contents.splice(pos, 1);
 
         _this2.setState({
           contents: _this2.state.contents
         });
+
+        _this2.props.showDialog(message, "success");
+      }).fail(function (jqXHR) {
+        var message = jqXHR.responseJSON;
+
+        _this2.props.showDialog(message, "error");
       });
     }
   }, {
@@ -62242,25 +62425,11 @@ function (_Component) {
   }, {
     key: "updateContent",
     value: function updateContent(id, content) {
-      var pos = this.findContentById(id);
+      var pos = Object(_helpers_findByAttr_js__WEBPACK_IMPORTED_MODULE_8__["default"])(this.state.contents, "id", id);
       this.state.contents[pos] = content;
       this.setState({
         contents: this.state.contents
       });
-    }
-  }, {
-    key: "findContentById",
-    value: function findContentById(id) {
-      var pos = -1;
-
-      for (var i = 0; i < this.state.contents.length; i++) {
-        if (this.state.contents[i].content_id == id) {
-          pos = i;
-          break;
-        }
-      }
-
-      return pos;
     }
   }, {
     key: "randomInteger",
@@ -62922,6 +63091,12 @@ function (_Component) {
         _this.setState({
           chapters: [].concat(_toConsumableArray(_this.state.chapters), [newChapter])
         });
+
+        _this.showDialog(message, "success");
+      }).fail(function (jqXHR) {
+        var message = jqXHR.responseJSON;
+
+        _this.showDialog(message, "error");
       });
     };
 
@@ -62934,14 +63109,29 @@ function (_Component) {
         _this.setState({
           chapters: _this.state.chapters
         });
+
+        _this.showDialog(message, "success");
+      }).fail(function (jqXHR) {
+        var message = jqXHR.responseJSON;
+
+        _this.showDialog(message, "error");
       });
     };
 
     return _this;
-  } // data is array of obj are ordered by chapter_id
-
+  }
 
   _createClass(Curriculum, [{
+    key: "showDialog",
+    value: function showDialog(message, type) {
+      this.props.toggleDialog(true, {
+        title: message.status,
+        body: message.message,
+        type: type
+      });
+    } // data is array of obj are ordered by chapter_id
+
+  }, {
     key: "shape_chapters",
     value: function shape_chapters(data) {
       var current_id = 0;
@@ -62985,7 +63175,8 @@ function (_Component) {
           contents: chapter.contents,
           id: chapter.chapter_id,
           title: chapter.chapter_title,
-          delete: _this2.deleteChapter.bind(_this2, chapter.chapter_id)
+          delete: _this2.deleteChapter.bind(_this2, chapter.chapter_id),
+          showDialog: _this2.showDialog.bind(_this2)
         });
       });
     }

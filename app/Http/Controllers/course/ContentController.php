@@ -106,7 +106,7 @@ class ContentController extends Controller
           }
       return DB::table('course_chapter_content')->where('id',$id)->update($data) ?
       response()->json(['status'=>'success','message' =>"content has been updated successfully"],200) :
-      response()->json(['status'=>'failed','message' =>"content cannot be updated"],413);
+      response()->json(['status'=>'failed','message' =>"content has not been changed"],413);
     }
 
     protected function delete(int $id){

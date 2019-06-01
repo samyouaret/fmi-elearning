@@ -92,7 +92,7 @@ class CourseInstructorController extends Controller
       $course->is_published = 0;
       if ($course->save()) {
          return response()->json(
-           ['status'=>'success','message' =>"course now is unpublished."],200);
+           ['status'=>'warning','message' =>"course now is unpublished."],200);
       }
       return response()->json(
          ['status'=>'failed','message' =>"somthing went wrong try again."],422);
@@ -147,7 +147,8 @@ class CourseInstructorController extends Controller
                  'subjects'=>$subjects,
                  'sub_subjects'=>$sub_subjects,
                  'languages' =>$languages
-              ];
+
+       ];
       return response()->json($result);
     }
 
@@ -195,9 +196,8 @@ class CourseInstructorController extends Controller
          "level"=>"required|nullable|integer|max:3",
       ]);
       $data = $request->all();
-      $cover_image = $data['image'];
+      $cover_image = "";
       unset($data['_method']);
-      unset($data['image']);
       if ($request->hasFile('cover_image')) {
           $fileNameWithExt = $request->file('cover_image')->getClientOriginalName();
           //get filename
@@ -213,12 +213,11 @@ class CourseInstructorController extends Controller
           $cover_image = $data['cover_image'];
       }
       return DB::table('course')->where('id',$id)->update($data) ?
-      response()->json([
-       "message"=>['status'=>'success','message' =>"course has been updated successfully"],
+      response()->json(['status'=>'success',
+      'message' =>"course has been updated successfully",
        "cover_image"=>$cover_image],200) :
       response()->json([
-      "message"=>['status'=>'failed','message' =>"course has not been updated"],
-      "cover_image"=>$cover_image],413);
+      'status'=>'failed','message' =>"course has not been changed"],413);
     }
 
     /**
