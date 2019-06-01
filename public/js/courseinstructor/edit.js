@@ -62638,6 +62638,8 @@ function (_Component) {
       _this.updateEditing(0);
     };
 
+    _this.timer = null;
+
     _this.handleChange = function (event) {
       var target = event.target;
       var value = target.type === "checkbox" ? target.checked : target.value;
@@ -62647,6 +62649,7 @@ function (_Component) {
       var data = _objectSpread({}, _this.state.data, _defineProperty({}, target.name, value));
 
       clearTimeout(_this.timer);
+      _this.timer = null;
 
       _this.setState({
         data: data
@@ -62688,7 +62691,7 @@ function (_Component) {
     };
 
     _this.update = function (data, state) {
-      setTimeout(function () {
+      _this.timer = setTimeout(function () {
         data.video_url = data.video_url || "";
         Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_10__["default"])("/curriculum/content/update/" + _this.state.data.content_id, data, "PUT").done(function (message) {
           _this.setState(_objectSpread({
@@ -62697,7 +62700,7 @@ function (_Component) {
             data: data
           }, state));
         });
-      }, 1500);
+      }, 3000);
     };
 
     _this.deleteVideo = function () {

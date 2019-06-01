@@ -47,6 +47,7 @@ export default class Content extends Component {
      this.cancel =()=>{
         this.updateEditing(0);
      };
+     this.timer = null;
      this.handleChange = (event)=>{
         const target = event.target;
         const value = target.type === "checkbox" ? target.checked : target.value;
@@ -57,6 +58,7 @@ export default class Content extends Component {
         [target.name] : value
         }
         clearTimeout(this.timer);
+        this.timer = null;
         this.setState({
            data : data
         })
@@ -91,7 +93,7 @@ export default class Content extends Component {
        this.setState(state);
      }
      this.update = (data,state)=>{
-        setTimeout(()=>{
+        this.timer = setTimeout(()=>{
            data.video_url = data.video_url || "";
           request("/curriculum/content/update/" + this.state.data.content_id,data,"PUT")
           .done((message)=>{
@@ -102,7 +104,7 @@ export default class Content extends Component {
                ...state
             });
          })
-      },1500);
+      },3000);
      }
      this.deleteVideo = ()=>{
         request("/curriculum/content/removevideo/" + this.state.data.content_id,{},"DELETE").done((message)=>{
