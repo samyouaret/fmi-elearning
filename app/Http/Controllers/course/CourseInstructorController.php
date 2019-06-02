@@ -47,7 +47,14 @@ class CourseInstructorController extends Controller
      */
     public function store(Request $request)
     {
-
+      $this->validate($request,['title'=>'bail|required|string']);
+      $data = $request->all();
+      $id = DB::table("course")->
+      insertGetId($data);
+      return $id ?
+         response()->json(["id"=>$id,'status'=>'success',
+         'message' =>"course has been created successfully"],200) :
+         response()->json(['status'=>'failed','message' =>"course has not been created"],413);
     }
 
     /**

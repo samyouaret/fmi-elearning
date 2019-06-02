@@ -9,9 +9,9 @@ class Course extends Component {
        <span style={style} className="badge badge-success badge-pill m-1 text-white"> published</span>
 
     return (
-     <div className="card">
+     <div className="card col-sm-4">
       <div className="card-body">
-      <img class="card-img-top" src={"/storage/course_image/" + course.cover_image}
+      <img className="card-img-top" src={"/storage/course_image/" + course.cover_image}
          alt="course image"/>
       <h3 className="card-title">
       {course.title}

@@ -13,6 +13,7 @@ export default function request(url,data,method="POST"){
       form_data.append('_method',method);
       method = "POST";
    }
+   console.log(method);
    return $.ajax({
    type: method,
    url: url,

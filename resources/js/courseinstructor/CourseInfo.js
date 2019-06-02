@@ -10,7 +10,9 @@ import request from '../helpers/request.js'
 import Loading from '../components/Loading.js'
 import Dialog from '../components/Dialog.js'
 import findByAttr from '../helpers/findByAttr.js'
+
 // TODO: fix bug unauthenticated routes errors
+
 export default class CourseInfo extends Component {
    constructor(props){
       super(props);

@@ -63865,6 +63865,7 @@ function request(url, data) {
     method = "POST";
   }
 
+  console.log(method);
   return $.ajax({
     type: method,
     url: url,
