@@ -61658,6 +61658,52 @@ function (_Component) {
 
 /***/ }),
 
+/***/ "./resources/js/helpers/findByAttr.js":
+/*!********************************************!*\
+  !*** ./resources/js/helpers/findByAttr.js ***!
+  \********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return findByAttr; });
+function findByAttr(arr, attr, val) {
+  var pos = -1;
+
+  for (var i = 0; i < arr.length; i++) {
+    if (arr[i][attr] == val) {
+      return i;
+    }
+  }
+
+  return pos;
+}
+
+/***/ }),
+
+/***/ "./resources/js/helpers/levels.js":
+/*!****************************************!*\
+  !*** ./resources/js/helpers/levels.js ***!
+  \****************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ([{
+  id: 1,
+  value: 'beginner'
+}, {
+  id: 2,
+  value: 'intermediate'
+}, {
+  id: 3,
+  value: 'advanced'
+}]);
+
+/***/ }),
+
 /***/ "./resources/js/helpers/request.js":
 /*!*****************************************!*\
   !*** ./resources/js/helpers/request.js ***!
@@ -61729,7 +61775,9 @@ function shortenString(str) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _helpers_shortenString_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../helpers/shortenString.js */ "./resources/js/helpers/shortenString.js");
+/* harmony import */ var _helpers_shortenString__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../helpers/shortenString */ "./resources/js/helpers/shortenString.js");
+/* harmony import */ var _helpers_levels__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../helpers/levels */ "./resources/js/helpers/levels.js");
+/* harmony import */ var _helpers_findByAttr__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../helpers/findByAttr */ "./resources/js/helpers/findByAttr.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -61751,6 +61799,8 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
+
 var Course =
 /*#__PURE__*/
 function (_Component) {
@@ -61766,8 +61816,9 @@ function (_Component) {
     key: "render",
     value: function render() {
       var course = this.props.data;
+      var level = _helpers_levels__WEBPACK_IMPORTED_MODULE_2__["default"][Object(_helpers_findByAttr__WEBPACK_IMPORTED_MODULE_3__["default"])(_helpers_levels__WEBPACK_IMPORTED_MODULE_2__["default"], 'id', course.level)].value;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "col-sm-4 my-2"
+        className: "col-sm-6 col-md-4 my-2"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         className: "text-dark",
         style: {
@@ -61784,7 +61835,11 @@ function (_Component) {
         className: "card-img my-1",
         src: "/storage/course_image/" + course.cover_image,
         alt: "course image"
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, Object(_helpers_shortenString_js__WEBPACK_IMPORTED_MODULE_1__["default"])(course.description, 80))))));
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        className: "badge badge-secondary badge-pill m-1 text-white"
+      }, level), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, Object(_helpers_shortenString__WEBPACK_IMPORTED_MODULE_1__["default"])(course.description, 80)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        className: "badge badge-info m-1 p-2 text-white"
+      }, course.course_fee, " $")))));
     }
   }]);
 

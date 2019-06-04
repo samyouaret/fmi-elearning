@@ -3,7 +3,7 @@ import loadData from "./dataLoader"
 import Form from '../formcomponents/Form'
 import Input from '../formcomponents/Input'
 import Select from '../formcomponents/Select'
-import levelsList from './levels'
+import levelsList from '../helpers/levels'
 import DataProvider from '../providers/DataProvider'
 import FileInput from '../providers/FileInput'
 import request from '../helpers/request.js'

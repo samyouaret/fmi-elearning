@@ -61687,7 +61687,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _formcomponents_Form__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../formcomponents/Form */ "./resources/js/formcomponents/Form.js");
 /* harmony import */ var _formcomponents_Input__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../formcomponents/Input */ "./resources/js/formcomponents/Input.js");
 /* harmony import */ var _formcomponents_Select__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../formcomponents/Select */ "./resources/js/formcomponents/Select.js");
-/* harmony import */ var _levels__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./levels */ "./resources/js/courseinstructor/levels.js");
+/* harmony import */ var _helpers_levels__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../helpers/levels */ "./resources/js/helpers/levels.js");
 /* harmony import */ var _providers_DataProvider__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../providers/DataProvider */ "./resources/js/providers/DataProvider.js");
 /* harmony import */ var _providers_FileInput__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../providers/FileInput */ "./resources/js/providers/FileInput.js");
 /* harmony import */ var _helpers_request_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../helpers/request.js */ "./resources/js/helpers/request.js");
@@ -61985,7 +61985,7 @@ function (_Component) {
           defaultValue: values.level,
           name: "level"
         }, handlers, {
-          data: _levels__WEBPACK_IMPORTED_MODULE_5__["default"]
+          data: _helpers_levels__WEBPACK_IMPORTED_MODULE_5__["default"]
         })), errors.level && _this3.renderErrors(errors.level)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "form-group"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, "Price"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_formcomponents_Input__WEBPACK_IMPORTED_MODULE_3__["default"], _extends({
@@ -62218,28 +62218,6 @@ __webpack_require__(/*! ../bootstrap */ "./resources/js/bootstrap.js");
 if (document.getElementById('course')) {
   react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_CourseBuilder__WEBPACK_IMPORTED_MODULE_2__["default"], null), document.getElementById('course'));
 }
-
-/***/ }),
-
-/***/ "./resources/js/courseinstructor/levels.js":
-/*!*************************************************!*\
-  !*** ./resources/js/courseinstructor/levels.js ***!
-  \*************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ([{
-  id: 1,
-  value: 'beginner'
-}, {
-  id: 2,
-  value: 'intermediate'
-}, {
-  id: 3,
-  value: 'advanced'
-}]);
 
 /***/ }),
 
@@ -63832,6 +63810,28 @@ function isEqual(a, b) {
 
   return true;
 }
+
+/***/ }),
+
+/***/ "./resources/js/helpers/levels.js":
+/*!****************************************!*\
+  !*** ./resources/js/helpers/levels.js ***!
+  \****************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ([{
+  id: 1,
+  value: 'beginner'
+}, {
+  id: 2,
+  value: 'intermediate'
+}, {
+  id: 3,
+  value: 'advanced'
+}]);
 
 /***/ }),
 

@@ -61505,7 +61505,7 @@ function (_Component) {
       }, " published");
       console.log(course.cover_image);
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "col-sm-4 my-2"
+        className: "col-sm-6 col-md-4 my-2"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "card"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -61514,9 +61514,9 @@ function (_Component) {
         className: "card-img-top",
         src: "/storage/course_image/" + course.cover_image,
         alt: "course image"
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", {
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", {
         className: "card-title"
-      }, course.title, statusContent), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, Object(_helpers_shortenString_js__WEBPACK_IMPORTED_MODULE_1__["default"])(course.description, 80)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      }, course.title), statusContent, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, Object(_helpers_shortenString_js__WEBPACK_IMPORTED_MODULE_1__["default"])(course.description, 80)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         className: "btn btn-secondary",
         href: "/instructor/" + course.id + "/edit"
       }, "explore"))));
