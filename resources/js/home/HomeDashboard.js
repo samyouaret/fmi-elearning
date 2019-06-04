@@ -55,14 +55,20 @@ class HomeDashboard extends Component {
      this.search = (data)=>{
         this.options.url = "/search";
         this.options.method = "POST";
-        this.loadCourses(1,data,[]);
-        this.setState(data)
+        if (data.search_term) {
+           this.loadCourses(1,data,[]);
+           this.setState(data)
+        }
      }
      this.handleClick = ()=>{
         let data = this.options.url == "/search" ?
         {search_term : this.state.search_term} : {};
         console.log("data in search : ");
         console.log(data);
+        //empty search_term
+        if (data && !data.search_term) {
+           return;
+        }
         let current_page = this.state.paginateData.current_page;
         this.loadCourses(current_page+1,data,this.state.courses);
      }

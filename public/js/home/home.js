@@ -61908,9 +61908,11 @@ function (_Component) {
       _this.options.url = "/search";
       _this.options.method = "POST";
 
-      _this.loadCourses(1, data, []);
+      if (data.search_term) {
+        _this.loadCourses(1, data, []);
 
-      _this.setState(data);
+        _this.setState(data);
+      }
     };
 
     _this.handleClick = function () {
@@ -61918,7 +61920,12 @@ function (_Component) {
         search_term: _this.state.search_term
       } : {};
       console.log("data in search : ");
-      console.log(data);
+      console.log(data); //empty search_term
+
+      if (data && !data.search_term) {
+        return;
+      }
+
       var current_page = _this.state.paginateData.current_page;
 
       _this.loadCourses(current_page + 1, data, _this.state.courses);
