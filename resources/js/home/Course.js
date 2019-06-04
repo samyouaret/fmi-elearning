@@ -9,7 +9,7 @@ class Course extends Component {
      let level = levelsList[findByAttr(levelsList,'id',course.level)].value;
     return (
      <div className="col-sm-6 col-md-4 my-2">
-     <a className="text-dark" style={{textDecoration:"none"}} href={"/instructor/" + course.id  + "/edit"}>
+     <a className="text-dark" style={{textDecoration:"none"}} href={"/enrollment/" + course.id}>
      <div className="card">
       <div className="card-body">
          <h4 className="card-title">

@@ -61824,7 +61824,7 @@ function (_Component) {
         style: {
           textDecoration: "none"
         },
-        href: "/instructor/" + course.id + "/edit"
+        href: "/enrollment/" + course.id
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "card"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {

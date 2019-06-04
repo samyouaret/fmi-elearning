@@ -11,11 +11,12 @@ class Video extends Component {
       }
    }
    render(){
-      return null;
-       (<video className="my-2" id="content_video"
+       return(<React.Fragment>
+          <video className="my-2" id="content_video"
            width="100%" height="auto"
-           src={this.state.url} controls>
-       </video>)
+           src={this.props.url} controls>
+       </video>
+    </React.Fragment>)
    }
 }
 export default Video
