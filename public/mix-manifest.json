@@ -3,5 +3,6 @@
     "/js/courseinstructor/edit.js": "/js/courseinstructor/edit.js",
     "/js/courseinstructor/index.js": "/js/courseinstructor/index.js",
     "/js/formcomponents/DataProviderTest.js": "/js/formcomponents/DataProviderTest.js",
+    "/js/home/home.js": "/js/home/home.js",
     "/js/profile/edit.js": "/js/profile/edit.js"
 }

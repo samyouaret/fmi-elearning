@@ -42,6 +42,8 @@ Auth::routes();
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('/dashboard', 'HomeController@dashboard')->middleware('auth')
 ->name('dashboard');
+Route::get('/courses', 'HomeController@courses');
+Route::post('/search', 'HomeController@search');
 
 /**
  * course builder (instructor routes)

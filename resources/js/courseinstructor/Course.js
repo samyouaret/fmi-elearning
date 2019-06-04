@@ -7,9 +7,10 @@ class Course extends Component {
      let statusContent = course.is_published== 0 ?
        <span style={style} className="badge badge-warning badge-pill m-1 text-gray"> draft</span> :
        <span style={style} className="badge badge-success badge-pill m-1 text-white"> published</span>
-
+      console.log(course.cover_image)
     return (
-     <div className="card col-sm-4">
+     <div className="col-sm-4 my-2">
+     <div className="card">
       <div className="card-body">
       <img className="card-img-top" src={"/storage/course_image/" + course.cover_image}
          alt="course image"/>
@@ -21,6 +22,7 @@ class Course extends Component {
        <a className="btn btn-secondary" href={"/instructor/" + course.id  + "/edit"}>explore</a>
       </div>
      </div>
+   </div>
     );
   }
 }
