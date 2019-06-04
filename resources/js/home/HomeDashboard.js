@@ -51,8 +51,15 @@ class HomeDashboard extends Component {
             loading : false
          })
       }
+     this.validateSearch = (data)=>{
+        return data && data.search_term && data.search_term.trim();
+     }
      this.renderLoading = () => (<Loading/>);
      this.search = (data)=>{
+        if (!this.validateSearch(data)) {
+           console.log("not validate");
+           return;
+        }
         this.options.url = "/search";
         this.options.method = "POST";
         if (data.search_term) {
@@ -61,13 +68,13 @@ class HomeDashboard extends Component {
         }
      }
      this.handleClick = ()=>{
-        let data = this.options.url == "/search" ?
-        {search_term : this.state.search_term} : {};
-        console.log("data in search : ");
-        console.log(data);
+        let data = null;
         //empty search_term
-        if (data && !data.search_term) {
-           return;
+        if (this.options.url == "/search") {
+           data = {search_term : this.state.search_term};
+           if (!this.validateSearch(data)) {
+             return;
+           }
         }
         let current_page = this.state.paginateData.current_page;
         this.loadCourses(current_page+1,data,this.state.courses);

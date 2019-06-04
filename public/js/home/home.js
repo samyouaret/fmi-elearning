@@ -61900,11 +61900,20 @@ function (_Component) {
       });
     };
 
+    _this.validateSearch = function (data) {
+      return data && data.search_term && data.search_term.trim();
+    };
+
     _this.renderLoading = function () {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Loading_js__WEBPACK_IMPORTED_MODULE_3__["default"], null);
     };
 
     _this.search = function (data) {
+      if (!_this.validateSearch(data)) {
+        console.log("not validate");
+        return;
+      }
+
       _this.options.url = "/search";
       _this.options.method = "POST";
 
@@ -61916,14 +61925,16 @@ function (_Component) {
     };
 
     _this.handleClick = function () {
-      var data = _this.options.url == "/search" ? {
-        search_term: _this.state.search_term
-      } : {};
-      console.log("data in search : ");
-      console.log(data); //empty search_term
+      var data = null; //empty search_term
 
-      if (data && !data.search_term) {
-        return;
+      if (_this.options.url == "/search") {
+        data = {
+          search_term: _this.state.search_term
+        };
+
+        if (!_this.validateSearch(data)) {
+          return;
+        }
       }
 
       var current_page = _this.state.paginateData.current_page;
