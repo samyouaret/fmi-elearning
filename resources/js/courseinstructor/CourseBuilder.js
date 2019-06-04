@@ -1,8 +1,7 @@
 import React, {Component} from 'react'
 import CourseInfo from './CourseInfo'
-import Navbar from './Navbar'
+import Sidebar from '../components/Sidebar'
 import Curriculum from '../curriculum/Curriculum'
-import loadData from "./dataLoader"
 import request from '../helpers/request.js'
 import Dialog from '../components/Dialog.js'
 
@@ -49,6 +48,14 @@ class CourseBuilder extends Component {
          }, 2000);
       }
    }
+   getFirstActiveClass(){
+      return this.state.display ==0 ? "list-group-item list-group-item-action active" :
+      "list-group-item list-group-item-action";
+   }
+   getSecondActiveClass(){
+      return this.state.display ==1 ? "list-group-item list-group-item-action active" :
+      "list-group-item list-group-item-action";
+   }
    renderDialog(){
       return this.state.displayDialog ?
       <Dialog  dismiss={this.toggleDialog.bind(this,false,{})}
@@ -60,13 +67,14 @@ class CourseBuilder extends Component {
       <CourseInfo id={this.id} toggleDialog={boundFunc}/> :
       <Curriculum id={this.id} toggleDialog={boundFunc}/>;
       return (
-         <div className="container-fluid border border-secondary h-100" style={{minHeight:500 + "px"}}>
-         <div className="row flex-row justify-content-end" style={{minHeight:500 + "px"}}>
-           <Navbar
-           showCourseInfo={this.showCourseInfo}
-           showCurriculum={this.showCurriculum}
-           publish={this.publish}
-           />
+         <div className="container-fluid border-secondary h-100" style={{minHeight:500 + "px"}}>
+         <div className="row justify-content-end" style={{minHeight:500 + "px"}}>
+           <Sidebar>
+             <div className="list-group">
+                <a href="#" className={this.getFirstActiveClass()} onClick={this.showCourseInfo}>course information</a>
+                <a href="#" className={this.getSecondActiveClass()} onClick={this.showCurriculum}>Curriculum</a>
+             </div>
+           </Sidebar>
            {content}
          </div>
          {this.renderDialog()}

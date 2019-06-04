@@ -87,12 +87,9 @@ Route::prefix('curriculum')->group(function()
 /**
  * course explorer
  */
-Route::prefix('course')->group(function()
+Route::prefix('enrollment')->group(function()
 {
-  Route::get('{id}','course\CourseExplorerController@show');
-  Route::get('search/{id}','course\CourseExplorerController@search');
-  Route::post('enroll/{id}','course\CourseExplorerController@enroll')
-  ->middleware('auth');
+  Route::get('{id}','EnrollmentController@show');
 });
 /**
  * Profile routes

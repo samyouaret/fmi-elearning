@@ -1,5 +1,4 @@
 import React,{Component} from "react"
-import loadData from "./dataLoader"
 import Form from '../formcomponents/Form'
 import Input from '../formcomponents/Input'
 import Select from '../formcomponents/Select'
@@ -9,6 +8,7 @@ import FileInput from '../providers/FileInput'
 import request from '../helpers/request.js'
 import Loading from '../components/Loading.js'
 import Dialog from '../components/Dialog.js'
+import WrapperContent from '../components/WrapperContent'
 import findByAttr from '../helpers/findByAttr.js'
 
 // TODO: fix bug unauthenticated routes errors
@@ -254,7 +254,8 @@ export default class CourseInfo extends Component {
    }
    render(){
       return (
-        <div className="card col-sm-8 position-relative"  style={{minHeight:500 + "px"}}>
+        <WrapperContent>
+           <div className="card">
            <DataProvider options={this.options}
                 renderLoading={()=>{ return <Loading/>}}
                 renderError={(error)=>{
@@ -281,6 +282,7 @@ export default class CourseInfo extends Component {
                 }}
          </DataProvider>
         </div>
+       </WrapperContent>
       )
    }
 }
