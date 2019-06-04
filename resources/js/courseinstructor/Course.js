@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import shortenString from '../helpers/shortenString.js'
 
 class Course extends Component {
   render(){
@@ -18,7 +19,7 @@ class Course extends Component {
       {course.title}
       {statusContent}
       </h3>
-       <p>{course.description}</p>
+       <p>{shortenString(course.description,80)}</p>
        <a className="btn btn-secondary" href={"/instructor/" + course.id  + "/edit"}>explore</a>
       </div>
      </div>

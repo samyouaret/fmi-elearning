@@ -61456,6 +61456,7 @@ function (_Component) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _helpers_shortenString_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../helpers/shortenString.js */ "./resources/js/helpers/shortenString.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -61473,6 +61474,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -61514,7 +61516,7 @@ function (_Component) {
         alt: "course image"
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", {
         className: "card-title"
-      }, course.title, statusContent), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, course.description), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      }, course.title, statusContent), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, Object(_helpers_shortenString_js__WEBPACK_IMPORTED_MODULE_1__["default"])(course.description, 80)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         className: "btn btn-secondary",
         href: "/instructor/" + course.id + "/edit"
       }, "explore"))));
@@ -62005,6 +62007,24 @@ function request(url, data) {
     processData: false,
     data: form_data
   });
+}
+
+/***/ }),
+
+/***/ "./resources/js/helpers/shortenString.js":
+/*!***********************************************!*\
+  !*** ./resources/js/helpers/shortenString.js ***!
+  \***********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return shortenString; });
+function shortenString(str) {
+  var length = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 60;
+  var suffix = str.length > 60 ? "..." : "";
+  return str.substr(0, length) + suffix;
 }
 
 /***/ }),

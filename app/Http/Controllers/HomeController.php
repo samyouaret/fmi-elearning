@@ -39,11 +39,13 @@ class HomeController extends Controller
 
     public function search(Request $request)
     {
+      $this->validate($request,['search_term'=>"bail|required|string"]);
       $search  = $request->input("search_term");
+
          $data = DB::table('course')
                     ->where('title','like',"%$search%")
                     ->orWhere('description','like',"%$search%")
-                    ->simplePaginate(3);
+                    ->paginate(3);
          $message = ["count"=>count($data),"auth"=>Auth::check(),
          "data"=>$data];
          return response()->json($message,200);

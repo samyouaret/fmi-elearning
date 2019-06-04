@@ -61700,6 +61700,24 @@ function request(url, data) {
 
 /***/ }),
 
+/***/ "./resources/js/helpers/shortenString.js":
+/*!***********************************************!*\
+  !*** ./resources/js/helpers/shortenString.js ***!
+  \***********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return shortenString; });
+function shortenString(str) {
+  var length = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 60;
+  var suffix = str.length > 60 ? "..." : "";
+  return str.substr(0, length) + suffix;
+}
+
+/***/ }),
+
 /***/ "./resources/js/home/Course.js":
 /*!*************************************!*\
   !*** ./resources/js/home/Course.js ***!
@@ -61711,6 +61729,7 @@ function request(url, data) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _helpers_shortenString_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../helpers/shortenString.js */ "./resources/js/helpers/shortenString.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -61731,6 +61750,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
 var Course =
 /*#__PURE__*/
 function (_Component) {
@@ -61743,13 +61763,6 @@ function (_Component) {
   }
 
   _createClass(Course, [{
-    key: "shortenString",
-    value: function shortenString(str) {
-      var length = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 60;
-      var suffix = str.length > 60 ? "..." : "";
-      return str.substr(0, length) + suffix;
-    }
-  }, {
     key: "render",
     value: function render() {
       var course = this.props.data;
@@ -61771,7 +61784,7 @@ function (_Component) {
         className: "card-img my-1",
         src: "/storage/course_image/" + course.cover_image,
         alt: "course image"
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, this.shortenString(course.description, 80))))));
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, Object(_helpers_shortenString_js__WEBPACK_IMPORTED_MODULE_1__["default"])(course.description, 80))))));
     }
   }]);
 
@@ -61946,6 +61959,19 @@ function (_Component) {
   }
 
   _createClass(HomeDashboard, [{
+    key: "renderSearchResult",
+    value: function renderSearchResult() {
+      if (this.state.paginateData && this.state.paginateData.total) {
+        var total = this.state.paginateData.total;
+        var plural = total == 1 ? total + " result" : total + " results";
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", {
+          className: "text-muted"
+        }, plural, " found for", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, " ", this.state.search_term));
+      }
+
+      return null;
+    }
+  }, {
     key: "render",
     value: function render() {
       var _this2 = this;
@@ -61992,7 +62018,7 @@ function (_Component) {
         }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
           className: "btn btn-secondary"
         }, "search "));
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_DataProvider__WEBPACK_IMPORTED_MODULE_7__["default"], {
+      }), this.renderSearchResult(), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_DataProvider__WEBPACK_IMPORTED_MODULE_7__["default"], {
         options: this.options,
         renderLoading: this.renderLoading,
         renderError: function renderError(error) {
