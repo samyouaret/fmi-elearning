@@ -67,24 +67,24 @@ Route::resource('instructor', 'course\CourseInstructorController',['parameters' 
 */
 Route::prefix('curriculum')->group(function()
 {
-  Route::get('{id}','course\CurriculumController@show');
-  Route::delete('chapter/{id}','course\CurriculumController@deleteChapter');
-  Route::post('chapter/create/{id}','course\CurriculumController@createChapter');
-  Route::put('chapter/update/{id}','course\CurriculumController@updateChapter');
+  Route::get('{id}','course\CurriculumController@show')->middleware('can:isInstructor');
+  Route::delete('chapter/{id}','course\CurriculumController@deleteChapter')->middleware('can:isInstructor');
+  Route::post('chapter/create/{id}','course\CurriculumController@createChapter')->middleware('can:isInstructor');
+  Route::put('chapter/update/{id}','course\CurriculumController@updateChapter')->middleware('can:isInstructor');
   /**
    * curriculum_content routes
   */
-  Route::post('content/create/{chapter_id}','course\ContentController@create');
-  Route::put('content/update/{id}','course\ContentController@update');
-  Route::delete('content/{id}','course\ContentController@delete');
+  Route::post('content/create/{chapter_id}','course\ContentController@create')->middleware('can:isInstructor');
+  Route::put('content/update/{id}','course\ContentController@update')->middleware('can:isInstructor');
+  Route::delete('content/{id}','course\ContentController@delete')->middleware('can:isInstructor');
   /**
    * curriculum_content resources routes
   */
-  Route::get('content/resource/{id}','course\ContentController@resource');
-  Route::get('content/resources/{id}','course\ContentController@resources');
-  Route::post('content/resource/upload','course\ContentController@upload');
-  Route::delete('content/resource/remove/{id}','course\ContentController@deleteResource');
-  Route::delete('content/removevideo/{content_id}','course\ContentController@deleteVideo');
+  Route::get('content/resource/{id}','course\ContentController@resource')->middleware('can:isInstructor');
+  Route::get('content/resources/{id}','course\ContentController@resources')->middleware('can:isInstructor');
+  Route::post('content/resource/upload','course\ContentController@upload')->middleware('can:isInstructor');
+  Route::delete('content/resource/remove/{id}','course\ContentController@deleteResource')->middleware('can:isInstructor');
+  Route::delete('content/removevideo/{content_id}','course\ContentController@deleteVideo')->middleware('can:isInstructor');
 });
 /**
  * course explorer
