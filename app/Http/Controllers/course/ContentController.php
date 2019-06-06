@@ -51,20 +51,6 @@ class ContentController extends Controller
       return response()->json($files);
     }
     /**
-     * return a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-     public function resources($content_id)
-      {
-         $files = DB::table("resource")->
-         select("id","url")
-         ->where('course_chapter_content_id',$content_id)
-         ->get();
-         return response()->json($files);
-      }
-
-    /**
      * create a new content.
      *
      * @return \Illuminate\Http\Response
@@ -119,6 +105,7 @@ class ContentController extends Controller
       // return $message;
       return response()->json($message['message'],$message['status']);
     }
+
     protected function storeFile($file){
       $fileNameWithExt =$file->getClientOriginalName();
       //get filename

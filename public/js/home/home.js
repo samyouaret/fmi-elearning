@@ -61758,6 +61758,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return shortenString; });
 function shortenString(str) {
   var length = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 60;
+
+  if (!str) {
+    return "";
+  }
+
   var suffix = str.length > 60 ? "..." : "";
   return str.substr(0, length) + suffix;
 }

@@ -61478,25 +61478,47 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Chapter).call(this, props));
     _this.state = {
-      activeLink: -1
+      activeLink: -1,
+      contents: _this.props.contents || []
     };
     return _this;
   }
 
   _createClass(Chapter, [{
+    key: "loadVideo",
+    value: function loadVideo(content) {
+      var newcontent = this.props.loadVideo(content); // let pos = findByAttr(this.state.contents,"content_id",content.content_id);
+      // let contents = this.state.contents;
+      // contents.splice(pos,1,newcontent);
+      // this.setState({
+      //    contents : contents
+      // })
+    }
+  }, {
     key: "renderVideoLinks",
     value: function renderVideoLinks() {
       var _this2 = this;
 
-      var contents = this.props.contents || [];
+      var contents = this.state.contents;
       return contents.map(function (content) {
+        var watched = null;
+
+        if (content.watched) {
+          // watched =   <span className="badge badge-primary badge-pill">&#128065;</span>;
+          watched = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
+            src: "/storage/images/view.png",
+            width: "24",
+            height: "24"
+          });
+        }
+
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
           onClick: function onClick() {
-            _this2.props.loadVideo(content.video_url);
+            _this2.loadVideo(content);
           },
           key: content.content_id,
-          className: "list-group-item list-group-item-action"
-        }, content.content_title);
+          className: "list-group-item d-flex justify-content-between align-items-center\r list-group-item-action"
+        }, content.content_title, watched);
       });
     }
   }, {
@@ -61537,7 +61559,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Chapter__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Chapter */ "./resources/js/enrollment/Chapter.js");
 /* harmony import */ var _components_WrapperContent__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../components/WrapperContent */ "./resources/js/components/WrapperContent.js");
 /* harmony import */ var _helpers_shapeChapters__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../helpers/shapeChapters */ "./resources/js/helpers/shapeChapters.js");
-/* harmony import */ var _providers_DataProvider__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../providers/DataProvider */ "./resources/js/providers/DataProvider.js");
+/* harmony import */ var _helpers_VideoPlayer__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../helpers/VideoPlayer */ "./resources/js/helpers/VideoPlayer.js");
+/* harmony import */ var _helpers_shortenString__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../helpers/shortenString */ "./resources/js/helpers/shortenString.js");
+/* harmony import */ var _providers_DataProvider__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../providers/DataProvider */ "./resources/js/providers/DataProvider.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -61566,6 +61590,8 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
+
 var EnrollmentDashboard =
 /*#__PURE__*/
 function (_Component) {
@@ -61578,23 +61604,71 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(EnrollmentDashboard).call(this, props));
     _this.state = {
-      current_video: null
+      current_content: {
+        video_url: null
+      },
+      resources: [],
+      relatedCourses: []
     };
     _this.options = {
-      url: "/curriculum/" + _this.getCourseId()
+      url: "/enrollment/course/" + _this.getCourseId()
     };
 
-    _this.loadVideo = function (url) {
+    _this.loadVideo = function (content) {
       _this.setState({
-        current_video: url
+        current_content: content
+      });
+
+      if (!content.watched) {
+        _this.videoPlayer.watch(_this.watch);
+      }
+
+      _this.loadResources(content.content_id);
+    };
+
+    _this.watch = function () {
+      _this.recordVideoView(); // this.videoPlayer.removeWatch(this.watch);
+
+    };
+
+    _this.recordVideoView = function () {
+      var content = _this.state.current_content;
+      var data = {
+        content_id: content.content_id
+      };
+      Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_1__["default"])("/enrollment/enrollcontent/" + content.content_id, data, "POST").done(function (message) {
+        content.watched = message.watched;
       });
     };
 
-    return _this;
-  } // componentDidMount will not work because id conditional rendering
+    _this.loadResources = function (id) {
+      Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_1__["default"])("/curriculum/content/resources/" + id, {}, "GET").done(function (message) {
+        _this.setState({
+          resources: message
+        });
+      });
+    };
 
+    _this.getRelatedCourses = function () {
+      Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_1__["default"])("/enrollment/relatedcourses/" + _this.getCourseId(), null, "GET").done(function (message) {
+        _this.setState({
+          relatedCourses: message
+        });
+      });
+    };
+
+    _this.getRelatedCourses();
+
+    return _this;
+  }
 
   _createClass(EnrollmentDashboard, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.videoPlayer = new _helpers_VideoPlayer__WEBPACK_IMPORTED_MODULE_8__["default"](document.getElementById('video'));
+      console.log(this.videoPlayer);
+    }
+  }, {
     key: "getCourseId",
     value: function getCourseId() {
       return location.pathname.split("/")[2];
@@ -61615,16 +61689,89 @@ function (_Component) {
       });
     }
   }, {
-    key: "render",
-    value: function render() {
+    key: "getResourceName",
+    value: function getResourceName(url) {
+      if (!url) {
+        return "undefined resource";
+      }
+
+      url = url.split("/")[3];
+      return url.length < 50 ? url : url.substr(0, 50) + "...";
+    }
+  }, {
+    key: "renderFiles",
+    value: function renderFiles() {
       var _this3 = this;
 
+      if (this.state.resources.length == 0) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "no files are found.");
+      }
+
+      var files = this.state.resources.map(function (resource) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+          className: "nav-link",
+          key: resource.id,
+          target: "_blank",
+          href: resource.url
+        }, _this3.getResourceName(resource.url));
+      });
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "nav flex-column nav-pills"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h5", null, "Files: "), files);
+    }
+  }, {
+    key: "rendeRelatedCourses",
+    value: function rendeRelatedCourses() {
+      if (this.state.relatedCourses.length == 0) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "no related posts are found.");
+      }
+
+      var courses = this.state.relatedCourses.map(function (course) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "card w-sm-12",
+          key: course.id,
+          style: {
+            maxHeight: " 12rem",
+            maxWidth: " 12rem"
+          }
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+          href: "/enrollment/" + course.id,
+          className: "text-dark",
+          style: {
+            textDecoration: "none"
+          }
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
+          src: "/storage/course_image/" + course.cover_image,
+          style: {
+            maxHeight: "6rem"
+          },
+          className: "card-img-top"
+        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "card-body"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h5", {
+          className: "card-title"
+        }, course.title))));
+      });
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "card-deck my-3"
+      }, courses);
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this4 = this;
+
+      var cover_image = this.state.current_content.video_url ? null : "/storage/course_image/" + this.state.cover_image;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row justify-content-end",
         style: {
           minHeight: 500 + "px"
         }
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Sidebar__WEBPACK_IMPORTED_MODULE_3__["default"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_DataProvider__WEBPACK_IMPORTED_MODULE_8__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "container justify-content-between d-flex bg-white p-4 mb-3"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", {
+        className: "text-muted"
+      }, this.state.course_title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h5", null, this.state.current_content.content_title)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Sidebar__WEBPACK_IMPORTED_MODULE_3__["default"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_DataProvider__WEBPACK_IMPORTED_MODULE_10__["default"], {
         options: this.options,
         renderLoading: this.renderLoading,
         renderError: function renderError(error) {
@@ -61633,13 +61780,25 @@ function (_Component) {
           }, error.message);
         },
         onSuccess: function onSuccess(data) {
-          _this3.setState({
-            chapters: Object(_helpers_shapeChapters__WEBPACK_IMPORTED_MODULE_7__["default"])(data)
+          var chapters = Object(_helpers_shapeChapters__WEBPACK_IMPORTED_MODULE_7__["default"])(data.chapters);
+
+          _this4.setState({
+            chapters: chapters,
+            course_title: data.course_title,
+            cover_image: data.cover_image
           });
         }
       }, this.renderChapters())), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_WrapperContent__WEBPACK_IMPORTED_MODULE_6__["default"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Video__WEBPACK_IMPORTED_MODULE_4__["default"], {
-        url: this.state.current_video
-      })));
+        poster: cover_image,
+        id: "video",
+        url: this.state.current_content.video_url
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "container justify-content-between d-flex bg-white p-4 mb-3"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", {
+        className: "text-muted"
+      }, "instructor"), this.renderFiles()), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h5", {
+        className: "card-title"
+      }, "Related courses"), this.rendeRelatedCourses()));
     }
   }]);
 
@@ -61665,6 +61824,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helpers_request_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../helpers/request.js */ "./resources/js/helpers/request.js");
 /* harmony import */ var _components_Dialog_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../components/Dialog.js */ "./resources/js/components/Dialog.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -61707,14 +61868,17 @@ function (_Component) {
   _createClass(Video, [{
     key: "render",
     value: function render() {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("video", {
+      var _React$createElement;
+
+      // src={this.props.url}
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("video", (_React$createElement = {
         className: "my-2",
         id: "content_video",
         width: "100%",
-        height: "auto",
-        src: this.props.url,
-        controls: true
-      }));
+        height: "450"
+      }, _defineProperty(_React$createElement, "id", this.props.id), _defineProperty(_React$createElement, "poster", this.props.poster), _defineProperty(_React$createElement, "src", this.props.url), _defineProperty(_React$createElement, "style", {
+        objectFit: "cover"
+      }), _defineProperty(_React$createElement, "controls", true), _React$createElement)));
     }
   }]);
 
@@ -61748,6 +61912,141 @@ var node = document.getElementById('enrollment');
 
 if (node) {
   react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_EnrollmentDashboard__WEBPACK_IMPORTED_MODULE_2__["default"], null), node);
+}
+
+/***/ }),
+
+/***/ "./resources/js/helpers/VideoPlayer.js":
+/*!*********************************************!*\
+  !*** ./resources/js/helpers/VideoPlayer.js ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return VideoPlayer; });
+function VideoPlayer(videoNode) {
+  if (!(videoNode instanceof HTMLVideoElement)) {
+    throw new Error('video Node must be of type HTMLVideoElement');
+  }
+
+  this.videoNode = videoNode;
+  this.loopRange = {
+    start: 0,
+    end: 0
+  };
+  this.LoopEnabled = false;
+
+  this.isPaused = function () {
+    return this.videoNode.paused;
+  };
+
+  this.pause = function () {
+    this.videoNode.pause();
+    return this;
+  };
+
+  this.play = function () {
+    this.videoNode.play();
+    return this;
+  };
+
+  this.setSpeed = function (val) {
+    this.videoNode.playbackRate = val;
+    return this;
+  };
+
+  this.getDuration = function () {
+    return this.videoNode.duration;
+  };
+
+  this.Getspeed = function () {
+    return this.videoNode.playbackRate;
+  };
+
+  this.setDefaultspeed = function () {
+    this.videoNode.defaultPlaybackRate;
+    return this;
+  };
+
+  this.GetDefaultspeed = function () {
+    return this.videoNode.defaultPlaybackRate;
+  };
+
+  this.setMuted = function (bool) {
+    bool = Boolean(bool);
+    this.videoNode.muted = bool;
+    return this;
+  };
+
+  this.getMuted = function () {
+    return this.videoNode.muted;
+  };
+
+  this.setControls = function (bool) {
+    bool = Boolean(bool);
+    this.videoNode.controls = bool;
+    return this;
+  };
+
+  this.getControls = function () {
+    return this.videoNode.controls;
+  };
+
+  this.setAutoplay = function (bool) {
+    bool = Boolean(bool);
+    this.videoNode.autoplay = bool;
+    return this;
+  };
+
+  this.getAutoplay = function () {
+    return this.videoNode.autoplay;
+  };
+
+  this.setCurrentTime = function (val) {
+    this.videoNode.currentTime = val;
+    return this;
+  };
+
+  this.getCurrentTime = function () {
+    return this.videoNode.currentTime;
+  }; //because bind change it's siganture of watchLoopRange function
+  // watch loop will be called in diffrent context
+
+
+  this.watchLoopRange = function () {
+    var ct = this.getCurrentTime();
+
+    if (ct < this.loopRange.start || ct >= this.loopRange.end) {
+      this.setCurrentTime(this.loopRange.start);
+    }
+  }.bind(this);
+
+  this.watch = function (callback) {
+    this.videoNode.addEventListener('ended', callback);
+    return this;
+  }.bind(this);
+
+  this.removeWatch = function (callback) {
+    this.videoNode.removeEventListener('timeupdate', callback);
+  };
+
+  this.addLoopRange = function (start, end) {
+    this.loopRange.start = start;
+    this.loopRange.end = end;
+    this.videoNode.addEventListener('timeupdate', this.watchLoopRange);
+    return this;
+  };
+
+  this.removeLoopRange = function (start, end) {
+    this.videoNode.removeEventListener('timeupdate', this.watchLoopRange);
+    this.setCurrentTime(0);
+    return this;
+  };
+
+  this.isLoopEnabled = function () {// this.video.addEvent.listener('timeupdate',this.setLoopEnabled);
+  };
 }
 
 /***/ }),
@@ -61862,6 +62161,29 @@ function shapeChapters(data) {
   }
 
   return chapters;
+}
+
+/***/ }),
+
+/***/ "./resources/js/helpers/shortenString.js":
+/*!***********************************************!*\
+  !*** ./resources/js/helpers/shortenString.js ***!
+  \***********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return shortenString; });
+function shortenString(str) {
+  var length = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 60;
+
+  if (!str) {
+    return "";
+  }
+
+  var suffix = str.length > 60 ? "..." : "";
+  return str.substr(0, length) + suffix;
 }
 
 /***/ }),

@@ -90,6 +90,9 @@ Route::prefix('curriculum')->group(function()
 Route::prefix('enrollment')->group(function()
 {
   Route::get('{id}','EnrollmentController@show');
+  Route::get('/course/{id}','EnrollmentController@getCourse');
+  Route::get('/relatedcourses/{id}','EnrollmentController@getRelatedCourse');
+  Route::post('/enrollcontent/{id}','EnrollmentController@enrollcontent');
 });
 /**
  * Profile routes

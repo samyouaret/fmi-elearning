@@ -36,4 +36,17 @@ trait ContentTrait
         "message"=>['status'=>'success','message' =>"content is deleted."],
         "status"  =>  200];
    }
+   /**
+    * return a listing of the resource.
+    *
+    * @return \Illuminate\Http\Response
+    */
+    public function resources($content_id)
+     {
+        $files = DB::table("resource")->
+        select("id","url")
+        ->where('course_chapter_content_id',$content_id)
+        ->get();
+        return response()->json($files);
+     }
 }

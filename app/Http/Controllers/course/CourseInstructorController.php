@@ -5,6 +5,7 @@ namespace App\Http\Controllers\course;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use App\Course;
 use Illuminate\Support\Facades\Storage;
 
@@ -23,9 +24,11 @@ class CourseInstructorController extends Controller
     {
        return view('courseinstructor.index');
     }
+
     public function courses()
     {
-         $courses = Course::all();
+         $courses = Course::
+         join('instructor_course','instructor_course.course_id','course.id')->get();
          return $courses->toJson();
     }
 
@@ -48,9 +51,12 @@ class CourseInstructorController extends Controller
     public function store(Request $request)
     {
       $this->validate($request,['title'=>'bail|required|string']);
+      $user_id = Auth::id();
       $data = $request->all();
       $id = DB::table("course")->
       insertGetId($data);
+      DB::table("instructor_course")->
+      insert(['course_id'=>$id,'instructor_id'=>$user_id,'is_owner'=>1]);
       return $id ?
          response()->json(["id"=>$id,'status'=>'success',
          'message' =>"course has been created successfully"],200) :
@@ -93,6 +99,7 @@ class CourseInstructorController extends Controller
            ['status'=>'success','message' =>"course now published."],200);
       }
     }
+
     public function unpublish(int $id)
     {
       $course = Course::find($id);
@@ -115,10 +122,12 @@ class CourseInstructorController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
     public function edit($id)
     {
         return view('courseinstructor.edit');
     }
+
     /**
      * Show the the specified resource.
      *
@@ -139,18 +148,20 @@ class CourseInstructorController extends Controller
 
     public function getCourse($id)
     {
-      $course = Course::select("course.id as id","language_name","label","subject_id",
+      $course = Course::select("course.id","language_name","label","subject_id",
        "description","title","course_fee","is_published","level","language_id","sub_subject_id",
        "cover_image as image")
       ->join('sub_subject','sub_subject_id','=','sub_subject.id')
+      ->join('instructor_course','instructor_course.course_id','course.id')
       ->where('course.id',$id)
       ->join('language','language_id','=','language.id')
       ->first();
       $subjects =DB::table('subject')
       ->get();
-       $sub_subjects = DB::table('sub_subject')
+      // return $course;
+       $sub_subjects = $course ? DB::table('sub_subject')
        ->where('subject_id',$course->subject_id)
-       ->get();
+       ->get() : [];
        $languages = DB::table('language')
        ->get();
        $result = [
@@ -171,15 +182,14 @@ class CourseInstructorController extends Controller
        // var_dump($course);
       return response()->json($items);
     }
+
     public function subjects()
     {
        $items = DB::table('subject')
        ->get();
-    //    return response()->json([
-    //  'message' => 'Record not found',
-    //  ], 404);
      return response()->json($items);
     }
+
     public function languages()
     {
        $items = DB::table('language')

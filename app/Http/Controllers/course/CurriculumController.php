@@ -10,10 +10,11 @@ use App\Traits\ContentTrait as ContentTrait;
 class CurriculumController extends Controller
 {
    use ContentTrait;
-   
+
    public function __construct (){
       $this->middleware('auth');
    }
+
    /**
     * get the curriculum of a given course
     * @var int $id
@@ -37,6 +38,7 @@ class CurriculumController extends Controller
     * get the curriculum of a given course
     * @var int $id curriculum_id
     */
+
    public function createChapter(int $id)
    {
      $data = [
@@ -50,6 +52,7 @@ class CurriculumController extends Controller
    return response()->json(["data"=>$data,'status'=>'success','message'
    =>"content created."],200);
    }
+
    public function updateChapter(Request $request,int $id){
       $this->validate($request,[
       "chapter_title"=>"bail|required|string|max:60",

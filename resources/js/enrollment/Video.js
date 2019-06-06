@@ -11,10 +11,15 @@ class Video extends Component {
       }
    }
    render(){
+      // src={this.props.url}
        return(<React.Fragment>
           <video className="my-2" id="content_video"
-           width="100%" height="auto"
-           src={this.props.url} controls>
+           width="100%" height="450"
+           id={this.props.id}
+           poster={this.props.poster}
+           src={this.props.url}
+           style={{objectFit: "cover"}}
+           controls>
        </video>
     </React.Fragment>)
    }
