@@ -27,8 +27,9 @@ class CourseInstructorController extends Controller
 
     public function courses()
     {
-         $courses = Course::
-         join('instructor_course','instructor_course.course_id','course.id')->get();
+         $this->authorize('isInstructor');
+         $courses = Course::join('instructor_course',
+         'instructor_course.course_id','course.id')->get();
          return $courses->toJson();
     }
 
@@ -50,6 +51,7 @@ class CourseInstructorController extends Controller
      */
     public function store(Request $request)
     {
+      $this->authorize('isInstructor');
       $this->validate($request,['title'=>'bail|required|string']);
       $user_id = Auth::id();
       $data = $request->all();
@@ -72,6 +74,7 @@ class CourseInstructorController extends Controller
      */
     public function publish(int $id)
     {
+      $this->authorize('isInstructor');
       $course = Course::find($id);
       if ($course->is_published == 1) {
          return response()->json(

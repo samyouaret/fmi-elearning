@@ -49,17 +49,19 @@ Route::post('/search', 'HomeController@search');
  * course builder (instructor routes)
  */
 // Route::match(['get','head'],'instructor/{courses}','course\CourseInstructorController');
-
-Route::post('instructor/{course}','course\CourseInstructorController@publish');
-Route::put('instructor/unpublish/{course}','course\CourseInstructorController@unpublish');
-Route::get('instructor/subSubjects/{subject}','course\CourseInstructorController@subSubjects');
-Route::get('instructor/subjects','course\CourseInstructorController@subjects');
-Route::get('instructor/languages','course\CourseInstructorController@languages');
-Route::get('instructor/course/{course}','course\CourseInstructorController@getCourse');
-Route::get('instructor/courses', 'course\CourseInstructorController@courses');
+Route::prefix('instructor')->group(function()
+{
+   Route::post('{course}','course\CourseInstructorController@publish')->middleware('can:isInstructor');
+   Route::put('unpublish/{course}','course\CourseInstructorController@unpublish')->middleware('can:isInstructor');
+   Route::get('subSubjects/{subject}','course\CourseInstructorController@subSubjects')->middleware('can:isInstructor');
+   Route::get('subjects','course\CourseInstructorController@subjects')->middleware('can:isInstructor');
+   Route::get('languages','course\CourseInstructorController@languages')->middleware('can:isInstructor');
+   Route::get('course/{course}','course\CourseInstructorController@getCourse')->middleware('can:isInstructor');
+   Route::get('courses', 'course\CourseInstructorController@courses')->middleware('can:isInstructor');
+});
 Route::resource('instructor', 'course\CourseInstructorController',['parameters' => [
-  'instructor' => 'course',
-]]);
+   'instructor' => 'course',
+   ]])->middleware('can:isInstructor');
 /**
  * curriculum routes
 */
