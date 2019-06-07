@@ -6,7 +6,10 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Profile;
 use App\User;
+use App\Course;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
@@ -21,41 +24,37 @@ class ProfileController extends Controller
       // $this->middleware("auth")->except;
       // $this->middleware('profile',['only' => ['create']]);
     }
-    public function index()
+    public function getprofileData(int $id){
+      $query = User::select('user.id as id','first_name','last_name','user_type','image')
+      ->leftjoin('user_info','user.id','user_info.id');
+      $courses = [];
+      $user = User::find($id);
+      if (!$user) {
+         return false;
+      }
+      if ($user->user_type>0) {
+        $query->addSelect('qualification',"introduction_brief",
+        'num_of_enrolled_students');
+       $query->leftjoin('instructor','user.id','instructor.id');
+       $courses = Course::select("id","description","title","course_fee","level","cover_image")
+       ->join('instructor_course','instructor_course.course_id','course.id')
+        // ->where(['instructor_course.instructor_id'=>$id,'is_published'=>1])
+        ->where(['instructor_course.instructor_id'=>$id])
+        ->get();
+      }
+      $query->where('user.id',$id);
+      return ["user"=>$query->first(),'courses'=>$courses];
+   }
+    public function show(int $id)
     {
-      return view('profile.show');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        return view('profile.create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
+      $data = $this->getprofileData($id);
+      if (!$data) {
+         return redirect('/');
+      }
+      $user = $data['user'];
+      $courses = $data['courses'];
+      return view('profile.show')->with(["user"=>$user,
+      'courses'=>$courses]);
     }
 
     /**

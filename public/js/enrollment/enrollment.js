@@ -61560,8 +61560,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_WrapperContent__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../components/WrapperContent */ "./resources/js/components/WrapperContent.js");
 /* harmony import */ var _helpers_shapeChapters__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../helpers/shapeChapters */ "./resources/js/helpers/shapeChapters.js");
 /* harmony import */ var _helpers_VideoPlayer__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../helpers/VideoPlayer */ "./resources/js/helpers/VideoPlayer.js");
-/* harmony import */ var _helpers_shortenString__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../helpers/shortenString */ "./resources/js/helpers/shortenString.js");
-/* harmony import */ var _providers_DataProvider__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../providers/DataProvider */ "./resources/js/providers/DataProvider.js");
+/* harmony import */ var _helpers_findByAttr__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../helpers/findByAttr */ "./resources/js/helpers/findByAttr.js");
+/* harmony import */ var _helpers_shortenString__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../helpers/shortenString */ "./resources/js/helpers/shortenString.js");
+/* harmony import */ var _providers_DataProvider__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../providers/DataProvider */ "./resources/js/providers/DataProvider.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -61592,6 +61593,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
 var EnrollmentDashboard =
 /*#__PURE__*/
 function (_Component) {
@@ -61607,6 +61609,7 @@ function (_Component) {
       current_content: {
         video_url: null
       },
+      chapters: [],
       resources: [],
       relatedCourses: []
     };
@@ -61638,6 +61641,20 @@ function (_Component) {
       };
       Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_1__["default"])("/enrollment/enrollcontent/" + content.content_id, data, "POST").done(function (message) {
         content.watched = message.watched;
+      });
+
+      _this.updateChapters(content);
+    };
+
+    _this.updateChapters = function (content) {
+      var pos = -1;
+
+      _this.state.chapters.map(function (chapter, index) {
+        if (pos = Object(_helpers_findByAttr__WEBPACK_IMPORTED_MODULE_9__["default"])(chapter.contents, 'content_id', content.content_id) > -1) {
+          chapter.contents.splice(pos, 1, content); // this.setState({
+          //   contents : contents
+          // })
+        }
       });
     };
 
@@ -61678,8 +61695,7 @@ function (_Component) {
     value: function renderChapters() {
       var _this2 = this;
 
-      var chapters = this.state.chapters || [];
-      return chapters.map(function (chapter) {
+      return this.state.chapters.map(function (chapter) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Chapter__WEBPACK_IMPORTED_MODULE_5__["default"], {
           key: chapter.chapter_id,
           loadVideo: _this2.loadVideo,
@@ -61771,7 +61787,7 @@ function (_Component) {
         className: "container justify-content-between d-flex bg-white p-4 mb-3"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", {
         className: "text-muted"
-      }, this.state.course_title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h5", null, this.state.current_content.content_title)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Sidebar__WEBPACK_IMPORTED_MODULE_3__["default"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_DataProvider__WEBPACK_IMPORTED_MODULE_10__["default"], {
+      }, this.state.course_title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h5", null, this.state.current_content.content_title)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Sidebar__WEBPACK_IMPORTED_MODULE_3__["default"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_DataProvider__WEBPACK_IMPORTED_MODULE_11__["default"], {
         options: this.options,
         renderLoading: this.renderLoading,
         renderError: function renderError(error) {

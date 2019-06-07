@@ -54,7 +54,7 @@
       </form>
     </div>
   </div>
-  <div id="test">
+  <div id="profile">
   </div>
 @endsection
 @prepend('scripts')

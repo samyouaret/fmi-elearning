@@ -7,6 +7,7 @@ import Chapter from './Chapter'
 import WrapperContent from '../components/WrapperContent'
 import shapeChapters from '../helpers/shapeChapters'
 import VideoPlayer from '../helpers/VideoPlayer'
+import findByAttr from '../helpers/findByAttr'
 import shortenString from '../helpers/shortenString'
 import DataProvider from '../providers/DataProvider'
 
@@ -17,6 +18,7 @@ class EnrollmentDashboard extends Component {
          current_content :  {
             video_url :null
          },
+         chapters : [],
          resources : [],
          relatedCourses : [],
       }
@@ -45,6 +47,18 @@ class EnrollmentDashboard extends Component {
          data,"POST").done((message)=>{
             content.watched = message.watched
          })
+         this.updateChapters(content);
+      }
+      this.updateChapters = (content)=>{
+         let pos = -1;
+         this.state.chapters.map((chapter,index)=>{
+            if (pos = findByAttr(chapter.contents,'content_id',content.content_id) > -1) {
+               chapter.contents.splice(pos,1,content);
+                // this.setState({
+                //   contents : contents
+                // })
+            }
+         })
       }
       this.loadResources = (id)=>{
          request("/curriculum/content/resources/" + id,{},"GET").done((message)=>{
@@ -70,8 +84,7 @@ class EnrollmentDashboard extends Component {
     return location.pathname.split("/")[2];
    }
    renderChapters(){
-      let chapters = this.state.chapters || [];
-      return chapters.map((chapter)=>{
+      return this.state.chapters.map((chapter)=>{
          return (<Chapter key={chapter.chapter_id}
             loadVideo={this.loadVideo}
             title={chapter.chapter_title} contents={chapter.contents}/>)

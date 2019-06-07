@@ -80,8 +80,8 @@ Route::prefix('curriculum')->group(function()
   /**
    * curriculum_content resources routes
   */
-  Route::get('content/resource/{id}','course\ContentController@resource')->middleware('can:isInstructor');
-  Route::get('content/resources/{id}','course\ContentController@resources')->middleware('can:isInstructor');
+  Route::get('content/resource/{id}','course\ContentController@resource');
+  Route::get('content/resources/{id}','course\ContentController@resources');
   Route::post('content/resource/upload','course\ContentController@upload')->middleware('can:isInstructor');
   Route::delete('content/resource/remove/{id}','course\ContentController@deleteResource')->middleware('can:isInstructor');
   Route::delete('content/removevideo/{content_id}','course\ContentController@deleteVideo')->middleware('can:isInstructor');
@@ -99,4 +99,4 @@ Route::prefix('enrollment')->group(function()
 /**
  * Profile routes
  */
-Route::resource('profile',"User\ProfileController");
+Route::resource('profile',"User\ProfileController")->only(['show',"edit","index",'update']);

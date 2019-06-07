@@ -29,11 +29,9 @@
             <!-- Left Side Of Navbar -->
             <ul class="navbar-nav mr-auto">
               {{-- // TODO: make instrcutor as a guard --}}
-            @auth
-               @if (Auth::user()->user_type==1)
+              @can ('isInstructor')
                   <li class="nav-item"><a class="nav-link" href="/instructor">instructor</a></li>
-               @endif
-            @endauth
+              @endcan
             </ul>
 
             <!-- Right Side Of Navbar -->
@@ -56,7 +54,7 @@
                         </a>
 
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                              <a href="#" class="dropdown-header dropdown-item">{{ Auth::user()->first_name." ".Auth::user()->last_name }}</a>
+                              <a href="/profile/{{Auth::user()->id}}" class="dropdown-header dropdown-item">{{ Auth::user()->first_name." ".Auth::user()->last_name }}</a>
                               <a href="/dashboard" class="dropdown-item">dashboard</a>
                               <a href="/profile/{{Auth::user()->id}}/edit" class="dropdown-item">edit profile</a>
                             <a class="dropdown-item" href="{{ route('logout') }}"
