@@ -7,6 +7,7 @@ import FileUploader from '../providers/FileUploader'
 import DataProvider from '../providers/DataProvider'
 import ProgressBar from '../components/ProgressBar.js'
 import Loading from '../components/Loading.js'
+import Dialog from '../components/Dialog.js'
 import request from '../helpers/request.js'
 import isEqual from '../helpers/isEqual.js'
 import findByAttr from '../helpers/findByAttr.js';
@@ -30,17 +31,31 @@ export default class ProfileEditor extends React.Component {
             values : {
                ...this.state.values,
                cover_image : data.cover_image
+            },
+            displayDialog :true,
+            dialogData:{
+               ...this.state.dialogData,
+                  title : data.status,
+                  body : data.message,
+                  type : "success"
             }
          })
       }
    }
-   showDialog(bool,dialogData){
+   showDialog(message,type){
       this.setState({
-        displayDialog :bool,
+        displayDialog :true,
         dialogData:{
            ...this.state.dialogData,
-           ...dialogData
+              title : message.status,
+              body : message.message,
+              type : type
         }
+      })
+   }
+   hideDialog(){
+      this.setState({
+        displayDialog :false
       })
    }
    getCourseId(){
@@ -48,18 +63,17 @@ export default class ProfileEditor extends React.Component {
    }
    save(data,errors){
       request('/profile/' + this.getCourseId(),data,'PUT').done((message)=>{
-      // this.showDialog(message,"success");
+       this.showDialog(message,"success");
    }).fail(({responseJSON})=> {
          let errors = responseJSON.errors || responseJSON;
          this.setState({
             errors : errors
          })
-         // this.showDialog(responseJSON,"error");
      })
    }
    renderDialog(){
       return this.state.displayDialog ?
-      <Dialog  dismiss={this.toggleDialog.bind(this,false,{})}
+      <Dialog  dismiss={this.hideDialog.bind(this)}
          {...this.state.dialogData}></Dialog> : null;
    }
    renderErrors(errors){
@@ -93,9 +107,6 @@ export default class ProfileEditor extends React.Component {
          }}
          >
        {({values,handleChange,handleSubmit,errors,touched}) => {
-          // //{errors.university && this.renderErrors(errors.university)}
-          //// {errors.department && this.renderErrors(errors.department)}
-          // {errors.biography && this.renderErrors(errors.biography)}
           return (
           <form onSubmit={handleSubmit} method="POST">
            <div className="form-group">
@@ -110,28 +121,31 @@ export default class ProfileEditor extends React.Component {
             <input className="form-control" defaultValue={values.last_name}
                name='last_name'
                onChange={handleChange}/>
+            {errors.last_name && this.renderErrors(errors.last_name)}
            </div>
            <div className="form-group">
              <label>university</label>
             <Select  defaultValue= {values.university_id} name="university_id" onChange={handleChange}
             data={this.state.universities} keys={{value:"name"}}/>
+         {errors.university && this.renderErrors(errors.university)}
           </div>
           <div className="form-group">
              <label>department</label>
             <Select  defaultValue= {values.department_id} name="department_id" onChange={handleChange}
             data={this.state.departments} keys={{value:"name"}}/>
+         {errors.department && this.renderErrors(errors.department)}
           </div>
           <div className="form-group">
              <label>Biography</label>
             <textarea  className="form-control"
                rows="4" name="biography" value={values.biography} onChange={handleChange}>
             </textarea>
+            {errors.biography && this.renderErrors(errors.biography)}
           </div>
             <button className="btn btn-primary m-2 btn-sm" type="submit">save</button>
       </form>)
          }}
       </Form>
-    // {this.renderDialog()}
    </DataProvider>
     );
   }
@@ -142,11 +156,15 @@ export default class ProfileEditor extends React.Component {
      }
      return (
            <FileUploader options={options}
-              onError={(error)=>{
-                    this.setState({
-                       hasMessage :true,
-                       message : error
-                    })
+              onError={(message)=>{
+                  this.setState({
+                     displayDialog :true,
+                     dialogData:{
+                           title : "uploading file failed",
+                           body : message.message,
+                           type : "error"
+                     }
+                  })
                }}
               onupload={this.onupload}>
             {({upload,handleChange,progressValue,hasFile,errors})=>{
@@ -183,6 +201,7 @@ export default class ProfileEditor extends React.Component {
         <div className="col-sm-6">
            {this.renderForm()};
         </div>
+         {this.renderDialog()}
      </div>)
   }
 }
