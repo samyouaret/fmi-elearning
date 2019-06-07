@@ -40,7 +40,7 @@ class ProfileController extends Controller
        ->join('instructor_course','instructor_course.course_id','course.id')
         // ->where(['instructor_course.instructor_id'=>$id,'is_published'=>1])
         ->where(['instructor_course.instructor_id'=>$id])
-        ->get();
+        ->paginate(3);
       }
       $query->where('user.id',$id);
       return ["user"=>$query->first(),'courses'=>$courses];

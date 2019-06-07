@@ -42,6 +42,9 @@
                  </a>
                {{-- </div> --}}
              @endforeach
+             <div class="d-flex justify-content-center my-4">
+                {{$courses->links()}}
+             </div>
         </div>
      @endif
   </div>
