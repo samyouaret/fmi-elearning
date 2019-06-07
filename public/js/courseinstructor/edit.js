@@ -63628,11 +63628,15 @@ function (_Component) {
 
   _createClass(Select, [{
     key: "renderList",
-    value: function renderList(arr, _ref) {
-      var _ref$key = _ref.key,
+    value: function renderList() {
+      var arr = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
+      var _ref = arguments.length > 1 ? arguments[1] : undefined,
+          _ref$key = _ref.key,
           key = _ref$key === void 0 ? "id" : _ref$key,
           _ref$value = _ref.value,
           value = _ref$value === void 0 ? "value" : _ref$value;
+
       return arr.map(function (ele) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
           key: ele[key],

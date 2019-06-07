@@ -18,7 +18,7 @@
                    <div class="container rounded p-5 bg-white">
                       <h5 class="text-muted">About :</h5>
                    <p>
-                      {{$user->introduction_brief}}
+                      {{$user->biography}}
                    </p>
                  </div>
                 </div>

@@ -3,7 +3,7 @@ export default class Select extends Component {
    constructor(props) {
       super(props);
    }
-   renderList(arr,{key="id",value="value"}){
+   renderList(arr=[],{key="id",value="value"}){
       return arr.map((ele)=> {
       return <option key={ele[key]} value={ele[key]}>{ele[value]}</option>
      })

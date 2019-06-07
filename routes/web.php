@@ -99,4 +99,6 @@ Route::prefix('enrollment')->group(function()
 /**
  * Profile routes
  */
+Route::get('profile/edit/{id}',"User\ProfileController@editprofile");
+Route::post('profile/image/upload',"User\ProfileController@uploadImage");
 Route::resource('profile',"User\ProfileController")->only(['show',"edit","index",'update']);

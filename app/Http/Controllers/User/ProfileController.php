@@ -25,7 +25,7 @@ class ProfileController extends Controller
       // $this->middleware('profile',['only' => ['create']]);
     }
     public function getprofileData(int $id){
-      $query = User::select('user.id as id','first_name','last_name','user_type','image')
+      $query = User::select('user.id as id','first_name','last_name','user_type','image','biography')
       ->leftjoin('user_info','user.id','user_info.id');
       $courses = [];
       $user = User::find($id);
@@ -33,7 +33,7 @@ class ProfileController extends Controller
          return false;
       }
       if ($user->user_type>0) {
-        $query->addSelect('qualification',"introduction_brief",
+        $query->addSelect('qualification',
         'num_of_enrolled_students');
        $query->leftjoin('instructor','user.id','instructor.id');
        $courses = Course::select("id","description","title","course_fee","level","cover_image")
@@ -65,15 +65,23 @@ class ProfileController extends Controller
      */
     public function edit($id)
     {
-      $profile = Profile::find($id);
+        return view('profile.edit');
+    }
+    public function editprofile(int $id)
+    {
+      $profile = Profile::select("user.id as id",'first_name','last_name',
+      'university_id','image as cover_image','biography',"department_id")
+      ->join('user','user.id','user_info.id')
+      ->where('user_info.id',$id)
+      ->first();
       $universities =  DB::table('university')->select('id','name')->get();
       $departments =  DB::table('department')->select('id','name')->get();
-        return view('profile.edit')->with([
-          'profile'=>$profile,
+        return [
+          'values'=>$profile,
           'id'=>$id,
           'departments'=>$departments,
           'universities' =>$universities
-        ]);
+        ];
     }
 
     /**
@@ -83,42 +91,56 @@ class ProfileController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request,int $id)
     {
         $this->validate($request,[
-          'university' => 'required',
-          'department' => 'required',
-          'gender'=>'required',
-          'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+           'first_name' => 'bail|required|string',
+           'last_name' => 'bail|required|string',
+           'biography' => 'bail|required|string',
+          'university_id' => 'bail|required|integer',
+          'department_id' => 'bail|required|integer',
         ]);
-        echo "<pre>";
-        print_r($request->all());
-        var_dump($request->has('profile_image'));
         if (!$request->user()->id==$id) {
-          App::abort(404, 'Unauthorized');
+            return response()->json(['message'=>"not found",
+            "status"=>"error"],404);
         }
-        if ($request->hasFile('profile_image')) {
-            $fileNameWithExt = $request->file('profile_image')->getClientOriginalName();
+        $profile = Profile::find($id) ?? new Profile;
+        $profile->id = $id;
+        $profile->university_id = $request->input('university_id');
+        $profile->department_id = $request->input('department_id');
+        $profile->biography = $request->input('biography');
+        $user = User::find($id);
+        $user->first_name = $request->input('first_name');
+        $user->last_name = $request->input('last_name');
+        $user->save();
+        $profile->save();
+        return response()->json(['message'=>"profile updated","status"=>"success"],200);
+    }
+
+    public function uploadImage(Request $request)
+    {
+        $this->validate($request,[
+          'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+        if ($request->hasFile('cover_image')) {
+            $fileNameWithExt = $request->file('cover_image')->getClientOriginalName();
             //get filename
             $fileName = pathinfo($fileNameWithExt,PATHINFO_FILENAME);
             //get extension
-            $ext = $request->file('profile_image')->getClientOriginalExtension();
+            $ext = $request->file('cover_image')->getClientOriginalExtension();
             $fileNameToStore = $fileName.'_'.time().'.'.$ext;
-            $path = $request->file('profile_image')->storeAs('public/profile_image',$fileNameToStore);
+            $path = $request->file('cover_image')->storeAs('public/profile_image',$fileNameToStore);
+            // '/storage/profile_image/'.$fileNameToStore);
             // echo "yeeeeeeeeeeees";
-            $user =  User::find($id);
+            $user =  User::find(Auth::id());
             $user->image = $fileNameToStore;
             $user->save();
             if ($user->image !=='no_image.jpg')
               Storage::delete('public/profile_image' . $user->image);
+            return response()->json(['cover_image'=>$fileNameToStore,
+            'message'=>"image uploaded","status"=>"success"],200);
         }
-        $profile = Profile::find($id) ?? new Profile;
-        $profile->id = $id;
-        $profile->university_id = $request->input('university');
-        $profile->department_id = $request->input('department');
-        $profile->gender = $request->input('gender');
-        $profile->save();
-        return redirect('/dashboard')->with('success',"Profile updated successfully");
+        return response()->json(['message'=>"image cannot be uploaded","status"=>"error"],422);
     }
 
     /**
