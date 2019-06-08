@@ -61763,7 +61763,7 @@ function shortenString(str) {
     return "";
   }
 
-  var suffix = str.length > 60 ? "..." : "";
+  var suffix = str.length > length ? "..." : "";
   return str.substr(0, length) + suffix;
 }
 

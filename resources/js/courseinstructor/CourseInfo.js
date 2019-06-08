@@ -213,8 +213,8 @@ export default class CourseInfo extends Component {
                <FileInput name="cover_image" error={errors.cover_image} {...handlers}>
                   {errors.cover_image && this.renderErrors(errors.cover_image)}
                </FileInput>
-               <button className="btn btn-success mr-3" type="submit">save</button>
-               <button className="btn btn-danger" onClick={this.cancel}>cancel</button>
+               <button className="btn btn-primary  rounded-0 mr-3" type="submit">save</button>
+               <button className="btn btn-danger rounded-0" onClick={this.cancel}>cancel</button>
             </form>
             )
          }

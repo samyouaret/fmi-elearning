@@ -72,12 +72,12 @@ class CourseContainer extends Component {
         return  (
            <form onSubmit={handleSubmit}>
            <div className="form-group">
-             <label htmlFor="title" className="form-control-label">title</label>
+             <label htmlFor="title" style={{fontSize:"20px"}}>Title :</label>
            <Input name="title" value={values.title} {...handlers}/>
            {errors.title && this.renderErrors(errors.title)}
            </div>
-           <button className="btn btn-success mr-3" type="submit">Create</button>
-           <button className="btn btn-danger" onClick={this.cancel}>Cancel</button>
+           <button className="btn btn-primary btn-sm rounded-0 mr-3" type="submit">Create</button>
+           <button className="btn btn-danger btn-sm rounded-0" onClick={this.cancel}>Cancel</button>
          </form>
          )
        }

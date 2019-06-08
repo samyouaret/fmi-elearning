@@ -3,21 +3,24 @@
   <div id="profile">
   </div>
   <div class="container-fluid">
-             <div class="bg-white p-3 my-4">
+             <div class="bg-white rounded p-3 my-4">
                 <div class="container">
                 <div class="row">
                   <div class="col-md-5 text-center">
                    <img class="img-fluid" style="border-radius: 50%;max-width:220px"src="/storage/profile_image/{{$user->image}}" alt="user"/>
-                   <h4 class="text-center text-muted my-2">{{$user->first_name}} {{$user->last_name}}</h4>
+                   <h4 class="text-center my-2"><strong>{{$user->first_name}} {{$user->last_name}}</strong></h4>
                    @auth
                       <a href="/profile/{{$user->id}}/edit" class="my-2 btn btn-info">
                      edit</a>
                    @endauth
+                   @if ($user->user_type==1)
+                      <span><strong class="text-muted">enrolled students: {{$user->num_of_enrolled_students}}</strong></span>
+                   @endif
                 </div>
                 <div class="col-md-7 d-flex align-items-center">
                    <div class="container rounded p-5 bg-white">
-                      <h5 class="text-muted">About :</h5>
-                   <p>
+                      <h4>About :</h4>
+                   <p class="lead">
                       {{$user->biography}}
                    </p>
                  </div>

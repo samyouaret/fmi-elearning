@@ -21,6 +21,7 @@ class EnrollmentDashboard extends Component {
          chapters : [],
          resources : [],
          relatedCourses : [],
+         instructor :{}
       }
       this.options = {
          url:  "/enrollment/course/" + this.getCourseId()
@@ -41,24 +42,27 @@ class EnrollmentDashboard extends Component {
       this.recordVideoView = ()=>{
          let content = this.state.current_content;
          let data = {
-            content_id : content.content_id
+            content_id : content.content_id,
+            course_id :  this.getCourseId()
          }
          request("/enrollment/enrollcontent/" + content.content_id,
          data,"POST").done((message)=>{
             content.watched = message.watched
+            this.updateChapters(content);
          })
-         this.updateChapters(content);
       }
       this.updateChapters = (content)=>{
          let pos = -1;
-         this.state.chapters.map((chapter,index)=>{
-            if (pos = findByAttr(chapter.contents,'content_id',content.content_id) > -1) {
-               chapter.contents.splice(pos,1,content);
-                // this.setState({
-                //   contents : contents
-                // })
+         let chapters = this.state.chapters.map((chapter,index)=>{
+            pos = findByAttr(chapter.contents,'content_id',content.content_id);
+            if (pos > -1) {
+              chapter.contents.splice(pos,1,content);
             }
-         })
+            return chapter;
+         });
+        this.setState({
+           chapters : chapters
+        })
       }
       this.loadResources = (id)=>{
          request("/curriculum/content/resources/" + id,{},"GET").done((message)=>{
@@ -86,6 +90,7 @@ class EnrollmentDashboard extends Component {
    renderChapters(){
       return this.state.chapters.map((chapter)=>{
          return (<Chapter key={chapter.chapter_id}
+            id={chapter.chapter_id}
             loadVideo={this.loadVideo}
             title={chapter.chapter_title} contents={chapter.contents}/>)
       })
@@ -102,7 +107,11 @@ class EnrollmentDashboard extends Component {
          return <span>no files are found.</span>
       }
       const files =  this.state.resources.map((resource)=>{
-         return ( <a className="nav-link" key={resource.id} target="_blank"
+         return ( <a className="nav-link p-2"
+         style={{color: "#362e4e",
+          textDecoration: "none",
+          backgroundColor: "#f0f5f9"}}
+         key={resource.id} target="_blank"
          href={resource.url}>{this.getResourceName(resource.url)}</a>)
       });
       return (<div className="nav flex-column nav-pills">
@@ -136,9 +145,9 @@ class EnrollmentDashboard extends Component {
       "/storage/course_image/" + this.state.cover_image;
       return (
          <div className="row justify-content-end" style={{minHeight:500 + "px"}}>
-            <div className="container justify-content-between d-flex bg-white p-4 mb-3">
-               <h4 className="text-muted">{this.state.course_title}</h4>
-               <h5>{this.state.current_content.content_title}</h5>
+            <div className="container rounded border justify-content-between d-flex bg-white p-4 mb-3">
+               <h4>{this.state.course_title}</h4>
+               <h5 className="p-3 bg-light rounded">{this.state.current_content.content_title}</h5>
             </div>
              <Sidebar>
               <DataProvider options={this.options}
@@ -151,7 +160,9 @@ class EnrollmentDashboard extends Component {
                      this.setState({
                         chapters : chapters,
                         course_title : data.course_title,
-                        cover_image : data.cover_image
+                        cover_image : data.cover_image,
+                        description : data.description,
+                        instructor : data.instructor
                      })
                   }}
                >
@@ -161,9 +172,29 @@ class EnrollmentDashboard extends Component {
              <WrapperContent>
                 <Video poster={cover_image}
                    id="video" url={this.state.current_content.video_url}/>
-                   <div className="container justify-content-between d-flex bg-white p-4 mb-3">
-                      <h4 className="text-muted">instructor</h4>
-                     {this.renderFiles()}
+                   <div className="container bg-white rounded border p-4 mb-3">
+                        <div className="row">
+                           <div className="col-md-3">
+                           <h4 className="my-1">instructor : </h4>
+                              <a  className="bg-white align-items-center d-flex
+                                 flex-column t p-3 my-2 text-secondary"
+                                style={{textDecoration:"none"}} href={"/profile/" +
+                                this.state.instructor.id}>
+                              <img
+                                style={{maxWidth:"100px",borderRadius:'50%'}} src={"/storage/profile_image/"+
+                                this.state.instructor.profile_image}/>
+                             <strong>{this.state.instructor.first_name + " " +
+                                this.state.instructor.last_name}</strong>
+                             </a>
+                         </div>
+                       <div className="col-md-9 text-center">
+                          {this.renderFiles()}
+                       </div>
+                    </div>
+                    <div className="container">
+                         <h3>Course description</h3>
+                         {shortenString(this.state.description,500)}
+                       </div>
                    </div>
                   <h5 className="card-title">Related courses</h5>
                    {this.rendeRelatedCourses()}

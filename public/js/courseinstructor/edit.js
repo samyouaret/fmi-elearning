@@ -62057,10 +62057,10 @@ function (_Component) {
           name: "cover_image",
           error: errors.cover_image
         }, handlers), errors.cover_image && _this3.renderErrors(errors.cover_image)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-          className: "btn btn-success mr-3",
+          className: "btn btn-primary  rounded-0 mr-3",
           type: "submit"
         }, "save"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-          className: "btn btn-danger",
+          className: "btn btn-danger rounded-0",
           onClick: _this3.cancel
         }, "cancel"));
       }));

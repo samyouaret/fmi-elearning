@@ -61611,7 +61611,8 @@ function (_Component) {
       },
       chapters: [],
       resources: [],
-      relatedCourses: []
+      relatedCourses: [],
+      instructor: {}
     };
     _this.options = {
       url: "/enrollment/course/" + _this.getCourseId()
@@ -61637,24 +61638,31 @@ function (_Component) {
     _this.recordVideoView = function () {
       var content = _this.state.current_content;
       var data = {
-        content_id: content.content_id
+        content_id: content.content_id,
+        course_id: _this.getCourseId()
       };
       Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_1__["default"])("/enrollment/enrollcontent/" + content.content_id, data, "POST").done(function (message) {
         content.watched = message.watched;
-      });
 
-      _this.updateChapters(content);
+        _this.updateChapters(content);
+      });
     };
 
     _this.updateChapters = function (content) {
       var pos = -1;
 
-      _this.state.chapters.map(function (chapter, index) {
-        if (pos = Object(_helpers_findByAttr__WEBPACK_IMPORTED_MODULE_9__["default"])(chapter.contents, 'content_id', content.content_id) > -1) {
-          chapter.contents.splice(pos, 1, content); // this.setState({
-          //   contents : contents
-          // })
+      var chapters = _this.state.chapters.map(function (chapter, index) {
+        pos = Object(_helpers_findByAttr__WEBPACK_IMPORTED_MODULE_9__["default"])(chapter.contents, 'content_id', content.content_id);
+
+        if (pos > -1) {
+          chapter.contents.splice(pos, 1, content);
         }
+
+        return chapter;
+      });
+
+      _this.setState({
+        chapters: chapters
       });
     };
 
@@ -61698,6 +61706,7 @@ function (_Component) {
       return this.state.chapters.map(function (chapter) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Chapter__WEBPACK_IMPORTED_MODULE_5__["default"], {
           key: chapter.chapter_id,
+          id: chapter.chapter_id,
           loadVideo: _this2.loadVideo,
           title: chapter.chapter_title,
           contents: chapter.contents
@@ -61725,7 +61734,12 @@ function (_Component) {
 
       var files = this.state.resources.map(function (resource) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-          className: "nav-link",
+          className: "nav-link p-2",
+          style: {
+            color: "#362e4e",
+            textDecoration: "none",
+            backgroundColor: "#f0f5f9"
+          },
           key: resource.id,
           target: "_blank",
           href: resource.url
@@ -61784,10 +61798,10 @@ function (_Component) {
           minHeight: 500 + "px"
         }
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "container justify-content-between d-flex bg-white p-4 mb-3"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", {
-        className: "text-muted"
-      }, this.state.course_title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h5", null, this.state.current_content.content_title)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Sidebar__WEBPACK_IMPORTED_MODULE_3__["default"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_DataProvider__WEBPACK_IMPORTED_MODULE_11__["default"], {
+        className: "container rounded border justify-content-between d-flex bg-white p-4 mb-3"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, this.state.course_title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h5", {
+        className: "p-3 bg-light rounded"
+      }, this.state.current_content.content_title)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Sidebar__WEBPACK_IMPORTED_MODULE_3__["default"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_DataProvider__WEBPACK_IMPORTED_MODULE_11__["default"], {
         options: this.options,
         renderLoading: this.renderLoading,
         renderError: function renderError(error) {
@@ -61801,7 +61815,9 @@ function (_Component) {
           _this4.setState({
             chapters: chapters,
             course_title: data.course_title,
-            cover_image: data.cover_image
+            cover_image: data.cover_image,
+            description: data.description,
+            instructor: data.instructor
           });
         }
       }, this.renderChapters())), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_WrapperContent__WEBPACK_IMPORTED_MODULE_6__["default"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Video__WEBPACK_IMPORTED_MODULE_4__["default"], {
@@ -61809,10 +61825,30 @@ function (_Component) {
         id: "video",
         url: this.state.current_content.video_url
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "container justify-content-between d-flex bg-white p-4 mb-3"
+        className: "container bg-white rounded border p-4 mb-3"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-3"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", {
-        className: "text-muted"
-      }, "instructor"), this.renderFiles()), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h5", {
+        className: "my-1"
+      }, "instructor : "), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        className: "bg-white align-items-center d-flex flex-column t p-3 my-2 text-secondary",
+        style: {
+          textDecoration: "none"
+        },
+        href: "/profile/" + this.state.instructor.id
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
+        style: {
+          maxWidth: "100px",
+          borderRadius: '50%'
+        },
+        src: "/storage/profile_image/" + this.state.instructor.profile_image
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, this.state.instructor.first_name + " " + this.state.instructor.last_name))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-9 text-center"
+      }, this.renderFiles())), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "container"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", null, "Course description"), Object(_helpers_shortenString__WEBPACK_IMPORTED_MODULE_10__["default"])(this.state.description, 500))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h5", {
         className: "card-title"
       }, "Related courses"), this.rendeRelatedCourses()));
     }
@@ -62198,7 +62234,7 @@ function shortenString(str) {
     return "";
   }
 
-  var suffix = str.length > 60 ? "..." : "";
+  var suffix = str.length > length ? "..." : "";
   return str.substr(0, length) + suffix;
 }
 

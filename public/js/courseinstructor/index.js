@@ -61677,15 +61677,17 @@ function (_Component) {
           className: "form-group"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
           htmlFor: "title",
-          className: "form-control-label"
-        }, "title"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_formcomponents_Input__WEBPACK_IMPORTED_MODULE_6__["default"], _extends({
+          style: {
+            fontSize: "20px"
+          }
+        }, "Title :"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_formcomponents_Input__WEBPACK_IMPORTED_MODULE_6__["default"], _extends({
           name: "title",
           value: values.title
         }, handlers)), errors.title && _this2.renderErrors(errors.title)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-          className: "btn btn-success mr-3",
+          className: "btn btn-primary btn-sm rounded-0 mr-3",
           type: "submit"
         }, "Create"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-          className: "btn btn-danger",
+          className: "btn btn-danger btn-sm rounded-0",
           onClick: _this2.cancel
         }, "Cancel"));
       })));
@@ -62028,7 +62030,7 @@ function shortenString(str) {
     return "";
   }
 
-  var suffix = str.length > 60 ? "..." : "";
+  var suffix = str.length > length ? "..." : "";
   return str.substr(0, length) + suffix;
 }
 

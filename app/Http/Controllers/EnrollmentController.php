@@ -34,9 +34,17 @@ class enrollmentController extends Controller
          ->where('course_id',$id)
          ->orderBy('chapter_id')
          ->get();
-          $courseInf = DB::table("course")->select("title","cover_image")->
-          where('id',$id)->first();
+          $courseInf = DB::table("course")->select("title",
+          "description","cover_image")
+          ->where('id',$id)->first();
+          $instructor = DB::table("user")->select('id',
+          'image as profile_image','first_name','last_name')
+          ->rightjoin('instructor_course','instructor_id','user.id')
+          ->where('instructor_course.course_id',$id)->first();
+
           return response()->json(["cover_image"=>$courseInf->cover_image,
+          'instructor' =>$instructor,
+          'description'=>$courseInf->description,
           "course_title"=>$courseInf->title,"chapters"=>$course],200);
    }
    public function getEnrolledCourses(){
@@ -57,11 +65,29 @@ class enrollmentController extends Controller
         ["id","<>",$id]])
          ->limit(3)
          ->get();
-          return response()->json($courses,200);
+        return response()->json($courses,200);
+   }
+   public function getInstructor(int $courseId){
+         $course = Course::find($id);
+         $courses = DB::table("course")
+         ->select("id","title","cover_image")
+         ->where(['sub_subject_id'=>$course->sub_subject_id,
+        ["id","<>",$id]])
+         ->limit(3)
+         ->get();
+        return response()->json($courses,200);
    }
    public function enrollcontent(Request $request)
    {
      $this->validate($request,['content_id'=>"bail|required|integer"]);
+     $user_id = Auth::id();
+     $instructor = DB::table('instructor_course')
+     ->select('instructor_id as user_id')
+     ->where('course_id',$request->input("course_id"))
+     ->first();
+     if ($user_id == $instructor->user_id) {
+        return response()->json([],422);
+     }
      $content_id  = $request->input("content_id");
         $data = ["content_id"=>$content_id,"user_id"=>
      Auth::id()];

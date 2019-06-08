@@ -28,5 +28,6 @@ class AppServiceProvider extends ServiceProvider
         Schema::defaultStringLength(191);
         Blade::component('components.alert', 'alert');
         Blade::include('inc.navbar', 'navbar');
+        Blade::include('inc.footer', 'footer');
     }
 }
