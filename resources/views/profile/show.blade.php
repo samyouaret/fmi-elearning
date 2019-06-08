@@ -10,7 +10,9 @@
                    <img class="img-fluid" style="border-radius: 50%;max-width:220px"src="/storage/profile_image/{{$user->image}}" alt="user"/>
                    <h4 class="text-center my-2"><strong>{{$user->first_name}} {{$user->last_name}}</strong></h4>
                    @auth
-                      <a href="/profile/{{$user->id}}/edit" class="my-2 btn btn-info">
+                      @if ($user->id ==Auth::id())
+                        <a href="/profile/{{$user->id}}/edit" class="my-2 btn btn-info">
+                      @endif
                      edit</a>
                    @endauth
                    @if ($user->user_type==1)

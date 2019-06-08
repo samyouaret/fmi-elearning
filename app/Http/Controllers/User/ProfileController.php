@@ -65,10 +65,14 @@ class ProfileController extends Controller
      */
     public function edit($id)
     {
+      if (Auth::id() != $id)
+          return abort(404,"forbidden");
         return view('profile.edit');
     }
     public function editprofile(int $id)
     {
+      if (Auth::id() != $id)
+          return abort(404,"forbidden");
       $profile = Profile::select("user.id as id",'first_name','last_name',
       'university_id','image as cover_image','biography',"department_id")
       ->join('user','user.id','user_info.id')
@@ -93,6 +97,10 @@ class ProfileController extends Controller
      */
     public function update(Request $request,int $id)
     {
+      if (!$request->user()->id==$id) {
+         return response()->json(['message'=>"not found",
+         "status"=>"error"],404);
+      }
         $this->validate($request,[
            'first_name' => 'bail|required|string',
            'last_name' => 'bail|required|string',
@@ -100,10 +108,6 @@ class ProfileController extends Controller
           'university_id' => 'bail|required|integer',
           'department_id' => 'bail|required|integer',
         ]);
-        if (!$request->user()->id==$id) {
-            return response()->json(['message'=>"not found",
-            "status"=>"error"],404);
-        }
         $profile = Profile::find($id) ?? new Profile;
         $profile->id = $id;
         $profile->university_id = $request->input('university_id');

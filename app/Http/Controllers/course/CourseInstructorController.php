@@ -30,7 +30,7 @@ class CourseInstructorController extends Controller
          $this->authorize('isInstructor');
          $courses = Course::join('instructor_course',
          'instructor_course.course_id','course.id')
-         ->where('instructor_id',Auth()::id())
+         ->where('instructor_id',Auth::id())
          ->get();
          return $courses->toJson();
     }
@@ -57,10 +57,13 @@ class CourseInstructorController extends Controller
       $this->validate($request,['title'=>'bail|required|string']);
       $user_id = Auth::id();
       $data = $request->all();
-      $id = DB::table("course")->
-      insertGetId($data);
-      DB::table("instructor_course")->
-      insert(['course_id'=>$id,'instructor_id'=>$user_id,'is_owner'=>1]);
+      $id = NULL;
+      DB::transaction(function () {
+         $id = DB::table("course")->
+         insertGetId($data);
+         DB::table("instructor_course")->
+         insert(['course_id'=>$id,'instructor_id'=>$user_id,'is_owner'=>1]);
+      });
       return $id ?
          response()->json(["id"=>$id,'status'=>'success',
          'message' =>"course has been created successfully"],200) :
