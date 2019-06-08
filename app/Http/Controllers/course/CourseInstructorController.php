@@ -29,7 +29,9 @@ class CourseInstructorController extends Controller
     {
          $this->authorize('isInstructor');
          $courses = Course::join('instructor_course',
-         'instructor_course.course_id','course.id')->get();
+         'instructor_course.course_id','course.id')
+         ->where('instructor_id',Auth()::id())
+         ->get();
          return $courses->toJson();
     }
 
