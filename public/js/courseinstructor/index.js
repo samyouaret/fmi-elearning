@@ -61647,14 +61647,7 @@ function (_Component) {
       var _this2 = this;
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "card m-2" // style={{
-        //      position:"fixed",
-        //      top:50 + "%",
-        //      left:50 +"%",
-        //      zIndex: 99999,
-        //      transform: "translate(-49%,-49%)"
-        //    }}>
-
+        className: "card m-2"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "card-body"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_formcomponents_Form__WEBPACK_IMPORTED_MODULE_5__["default"], {

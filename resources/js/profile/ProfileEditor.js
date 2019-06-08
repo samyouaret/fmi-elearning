@@ -147,7 +147,7 @@ export default class ProfileEditor extends React.Component {
          }}
       </Form>
    </DataProvider>
-    );
+    )
   }
   renderFileUploader(){
      const options = {

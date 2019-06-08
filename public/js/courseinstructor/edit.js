@@ -61917,7 +61917,7 @@ function (_Component) {
         var label = _this2.state.sub_subjects[labelPos].label;
         var language_name = _this2.state.languages[lanPos].language_name;
 
-        var course = _objectSpread({}, data, {
+        var course = _objectSpread({}, _this2.state.course, data, {
           language_name: language_name,
           label: label,
           image: message.cover_image || _this2.state.course.image
@@ -62078,6 +62078,7 @@ function (_Component) {
           onClick: this.publish
         }, "publish");
       } else {
+        console.log("unpublished");
         publishButton = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
           className: "btn btn-warning",
           onClick: this.unpublish

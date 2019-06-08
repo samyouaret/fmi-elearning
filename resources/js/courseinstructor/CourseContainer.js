@@ -50,15 +50,7 @@ class CourseContainer extends Component {
    }
    renderForm(){
       return(
-       <div className="card m-2"
-          // style={{
-          //      position:"fixed",
-          //      top:50 + "%",
-          //      left:50 +"%",
-          //      zIndex: 99999,
-          //      transform: "translate(-49%,-49%)"
-          //    }}>
-          >
+       <div className="card m-2">
         <div className="card-body">
           <Form
            initialErrors={this.state.errors}

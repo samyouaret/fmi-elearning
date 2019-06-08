@@ -115,6 +115,7 @@ export default class CourseInfo extends Component {
       let label = this.state.sub_subjects[labelPos].label;
       let language_name = this.state.languages[lanPos].language_name;
       let course =  {
+             ...this.state.course,
              ...data,
              language_name : language_name,
              label : label,
@@ -229,6 +230,7 @@ export default class CourseInfo extends Component {
       if (course.is_published==0) {
          publishButton = <button className="btn btn-warning" onClick={this.publish}>publish</button>;
       }else {
+         console.log("unpublished");
          publishButton = <button className="btn btn-warning" onClick={this.unpublish}>unpublish</button>;
          publishedStatus =  <small className="badge pill-badge badge-success mr-2">published</small>
       }
