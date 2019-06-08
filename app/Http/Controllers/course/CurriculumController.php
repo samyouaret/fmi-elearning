@@ -20,6 +20,7 @@ class CurriculumController extends Controller
     * @var int $id
     */
    public function show(int $id){
+        $this->authorize('editCourse',$id);
          $course = DB::table("course_chapter")->
          select("course_chapter.id as chapter_id","chapter_title",
          "course_chapter_content.id as content_id","is_mandatory",
@@ -41,6 +42,7 @@ class CurriculumController extends Controller
 
    public function createChapter(int $id)
    {
+      $this->authorize('editCourse',$id);
      $data = [
      "chapter_title"=>"new Chapter title.",
      "course_id"=>$id,

@@ -22,6 +22,7 @@ class CourseInstructorController extends Controller
      */
     public function index()
     {
+       $this->authorize('isInstructor');
        return view('courseinstructor.index');
     }
 
@@ -80,7 +81,7 @@ class CourseInstructorController extends Controller
      */
     public function publish(int $id)
     {
-      $this->authorize('isInstructor');
+      $this->authorize('editCourse',$id);
       $course = Course::find($id);
       if ($course->is_published == 1) {
          return response()->json(
@@ -94,7 +95,10 @@ class CourseInstructorController extends Controller
       ->select('course_chapter.id as co_ch_id','video_url')
       ->leftJoin('course_chapter_content','course_chapter.id','=','course_chapter_content.course_chapter_id')
       ->where('course_id',"=",$id)->get();
-      // return $chapters;
+      if (count($chapters)==0) {
+         return response()->json(
+           ['status'=>'failed','message' =>"course must have at least a chapter."],422);
+      }
       foreach ($chapters as $chapter) {
          if (!$chapter->video_url) {
             return response()->json(
@@ -106,11 +110,15 @@ class CourseInstructorController extends Controller
       if ($course->save()) {
          return response()->json(
            ['status'=>'success','message' =>"course now published."],200);
+      }else {
+        return response()->json(['status'=>'failed',
+         'message' =>"course cannot be updated try again"],422);
       }
     }
 
     public function unpublish(int $id)
     {
+      $this->authorize('editCourse',$id);
       $course = Course::find($id);
       if ($course->is_published == 0) {
          return response()->json(
@@ -145,6 +153,7 @@ class CourseInstructorController extends Controller
      */
     public function show($id)
     {
+      $this->authorize('editCourse',$id);
        $course = Course::select("course.id as id","language_name","label","subject_id",
         "description","title","course_fee","is_published","level","language_id","sub_subject_id",
         "cover_image")
@@ -157,6 +166,7 @@ class CourseInstructorController extends Controller
 
     public function getCourse($id)
     {
+      $this->authorize('editCourse',$id);
       $course = Course::select("course.id","language_name","label","subject_id",
        "description","title","course_fee","is_published","level","language_id","sub_subject_id",
        "cover_image as image")
@@ -185,6 +195,7 @@ class CourseInstructorController extends Controller
 
     public function subSubjects($subjectId)
     {
+      $this->authorize('editCourse',$id);
        $items = DB::table('sub_subject')
        ->where('subject_id',$subjectId)
        ->get();
@@ -194,6 +205,7 @@ class CourseInstructorController extends Controller
 
     public function subjects()
     {
+      $this->authorize('editCourse',$id);
        $items = DB::table('subject')
        ->get();
      return response()->json($items);
@@ -201,6 +213,7 @@ class CourseInstructorController extends Controller
 
     public function languages()
     {
+      $this->authorize('editCourse',$id);
        $items = DB::table('language')
        ->get();
       return response()->json($items);
@@ -215,7 +228,7 @@ class CourseInstructorController extends Controller
      */
     public function update(Request $request, $id)
     {
-      // return $request->all();
+         $this->authorize('editCourse',$id);
          $this->validate($request,[
          "title"=>"required|string|max:60",
          "description"=>"required|string|max:2000",

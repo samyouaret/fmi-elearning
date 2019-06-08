@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use App\Course;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -40,6 +42,11 @@ class AuthServiceProvider extends ServiceProvider
         });
         Gate::define('editProfile', function ($user,$id) {
            return $user->id == $id;
+        });
+        Gate::define('editCourse', function ($user,$id) {
+           $instructor = DB::table('instructor_course')
+           ->select('instructor_id as id')->where('course_id',$id)->first();
+           return $instructor->id == $user->id;
         });
         //
     }
