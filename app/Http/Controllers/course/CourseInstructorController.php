@@ -58,12 +58,13 @@ class CourseInstructorController extends Controller
       $user_id = Auth::id();
       $data = $request->all();
       $id = NULL;
-      DB::transaction(function () {
+      $id = DB::transaction(function () use ($data,$user_id) {
          $id = DB::table("course")->
          insertGetId($data);
          DB::table("instructor_course")->
          insert(['course_id'=>$id,'instructor_id'=>$user_id,'is_owner'=>1]);
-      });
+        return $id;
+      },5);
       return $id ?
          response()->json(["id"=>$id,'status'=>'success',
          'message' =>"course has been created successfully"],200) :

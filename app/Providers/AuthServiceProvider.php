@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -36,6 +37,9 @@ class AuthServiceProvider extends ServiceProvider
         });
         Gate::define('isInstructor', function ($user) {
           return $user->user_type == self::USER_INSTRUCTOR;
+        });
+        Gate::define('editProfile', function ($user,$id) {
+           return $user->id == $id;
         });
         //
     }
