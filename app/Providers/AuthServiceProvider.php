@@ -38,7 +38,7 @@ class AuthServiceProvider extends ServiceProvider
           return $user->user_type == self::USER_STUDENT;
         });
         Gate::define('isInstructor', function ($user) {
-          return $user->user_type == self::USER_INSTRUCTOR;
+          return $user->user_type >= self::USER_INSTRUCTOR;
         });
         Gate::define('editProfile', function ($user,$id) {
            return $user->id == $id;

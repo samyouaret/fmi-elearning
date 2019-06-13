@@ -99,6 +99,19 @@ Route::prefix('enrollment')->group(function()
 /**
  * Profile routes
  */
-Route::get('profile/edit/{id}',"User\ProfileController@editprofile");
-Route::post('profile/image/upload',"User\ProfileController@uploadImage");
-Route::resource('profile',"User\ProfileController")->only(['show',"edit","index",'update']);
+ Route::prefix('profile')->group(function()
+ {
+    Route::get('/edit/{id}',"User\ProfileController@editprofile");
+    Route::post('/image/upload',"User\ProfileController@uploadImage");
+});
+ Route::resource('profile',"User\ProfileController")->only(['show',"edit","index",'update']);
+/*
+** Admin routes
+*/
+Route::prefix('admin')->group(function()
+{
+   Route::get('/',"User\AdminController@show");
+   Route::get('/users',"User\AdminController@getUsers");
+   Route::get('/courses',"User\AdminController@getCourses");
+   Route::post('/search/{type}',"User\AdminController@search");
+});

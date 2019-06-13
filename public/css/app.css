@@ -1976,7 +1976,7 @@ pre code {
   background-color: #fff;
   background-clip: padding-box;
   border: 1px solid #ced4da;
-  border-radius: 0.25rem;
+  border-radius: 0.15rem;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
@@ -1992,11 +1992,11 @@ pre code {
 }
 
 .form-control:focus {
-  color: #495057;
-  background-color: #fff;
-  border-color: #a1cbef;
-  outline: 0;
-  box-shadow: 0 0 0 0.2rem rgba(52, 144, 220, 0.25);
+    color: #495057;
+    background-color: #fff;
+    border-color: #dbe0e4;
+    outline: 0;
+    box-shadow: 0 0 0 0.1rem hsla(215, 24%, 25%, 0.38);
 }
 
 .form-control::-webkit-input-placeholder {
@@ -4744,7 +4744,7 @@ input[type=button].btn-block {
   word-wrap: break-word;
   background-color: #fff;
   background-clip: border-box;
-  border: 1px solid rgba(0, 0, 0, 0.125);
+  border: 1px solid rgba(213, 217, 226, 0.45);
   border-radius: 0.25rem;
 }
 
@@ -4790,10 +4790,10 @@ input[type=button].btn-block {
 }
 
 .card-header {
-  padding: 0.75rem 1.25rem;
-  margin-bottom: 0;
-  background-color: rgba(0, 0, 0, 0.03);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 0;
+    background-color: rgb(245, 248, 255);
+    border-bottom: 1px solid rgba(213, 217, 226, 0.45);
 }
 
 .card-header:first-child {
@@ -5542,7 +5542,7 @@ a.badge-dark.focus {
   padding: 0.75rem 1.25rem;
   margin-bottom: -1px;
   background-color: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.125);
+  border: 1px solid rgb(231, 234, 241,0.70);
 }
 
 .list-group-item:first-child {
@@ -6825,23 +6825,23 @@ button.bg-dark:focus {
 }
 
 .border {
-  border: 1px solid #dee2e6 !important;
+  border: 1px solid rgba(213, 217, 226, 0.45) !important;
 }
 
 .border-top {
-  border-top: 1px solid #dee2e6 !important;
+  border-top: 1px solid rgba(213, 217, 226, 0.45) !important;
 }
 
 .border-right {
-  border-right: 1px solid #dee2e6 !important;
+  border-right: 1px solid rgba(213, 217, 226, 0.45) !important;
 }
 
 .border-bottom {
-  border-bottom: 1px solid #dee2e6 !important;
+  border-bottom: 1px solid rgba(213, 217, 226, 0.45) !important;
 }
 
 .border-left {
-  border-left: 1px solid #dee2e6 !important;
+  border-left: 1px solid rgba(213, 217, 226, 0.45) !important;
 }
 
 .border-0 {
@@ -10654,4 +10654,3 @@ a.text-dark:focus {
     border-color: #dee2e6;
   }
 }
-

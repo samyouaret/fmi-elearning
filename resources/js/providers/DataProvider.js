@@ -69,9 +69,9 @@ export default class DataProvider extends Component{
      }else if (!isLoaded) {
         console.log("loading.. renderd :" + this.times);
       return this.props.renderLoading && this.props.renderLoading() || null;
-   }else{
+     }else{
          return this.props.children && this.props.children.constructor.name == "Function" ?
          this.props.children(data,error,this.reload,this.update) : this.props.children || null;
-   }
+     }
    }
 }

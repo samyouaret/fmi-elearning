@@ -183,7 +183,7 @@ class EnrollmentDashboard extends Component {
                               <img
                                 style={{maxWidth:"100px",borderRadius:'50%'}} src={"/storage/profile_image/"+
                                 this.state.instructor.profile_image}/>
-                             <strong>{this.state.instructor.first_name + " " +
+                             <strong className="text-center">{this.state.instructor.first_name + " " +
                                 this.state.instructor.last_name}</strong>
                              </a>
                          </div>
