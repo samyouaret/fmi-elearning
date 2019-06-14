@@ -16,6 +16,19 @@ class AdminDashboard extends Component {
     constructor(props) {
         super(props);
         this.state = {}
+        this.authorizeUser = (id,type)=>{
+           let url = "/admin/users/authorize/"+ id + "/" + type;
+           request(url,{},"PUT").done((message)=>{
+             this.setState({
+               message:message.message || message
+            })
+          }).fail((jqXHR)=>{
+             let message = jqXHR.responseJSON;
+             this.setState({
+                errors: message.errors || message.message || message
+             })
+        })
+       }
     }
     render() {
         return (
@@ -30,12 +43,15 @@ class AdminDashboard extends Component {
                         console.log("has next");
                         btn = <button className="btn btn-info my-2" onClick={loadMore}>load</button>
                      }
-                     let userList =  users.map(function(user) {
+                     let userList =  users.map((user)=>{
                         return(<Row key={user.id} title={user.first_name + " " + user.last_name}
                         subTitle={user.email}>
-                        <button className="btn btn-primary btn-sm mr-1">set as admin</button>
-                        <button className="btn btn-secondary btn-sm mr-1">set as instructor</button>
-                        <button className="btn btn-danger btn-sm">block</button>
+                        <button className="btn btn-primary btn-sm mr-1"
+                           onClick={this.authorizeUser.bind(this,user.id,2)}>set as admin</button>
+                        <button className="btn btn-secondary btn-sm mr-1"
+                           onClick={this.authorizeUser.bind(this,user.id,1)}>set as instructor</button>
+                        <button onClick={this.authorizeUser.bind(this,user.id,0)}
+                           className="btn btn-danger btn-sm">delete roles</button>
                      </Row>)
                   });
                   return (<ul className="list-group">

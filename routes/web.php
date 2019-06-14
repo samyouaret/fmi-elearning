@@ -103,7 +103,7 @@ Route::prefix('enrollment')->group(function()
  {
     Route::get('/edit/{id}',"User\ProfileController@editprofile");
     Route::post('/image/upload',"User\ProfileController@uploadImage");
-});
+ });
  Route::resource('profile',"User\ProfileController")->only(['show',"edit","index",'update']);
 /*
 ** Admin routes
@@ -111,7 +111,12 @@ Route::prefix('enrollment')->group(function()
 Route::prefix('admin')->group(function()
 {
    Route::get('/',"User\AdminController@show");
-   Route::get('/users',"User\AdminController@getUsers");
-   Route::get('/courses',"User\AdminController@getCourses");
    Route::post('/search/{type}',"User\AdminController@search");
+
+   Route::get('/users',"User\AdminController@getUsers");
+   Route::put('/users/authorize/{id}/{type}',"User\AdminController@authorizeUser");
+   Route::put('/users/block/{id}',"User\AdminController@blockUser");
+
+   Route::get('/courses',"User\AdminController@getCourses");
+   Route::put('/courses/unpublish/{id}',"User\AdminController@unpublishCourse");
 });

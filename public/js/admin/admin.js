@@ -61272,12 +61272,30 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(AdminDashboard).call(this, props));
     _this.state = {};
+
+    _this.authorizeUser = function (id, type) {
+      var url = "/admin/users/authorize/" + id + "/" + type;
+      Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_1__["default"])(url, {}, "PUT").done(function (message) {
+        _this.setState({
+          message: message.message || message
+        });
+      }).fail(function (jqXHR) {
+        var message = jqXHR.responseJSON;
+
+        _this.setState({
+          errors: message.errors || message.message || message
+        });
+      });
+    };
+
     return _this;
   }
 
   _createClass(AdminDashboard, [{
     key: "render",
     value: function render() {
+      var _this2 = this;
+
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -61303,12 +61321,15 @@ function (_Component) {
             title: user.first_name + " " + user.last_name,
             subTitle: user.email
           }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-            className: "btn btn-primary btn-sm mr-1"
+            className: "btn btn-primary btn-sm mr-1",
+            onClick: _this2.authorizeUser.bind(_this2, user.id, 2)
           }, "set as admin"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-            className: "btn btn-secondary btn-sm mr-1"
+            className: "btn btn-secondary btn-sm mr-1",
+            onClick: _this2.authorizeUser.bind(_this2, user.id, 1)
           }, "set as instructor"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+            onClick: _this2.authorizeUser.bind(_this2, user.id, 0),
             className: "btn btn-danger btn-sm"
-          }, "block"));
+          }, "delete roles"));
         });
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
           className: "list-group"
