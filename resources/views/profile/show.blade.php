@@ -12,8 +12,8 @@
                    @auth
                       @if ($user->id ==Auth::id())
                         <a href="/profile/{{$user->id}}/edit" class="my-2 btn btn-info">
-                      @endif
                      edit</a>
+                     @endif
                    @endauth
                    @if ($user->user_type==1)
                       <span><strong class="text-muted">enrolled students: {{$user->num_of_enrolled_students}}</strong></span>
