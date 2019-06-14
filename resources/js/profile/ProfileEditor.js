@@ -195,11 +195,11 @@ export default class ProfileEditor extends React.Component {
   render(){
     return(<div className="row">
         <div className="col-sm-4">
-           {this.renderImage()};
-           {this.renderFileUploader()};
+           {this.renderImage()}
+           {this.renderFileUploader()}
         </div>
         <div className="col-sm-6">
-           {this.renderForm()};
+           {this.renderForm()}
         </div>
          {this.renderDialog()}
      </div>)

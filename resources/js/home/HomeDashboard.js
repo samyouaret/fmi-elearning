@@ -81,18 +81,15 @@ class HomeDashboard extends Component {
      }
    }
    renderSearchResult(){
-      if (this.state.paginateData) {
-      let total = this.state.paginateData.total;
-      if (total>0) {
+      if (this.state.paginateData && this.state.paginateData.total>0) {
+         let total = this.state.paginateData.total;
       let plural = total == 1  ? total + " result" : total +" results";
       return (<h4 className="text-muted">{plural} found for
       <strong> {this.state.search_term}.</strong></h4>)
-      }else {
-         return (<h4 className="text-muted">No result found for
-         <strong> {this.state.search_term}.</strong></h4>)
       }
-    }
-    return null;
+      return this.state.search_term ? (<h4 className="text-muted">No result found for
+      <strong> {this.state.search_term}.</strong></h4>) :null;
+
    }
    render(){
       const courses = this.state.courses.map(function(course) {

@@ -62021,22 +62021,17 @@ function (_Component) {
   _createClass(HomeDashboard, [{
     key: "renderSearchResult",
     value: function renderSearchResult() {
-      if (this.state.paginateData) {
+      if (this.state.paginateData && this.state.paginateData.total > 0) {
         var total = this.state.paginateData.total;
-
-        if (total > 0) {
-          var plural = total == 1 ? total + " result" : total + " results";
-          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", {
-            className: "text-muted"
-          }, plural, " found for", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, " ", this.state.search_term, "."));
-        } else {
-          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", {
-            className: "text-muted"
-          }, "No result found for", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, " ", this.state.search_term, "."));
-        }
+        var plural = total == 1 ? total + " result" : total + " results";
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", {
+          className: "text-muted"
+        }, plural, " found for", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, " ", this.state.search_term, "."));
       }
 
-      return null;
+      return this.state.search_term ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", {
+        className: "text-muted"
+      }, "No result found for", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, " ", this.state.search_term, ".")) : null;
     }
   }, {
     key: "render",

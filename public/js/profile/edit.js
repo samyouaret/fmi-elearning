@@ -25740,9 +25740,9 @@ function (_React$Component) {
         className: "row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-sm-4"
-      }, this.renderImage(), ";", this.renderFileUploader(), ";"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, this.renderImage(), this.renderFileUploader()), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-sm-6"
-      }, this.renderForm(), ";"), this.renderDialog());
+      }, this.renderForm()), this.renderDialog());
     }
   }]);
 
