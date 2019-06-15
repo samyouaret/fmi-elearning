@@ -195,7 +195,7 @@ class CourseInstructorController extends Controller
 
     public function subSubjects($subjectId)
     {
-      $this->authorize('editCourse',$id);
+      // $this->authorize('editCourse',$id);
        $items = DB::table('sub_subject')
        ->where('subject_id',$subjectId)
        ->get();
@@ -205,7 +205,7 @@ class CourseInstructorController extends Controller
 
     public function subjects()
     {
-      $this->authorize('editCourse',$id);
+      // $this->authorize('editCourse',$id);
        $items = DB::table('subject')
        ->get();
      return response()->json($items);
@@ -213,7 +213,7 @@ class CourseInstructorController extends Controller
 
     public function languages()
     {
-      $this->authorize('editCourse',$id);
+      // $this->authorize('editCourse',$id);
        $items = DB::table('language')
        ->get();
       return response()->json($items);

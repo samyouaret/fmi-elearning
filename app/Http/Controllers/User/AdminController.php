@@ -8,10 +8,11 @@ use App\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Course;
-
+use App\Traits\AdminTrait as AdminTrait;
 
 class AdminController extends Controller
 {
+   use AdminTrait;
  /**
   * function to return list of users
   *
@@ -76,12 +77,28 @@ class AdminController extends Controller
     public function authorizeUser($id,$type)
     {
       $user = User::find($id);
-      if ($type <0 || $type > 2 || !$user || $user->id ==Auth::id()) {
+      if ($user->id ==Auth::id()) {
          return response()->json(["message"=>"unathorized","status"=>"error"],405);
+      }
+      $label = "";
+      switch ($type) {
+         case 0:
+            $label = "basic user";
+            break;
+
+         case 1:
+            $label = "instructor";
+            break;
+         case 1:
+            $label = "admin";
+            break;
+         default:
+            return response()->json(["message"=>"unathorized","status"=>"error"],405);
+            break;
       }
        $user->user_type = $type;
        $user->save();
-       return response()->json(["message"=>"user now is an admin","status"=>"success"]
+       return response()->json(["message"=>"user role has been changed to ".$label,"status"=>"success"]
        ,200);
     }
 

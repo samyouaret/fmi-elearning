@@ -1,6 +1,8 @@
 import React,{Component} from 'react'
 import ReactDOM from 'react-dom'
 import request from '../helpers/request.js'
+import findByAttr from '../helpers/findByAttr.js'
+import filterByAttr from '../helpers/filterByAttr.js'
 import Loading from '../components/Loading.js'
 
 export default class DataPager extends Component{
@@ -16,16 +18,23 @@ export default class DataPager extends Component{
          paginateData :{},
          search_term : null
       }
+      //to avoid a request
+      this.oldData = null;
       this.loadMore = ()=> {
         if (this.state.hasNext) {
            this.load(this.state.paginateData.current_page+1,this.state.data);
         }
       }
+      this.reset = ()=> {
+            this.normalLoad();
+      }
       this.load = (page=1,currentData)=>{
          // this.setState({
          //    isLoaded:false
          // })
-         request(this.options.url + '?page=' + page,this.options.data,this.options.method).done((message)=>{
+         request(this.options.url + '?page=' + page,this.options.data,this.options.method).
+         done((message)=>{
+            this.oldData = null;
             this.success(message,currentData);
          }).fail((jqXHR)=>{
             let message = jqXHR.responseJSON;
@@ -53,6 +62,22 @@ export default class DataPager extends Component{
          this.options.data = {search_term};
          this.load(1,[]);
       }
+      this.filter= ({attr,value})=>{
+         if (!this.oldData) {
+            this.oldData = JSON.parse(JSON.stringify(this.state.data))
+         }
+         if (!value) {
+            this.setState({
+              data : this.oldData
+            })
+            return;
+         }
+         // let data = JSON.parse(JSON.stringify(this.state.data))
+         let result = filterByAttr(this.oldData,attr,value);
+            this.setState({
+               data : result
+            })
+      }
     this.normalLoad = ()=>{
       this.options ={
           url : this.state.url,
@@ -74,7 +99,8 @@ export default class DataPager extends Component{
       return <Loading/>;
      }else{
          return this.props.children && this.props.children.constructor.name == "Function" ?
-         this.props.children(data,this.loadMore,this.state.hasNext,this.search) : this.props.children || null;
+         this.props.children(data,this.loadMore,this.state.hasNext,this.search,this.filter,this.reset) :
+            this.props.children || null;
      }
    }
 }

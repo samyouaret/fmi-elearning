@@ -61271,40 +61271,210 @@ function (_Component) {
     _classCallCheck(this, AdminDashboard);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(AdminDashboard).call(this, props));
-    _this.state = {};
+    _this.state = {
+      subject_value: null,
+      sub_subject_value: null,
+      subject_id: 0,
+      hasMessage: false
+    };
 
     _this.authorizeUser = function (id, type) {
       var url = "/admin/users/authorize/" + id + "/" + type;
       Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_1__["default"])(url, {}, "PUT").done(function (message) {
         _this.setState({
-          message: message.message || message
+          message: message.message || message,
+          hasMessage: true
         });
       }).fail(function (jqXHR) {
         var message = jqXHR.responseJSON;
 
         _this.setState({
-          errors: message.errors || message.message || message
+          message: message.errors || message.message || message,
+          hasMessage: true
         });
       });
+
+      _this.timerMessage();
+    };
+
+    _this.selectSubject = function (id) {
+      _this.setState({
+        subject_id: id
+      });
+    };
+
+    _this.deleteSubject = function (id) {
+      var url = "/admin/deletesubject/" + id;
+      Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_1__["default"])(url, {}, "DELETE").done(function (message) {
+        _this.setState({
+          message: message.message || message,
+          hasMessage: true
+        });
+      }).fail(function (jqXHR) {
+        var message = jqXHR.responseJSON;
+
+        _this.setState({
+          message: message.errors || message.message || message,
+          hasMessage: true
+        });
+      });
+
+      _this.timerMessage();
+    };
+
+    _this.addSubject = function (subject) {
+      var url = "/admin/addsubject";
+      Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_1__["default"])(url, {
+        subject: subject
+      }, "POST").done(function (message) {
+        _this.setState({
+          message: message.message || message,
+          hasMessage: true
+        });
+      }).fail(function (jqXHR) {
+        var message = jqXHR.responseJSON;
+
+        _this.setState({
+          message: message.errors || message.message || message,
+          hasMessage: true
+        });
+      });
+
+      _this.timerMessage();
+    };
+
+    _this.addSubSubject = function () {
+      var data = {
+        subject_id: _this.state.subject_id,
+        sub_subject: _this.state.sub_subject_value
+      };
+      var url = "/admin/addsubsubject";
+      Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_1__["default"])(url, data, "POST").done(function (message) {
+        _this.setState({
+          message: message.message || message,
+          hasMessage: true
+        });
+      }).fail(function (jqXHR) {
+        var message = jqXHR.responseJSON;
+
+        _this.setState({
+          message: message.errors || message.message || message,
+          hasMessage: true
+        });
+      });
+
+      _this.timerMessage();
     };
 
     return _this;
   }
 
   _createClass(AdminDashboard, [{
-    key: "render",
-    value: function render() {
+    key: "renderUsers",
+    value: function renderUsers(users) {
       var _this2 = this;
 
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      return users.map(function (user) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Row__WEBPACK_IMPORTED_MODULE_8__["default"], {
+          key: user.id,
+          title: user.first_name + " " + user.last_name,
+          subTitle: user.email
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          className: "btn btn-primary btn-sm mr-1",
+          onClick: _this2.authorizeUser.bind(_this2, user.id, 2)
+        }, "set as admin"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          className: "btn btn-secondary btn-sm mr-1",
+          onClick: _this2.authorizeUser.bind(_this2, user.id, 1)
+        }, "set as instructor"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          onClick: _this2.authorizeUser.bind(_this2, user.id, 0),
+          className: "btn btn-danger btn-sm"
+        }, "delete roles"));
+      });
+    }
+  }, {
+    key: "renderCourses",
+    value: function renderCourses(courses) {
+      // <button className="btn btn-primary btn-sm mr-1">unpublish</button>
+      return courses.map(function (course) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Row__WEBPACK_IMPORTED_MODULE_8__["default"], {
+          key: course.id,
+          title: course.title,
+          subTitle: course.created_at
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+          target: "_blank",
+          href: "/enrollment/" + course.id,
+          className: "btn btn-secondary btn-sm mr-1"
+        }, "view"));
+      });
+    }
+  }, {
+    key: "rendersubjects",
+    value: function rendersubjects(subjects) {
+      var _this3 = this;
+
+      console.log(subjects);
+      var active = "";
+      return subjects.map(function (subject) {
+        active = "";
+
+        if (subject.id == _this3.state.subject_id) {
+          active = "active";
+        }
+
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Row__WEBPACK_IMPORTED_MODULE_8__["default"], {
+          key: subject.id,
+          title: subject.label,
+          active: active,
+          onClick: _this3.selectSubject.bind(_this3, subject.id)
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          onClick: _this3.deleteSubject.bind(_this3, subject.id),
+          className: "btn btn-danger btn-sm"
+        }, "delete"));
+      });
+    }
+  }, {
+    key: "renderSubSubjects",
+    value: function renderSubSubjects(subSubjects) {
+      console.log(subSubjects);
+      return subSubjects.map(function (sub_subject) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Row__WEBPACK_IMPORTED_MODULE_8__["default"], {
+          key: sub_subject.sub_id,
+          title: sub_subject.sub_label,
+          subTitle: sub_subject.label
+        });
+      });
+    }
+  }, {
+    key: "renderMessage",
+    value: function renderMessage() {
+      return this.state.hasMessage ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "alert alert-info w-100"
+      }, this.state.message) : null;
+    }
+  }, {
+    key: "timerMessage",
+    value: function timerMessage() {
+      var _this4 = this;
+
+      setTimeout(function () {
+        _this4.setState({
+          hasMessage: false
+        });
+      }, 5000);
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this5 = this;
+
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, this.renderMessage(), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "users"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_DataPager__WEBPACK_IMPORTED_MODULE_7__["default"], {
         url: "/admin/users",
         searchUrl: "/admin/search/user"
-      }, function (users, loadMore, hasNext, search) {
-        // console.log(hasNext);
+      }, function (users, loadMore, hasNext, search, filter) {
         var btn = null;
 
         if (hasNext) {
@@ -61315,30 +61485,19 @@ function (_Component) {
           }, "load");
         }
 
-        var userList = users.map(function (user) {
-          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Row__WEBPACK_IMPORTED_MODULE_8__["default"], {
-            key: user.id,
-            title: user.first_name + " " + user.last_name,
-            subTitle: user.email
-          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-            className: "btn btn-primary btn-sm mr-1",
-            onClick: _this2.authorizeUser.bind(_this2, user.id, 2)
-          }, "set as admin"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-            className: "btn btn-secondary btn-sm mr-1",
-            onClick: _this2.authorizeUser.bind(_this2, user.id, 1)
-          }, "set as instructor"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-            onClick: _this2.authorizeUser.bind(_this2, user.id, 0),
-            className: "btn btn-danger btn-sm"
-          }, "delete roles"));
-        });
+        var userList = _this5.renderUsers(users);
+
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
           className: "list-group"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
           className: "form-control my-2",
           type: "search",
-          placeholder: "search user",
+          placeholder: "filter user",
           onChange: function onChange(e) {
-            search(event.target.value);
+            filter({
+              attr: "email",
+              value: event.target.value
+            });
           }
         }), userList, btn);
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -61346,8 +61505,7 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "published courses"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_DataPager__WEBPACK_IMPORTED_MODULE_7__["default"], {
         url: "/admin/courses",
         searchUrl: "/admin/search/course"
-      }, function (courses, loadMore, hasNext, search) {
-        // console.log(hasNext);
+      }, function (courses, loadMore, hasNext, search, filter) {
         var btn = null;
 
         if (hasNext) {
@@ -61358,29 +61516,133 @@ function (_Component) {
           }, "load");
         }
 
-        var courseList = courses.map(function (course) {
-          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Row__WEBPACK_IMPORTED_MODULE_8__["default"], {
-            key: course.id,
-            title: course.title,
-            subTitle: course.created_at
-          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-            className: "btn btn-primary btn-sm mr-1"
-          }, "unpublish"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-            href: "/enrollment/" + course.id,
-            className: "btn btn-secondary btn-sm mr-1"
-          }, "view"));
-        });
+        var courseList = _this5.renderCourses(courses);
+
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
           className: "list-group"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
           className: "form-control my-2",
           type: "search",
-          placeholder: "search user",
+          placeholder: "search course",
           onChange: function onChange(e) {
-            search(event.target.value);
+            filter({
+              attr: "title",
+              value: event.target.value
+            });
           }
         }), courseList, btn);
-      })));
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-6"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "subjects"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_DataPager__WEBPACK_IMPORTED_MODULE_7__["default"], {
+        url: "/admin/subjects",
+        searchUrl: "/admin/search/subjec"
+      }, function (subjects, loadMore, hasNext, search, filter, reset) {
+        var btn = null;
+
+        if (hasNext) {
+          console.log("has next");
+          btn = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+            className: "btn btn-info",
+            onClick: loadMore
+          }, "load");
+        }
+
+        var addBtn = null;
+
+        if (subjects.length == 0) {
+          console.log("has next");
+          addBtn = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+            className: "btn btn-secondary",
+            onClick: function onClick(e) {
+              var subject = _this5.state.subject_value;
+              console.log(subject);
+
+              _this5.addSubject(subject);
+
+              setTimeout(reset, 1000);
+            }
+          }, "add");
+        }
+
+        var subjectList = _this5.rendersubjects(subjects);
+
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
+          className: "list-group"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+          className: "form-control my-2",
+          type: "search",
+          placeholder: "search subject",
+          onChange: function onChange(e) {
+            loadMore();
+            filter({
+              attr: "label",
+              value: event.target.value
+            });
+
+            _this5.setState({
+              subject_value: event.target.value
+            });
+          }
+        }), subjectList, btn, addBtn);
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-6"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "sub subjects"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_DataPager__WEBPACK_IMPORTED_MODULE_7__["default"], {
+        url: "/admin/subsubjects"
+      }, function (subSubjects, loadMore, hasNext, search, filter, reset) {
+        var btn = null;
+
+        if (hasNext) {
+          console.log("has next");
+          btn = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+            className: "btn btn-info",
+            onClick: loadMore
+          }, "load");
+        }
+
+        var addBtn = null;
+
+        if (subSubjects.length == 0) {
+          console.log("has next");
+          addBtn = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+            className: "btn btn-secondary",
+            onClick: function onClick(e) {
+              var value = _this5.state.sub_subject_value;
+
+              if (_this5.state.subject_id > 0) {
+                _this5.addSubSubject(value);
+
+                setTimeout(reset, 1000);
+              } else {
+                _this5.setState({
+                  hasMessage: true,
+                  message: "please select a subject from subject list"
+                });
+              }
+            }
+          }, "add");
+        }
+
+        var subSubjectList = _this5.renderSubSubjects(subSubjects);
+
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
+          className: "list-group"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+          className: "form-control my-2",
+          type: "search",
+          placeholder: "search sub subject",
+          onChange: function onChange(e) {
+            loadMore();
+            filter({
+              attr: "sub_label",
+              value: event.target.value
+            });
+
+            _this5.setState({
+              sub_subject_value: event.target.value
+            });
+          }
+        }), subSubjectList, btn, addBtn);
+      }))));
     }
   }]);
 
@@ -61405,7 +61667,8 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ __webpack_exports__["default"] = (function (props) {
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
-    className: "list-group-item d-flex justify-content-between"
+    className: "list-group-item d-flex justify-content-between " + props.active,
+    onClick: props.onClick
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
     className: "d-flex flex-column"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, props.title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
@@ -61888,6 +62151,57 @@ function (_Component) {
 
 /***/ }),
 
+/***/ "./resources/js/helpers/filterByAttr.js":
+/*!**********************************************!*\
+  !*** ./resources/js/helpers/filterByAttr.js ***!
+  \**********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return filterByAttr; });
+function filterByAttr(arr, attr, val) {
+  var pos = -1;
+  var result = [];
+  val = val.toLowerCase();
+  var regex = new RegExp('.*' + val + '.*$');
+
+  for (var i = 0; i < arr.length; i++) {
+    if (regex.test(arr[i][attr])) {
+      result.push(arr[i]);
+    }
+  }
+
+  return result;
+}
+
+/***/ }),
+
+/***/ "./resources/js/helpers/findByAttr.js":
+/*!********************************************!*\
+  !*** ./resources/js/helpers/findByAttr.js ***!
+  \********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return findByAttr; });
+function findByAttr(arr, attr, val) {
+  var pos = -1;
+
+  for (var i = 0; i < arr.length; i++) {
+    if (arr[i][attr] == val) {
+      return i;
+    }
+  }
+
+  return pos;
+}
+
+/***/ }),
+
 /***/ "./resources/js/helpers/request.js":
 /*!*****************************************!*\
   !*** ./resources/js/helpers/request.js ***!
@@ -61945,7 +62259,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _helpers_request_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../helpers/request.js */ "./resources/js/helpers/request.js");
-/* harmony import */ var _components_Loading_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../components/Loading.js */ "./resources/js/components/Loading.js");
+/* harmony import */ var _helpers_findByAttr_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../helpers/findByAttr.js */ "./resources/js/helpers/findByAttr.js");
+/* harmony import */ var _helpers_filterByAttr_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../helpers/filterByAttr.js */ "./resources/js/helpers/filterByAttr.js");
+/* harmony import */ var _components_Loading_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../components/Loading.js */ "./resources/js/components/Loading.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
@@ -61981,6 +62297,8 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
+
 var DataPager =
 /*#__PURE__*/
 function (_Component) {
@@ -62000,13 +62318,19 @@ function (_Component) {
       searchUrl: _this.props.searchUrl,
       loadType: 0,
       paginateData: {},
-      search_term: null
+      search_term: null //to avoid a request
+
     };
+    _this.oldData = null;
 
     _this.loadMore = function () {
       if (_this.state.hasNext) {
         _this.load(_this.state.paginateData.current_page + 1, _this.state.data);
       }
+    };
+
+    _this.reset = function () {
+      _this.normalLoad();
     };
 
     _this.load = function () {
@@ -62016,6 +62340,8 @@ function (_Component) {
       //    isLoaded:false
       // })
       Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_this.options.url + '?page=' + page, _this.options.data, _this.options.method).done(function (message) {
+        _this.oldData = null;
+
         _this.success(message, currentData);
       }).fail(function (jqXHR) {
         var message = jqXHR.responseJSON;
@@ -62054,6 +62380,30 @@ function (_Component) {
       _this.load(1, []);
     };
 
+    _this.filter = function (_ref) {
+      var attr = _ref.attr,
+          value = _ref.value;
+
+      if (!_this.oldData) {
+        _this.oldData = JSON.parse(JSON.stringify(_this.state.data));
+      }
+
+      if (!value) {
+        _this.setState({
+          data: _this.oldData
+        });
+
+        return;
+      } // let data = JSON.parse(JSON.stringify(this.state.data))
+
+
+      var result = Object(_helpers_filterByAttr_js__WEBPACK_IMPORTED_MODULE_4__["default"])(_this.oldData, attr, value);
+
+      _this.setState({
+        data: result
+      });
+    };
+
     _this.normalLoad = function () {
       _this.options = {
         url: _this.state.url,
@@ -62084,9 +62434,9 @@ function (_Component) {
         // return  this.renderError(errors);
         return null;
       } else if (!isLoaded) {
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Loading_js__WEBPACK_IMPORTED_MODULE_3__["default"], null);
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Loading_js__WEBPACK_IMPORTED_MODULE_5__["default"], null);
       } else {
-        return this.props.children && this.props.children.constructor.name == "Function" ? this.props.children(data, this.loadMore, this.state.hasNext, this.search) : this.props.children || null;
+        return this.props.children && this.props.children.constructor.name == "Function" ? this.props.children(data, this.loadMore, this.state.hasNext, this.search, this.filter, this.reset) : this.props.children || null;
       }
     }
   }]);

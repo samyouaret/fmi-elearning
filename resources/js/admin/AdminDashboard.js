@@ -15,49 +15,162 @@ import Row from './Row'
 class AdminDashboard extends Component {
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+           subject_value : null,
+           sub_subject_value : null,
+           subject_id : 0,
+           hasMessage : false,
+        }
         this.authorizeUser = (id,type)=>{
            let url = "/admin/users/authorize/"+ id + "/" + type;
            request(url,{},"PUT").done((message)=>{
              this.setState({
-               message:message.message || message
+               message:message.message || message,
+               hasMessage  :true
             })
           }).fail((jqXHR)=>{
              let message = jqXHR.responseJSON;
              this.setState({
-                errors: message.errors || message.message || message
+                message: message.errors || message.message || message,
+                hasMessage  :true
              })
         })
+        this.timerMessage();
+       }
+       this.selectSubject = (id)=>{
+          this.setState({
+             subject_id : id
+          })
+       }
+        this.deleteSubject = (id)=>{
+           let url = "/admin/deletesubject/"+ id;
+           request(url,{},"DELETE").done((message)=>{
+             this.setState({
+               message:message.message || message,
+               hasMessage : true
+            })
+          }).fail((jqXHR)=>{
+             let message = jqXHR.responseJSON;
+             this.setState({
+                message: message.errors || message.message || message,
+                 hasMessage : true
+             })
+        })
+        this.timerMessage();
+       }
+        this.addSubject = (subject)=>{
+           let url = "/admin/addsubject";
+           request(url,{subject},"POST").done((message)=>{
+             this.setState({
+               message:message.message || message,
+                hasMessage : true
+            })
+          }).fail((jqXHR)=>{
+             let message = jqXHR.responseJSON;
+             this.setState({
+                message: message.errors || message.message || message,
+                 hasMessage : true
+             })
+        })
+        this.timerMessage();
+       }
+        this.addSubSubject = ()=>{
+           let data = {
+             subject_id : this.state.subject_id,
+             sub_subject : this.state.sub_subject_value
+          }
+           let url = "/admin/addsubsubject";
+           request(url,data,"POST").done((message)=>{
+             this.setState({
+               message:message.message || message,
+               hasMessage : true
+            })
+          }).fail((jqXHR)=>{
+             let message = jqXHR.responseJSON;
+             this.setState({
+                message: message.errors || message.message || message,
+                hasMessage : true
+             })
+        })
+        this.timerMessage();
        }
     }
+    renderUsers(users){
+      return users.map((user)=>{
+         return(<Row key={user.id} title={user.first_name + " " + user.last_name}
+         subTitle={user.email}>
+         <button className="btn btn-primary btn-sm mr-1"
+            onClick={this.authorizeUser.bind(this,user.id,2)}>set as admin</button>
+         <button className="btn btn-secondary btn-sm mr-1"
+            onClick={this.authorizeUser.bind(this,user.id,1)}>set as instructor</button>
+         <button onClick={this.authorizeUser.bind(this,user.id,0)}
+            className="btn btn-danger btn-sm">delete roles</button>
+      </Row>)
+   });
+   }
+   renderCourses(courses){
+      // <button className="btn btn-primary btn-sm mr-1">unpublish</button>
+      return courses.map(function(course) {
+         return(<Row key={course.id} title={course.title}
+         subTitle={course.created_at}>
+         <a target="_blank" href={"/enrollment/" + course.id}
+            className="btn btn-secondary btn-sm mr-1">view</a>
+      </Row>)
+   });
+   }
+   rendersubjects(subjects){
+      console.log(subjects);
+      let active = "";
+      return subjects.map((subject) =>{
+         active ="";
+         if (subject.id==this.state.subject_id) {
+            active = "active"
+         }
+         return(<Row key={subject.id} title={subject.label}
+            active={active} onClick={this.selectSubject.bind(this,subject.id)}>
+            <button onClick={this.deleteSubject.bind(this,subject.id)}
+               className="btn btn-danger btn-sm">delete</button>
+         </Row>)
+   });
+   }
+   renderSubSubjects(subSubjects){
+      console.log(subSubjects);
+      return subSubjects.map((sub_subject) =>{
+         return(<Row key={sub_subject.sub_id} title={sub_subject.sub_label}
+            subTitle={sub_subject.label}
+            ></Row>)
+   });
+   }
+   renderMessage(){
+      return this.state.hasMessage ?
+      <div className="alert alert-info w-100">{this.state.message}</div> :null;
+   }
+   timerMessage(){
+      setTimeout(()=>{
+         this.setState({
+            hasMessage :false
+         })
+      }, 5000);
+   }
     render() {
         return (
+           <React.Fragment>
+           {this.renderMessage()}
            <div className="row">
              <div className="col-md-6">
                 <h4>users</h4>
                 <DataPager url="/admin/users" searchUrl="/admin/search/user">
-                   {(users,loadMore,hasNext,search)=>{
-                      // console.log(hasNext);
+                   {(users,loadMore,hasNext,search,filter)=>{
                       let btn = null;
                       if (hasNext) {
                         console.log("has next");
                         btn = <button className="btn btn-info my-2" onClick={loadMore}>load</button>
                      }
-                     let userList =  users.map((user)=>{
-                        return(<Row key={user.id} title={user.first_name + " " + user.last_name}
-                        subTitle={user.email}>
-                        <button className="btn btn-primary btn-sm mr-1"
-                           onClick={this.authorizeUser.bind(this,user.id,2)}>set as admin</button>
-                        <button className="btn btn-secondary btn-sm mr-1"
-                           onClick={this.authorizeUser.bind(this,user.id,1)}>set as instructor</button>
-                        <button onClick={this.authorizeUser.bind(this,user.id,0)}
-                           className="btn btn-danger btn-sm">delete roles</button>
-                     </Row>)
-                  });
+                     let userList =  this.renderUsers(users);
                   return (<ul className="list-group">
-                  <input className="form-control my-2" type="search" placeholder="search user"
+                  <input className="form-control my-2" type="search" placeholder="filter user"
                      onChange={(e)=>{
-                        search(event.target.value)
+                        filter({attr : "email",value : event.target.value});
                      }}/>
                      {userList}
                      {btn}
@@ -68,25 +181,17 @@ class AdminDashboard extends Component {
              <div className="col-md-6">
                  <h4>published courses</h4>
                 <DataPager url="/admin/courses" searchUrl="/admin/search/course">
-                   {(courses,loadMore,hasNext,search)=>{
-                      // console.log(hasNext);
+                   {(courses,loadMore,hasNext,search,filter)=>{
                       let btn = null;
                       if (hasNext) {
                         console.log("has next");
                         btn = <button className="btn btn-info" onClick={loadMore}>load</button>
                      }
-                     let courseList =  courses.map(function(course) {
-                        return(<Row key={course.id} title={course.title}
-                        subTitle={course.created_at}>
-                        <button className="btn btn-primary btn-sm mr-1">unpublish</button>
-                        <a href={"/enrollment/" + course.id}
-                           className="btn btn-secondary btn-sm mr-1">view</a>
-                     </Row>)
-                  });
+                     let courseList =  this.renderCourses(courses);
                   return (<ul className="list-group">
-                  <input className="form-control my-2" type="search" placeholder="search user"
+                  <input className="form-control my-2" type="search" placeholder="search course"
                      onChange={(e)=>{
-                        search(event.target.value)
+                        filter({attr : "title",value : event.target.value})
                      }}/>
                   {courseList}
                      {btn}
@@ -94,7 +199,88 @@ class AdminDashboard extends Component {
                }}
             </DataPager>
              </div>
-     </div>)
+             <div className="col-md-6">
+                 <h4>subjects</h4>
+                <DataPager url="/admin/subjects" searchUrl="/admin/search/subjec">
+                   {(subjects,loadMore,hasNext,search,filter,reset)=>{
+                      let btn = null;
+                      if (hasNext) {
+                        console.log("has next");
+                        btn = <button className="btn btn-info" onClick={loadMore}>load</button>
+                     }
+                     let addBtn = null;
+                      if (subjects.length==0) {
+                        console.log("has next");
+                        addBtn = <button className="btn btn-secondary" onClick={(e)=>{
+                              let subject = this.state.subject_value;
+                              console.log(subject);
+                              this.addSubject(subject);
+                              setTimeout(reset,1000);
+                              }}>add
+                        </button>
+                     }
+                     let subjectList =  this.rendersubjects(subjects);
+                  return (<ul className="list-group">
+                  <input className="form-control my-2" type="search" placeholder="search subject"
+                     onChange={(e)=>{
+                        loadMore()
+                        filter({attr : "label",value : event.target.value})
+                        this.setState({
+                           subject_value : event.target.value
+                        })
+                     }}/>
+                  {subjectList}
+                     {btn}
+                     {addBtn}
+                  </ul>)
+               }}
+            </DataPager>
+             </div>
+             <div className="col-md-6">
+                 <h4>sub subjects</h4>
+                <DataPager url="/admin/subsubjects">
+                   {(subSubjects,loadMore,hasNext,search,filter,reset)=>{
+                      let btn = null;
+                      if (hasNext) {
+                        console.log("has next");
+                        btn = <button className="btn btn-info" onClick={loadMore}>load</button>
+                     }
+                     let addBtn = null;
+                     if (subSubjects.length==0) {
+                       console.log("has next");
+                       addBtn = <button className="btn btn-secondary" onClick={(e)=>{
+                             let value = this.state.sub_subject_value;
+                             if (this.state.subject_id>0) {
+                                this.addSubSubject(value)
+                                setTimeout(reset,1000);
+                             }else {
+                                this.setState({
+                                   hasMessage:true,
+                                   message : "please select a subject from subject list"
+                                })
+                             }
+                             }}>add
+                       </button>
+                    }
+                    let subSubjectList =  this.renderSubSubjects(subSubjects);
+                  return (<ul className="list-group">
+                  <input className="form-control my-2" type="search" placeholder="search sub subject"
+                     onChange={(e)=>{
+                        loadMore()
+                        filter({attr : "sub_label",value : event.target.value})
+                        this.setState({
+                           sub_subject_value : event.target.value
+                        })
+                     }}/>
+                  {subSubjectList}
+                     {btn}
+                     {addBtn}
+                  </ul>)
+               }}
+            </DataPager>
+             </div>
+     </div>
+  </React.Fragment>)
     }
 }
 export default AdminDashboard

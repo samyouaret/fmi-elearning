@@ -116,6 +116,11 @@ Route::prefix('admin')->group(function()
    Route::get('/users',"User\AdminController@getUsers");
    Route::put('/users/authorize/{id}/{type}',"User\AdminController@authorizeUser");
    Route::put('/users/block/{id}',"User\AdminController@blockUser");
+   Route::get('subjects/',"User\AdminController@getSubjects");
+   Route::delete('subjects/{id}',"User\AdminController@deleteSubject");
+   Route::post('/addsubject',"User\AdminController@addSubject");
+   Route::post('/addsubsubject',"User\AdminController@addSubSubject");
+   Route::get('subsubjects/',"User\AdminController@getSubSubjects");
 
    Route::get('/courses',"User\AdminController@getCourses");
    Route::put('/courses/unpublish/{id}',"User\AdminController@unpublishCourse");
