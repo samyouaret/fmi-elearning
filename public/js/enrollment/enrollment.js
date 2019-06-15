@@ -61512,12 +61512,22 @@ function (_Component) {
           });
         }
 
+        var active = "";
+        var UniqueSum = content.content_id + "" + _this2.props.id;
+
+        if (content.content_id == _this2.props.activeLink) {
+          active = "active";
+        }
+
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+          href: "#" + content.content_title,
           onClick: function onClick() {
             _this2.loadVideo(content);
           },
           key: content.content_id,
-          className: "list-group-item d-flex justify-content-between align-items-center\r list-group-item-action"
+          className: "list-group-item d-flex \
+               justify-content-between align-items-center \
+            list-group-item-action " + active
         }, content.content_title, watched);
       });
     }
@@ -61526,7 +61536,7 @@ function (_Component) {
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "card mb-2"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h5", {
         className: "card-header"
       }, this.props.title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
         className: "list-group list-group-flush bg-light"
@@ -61612,7 +61622,8 @@ function (_Component) {
       chapters: [],
       resources: [],
       relatedCourses: [],
-      instructor: {}
+      instructor: {},
+      activeLink: -1
     };
     _this.options = {
       url: "/enrollment/course/" + _this.getCourseId()
@@ -61620,7 +61631,8 @@ function (_Component) {
 
     _this.loadVideo = function (content) {
       _this.setState({
-        current_content: content
+        current_content: content,
+        activeLink: content.content_id
       });
 
       if (!content.watched) {
@@ -61707,6 +61719,7 @@ function (_Component) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Chapter__WEBPACK_IMPORTED_MODULE_5__["default"], {
           key: chapter.chapter_id,
           id: chapter.chapter_id,
+          activeLink: _this2.state.activeLink,
           loadVideo: _this2.loadVideo,
           title: chapter.chapter_title,
           contents: chapter.contents
@@ -61792,6 +61805,9 @@ function (_Component) {
       var _this4 = this;
 
       var cover_image = this.state.current_content.video_url ? null : "/storage/course_image/" + this.state.cover_image;
+      var content_title = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h5", {
+        className: "p-3 bg-light rounded"
+      }, this.state.current_content.content_title);
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row justify-content-end",
         style: {
@@ -61799,9 +61815,7 @@ function (_Component) {
         }
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "container rounded border justify-content-between d-flex bg-white p-4 mb-3"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, this.state.course_title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h5", {
-        className: "p-3 bg-light rounded"
-      }, this.state.current_content.content_title)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Sidebar__WEBPACK_IMPORTED_MODULE_3__["default"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_DataProvider__WEBPACK_IMPORTED_MODULE_11__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, this.state.course_title), this.state.current_content.content_title && content_title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Sidebar__WEBPACK_IMPORTED_MODULE_3__["default"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_DataProvider__WEBPACK_IMPORTED_MODULE_11__["default"], {
         options: this.options,
         renderLoading: this.renderLoading,
         renderError: function renderError(error) {

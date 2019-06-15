@@ -20,6 +20,7 @@ export default class Chapter extends Component {
       //    contents : contents
       // })
    }
+
    renderVideoLinks(){
       let contents = this.state.contents;
       return contents.map((content) =>{
@@ -28,11 +29,20 @@ export default class Chapter extends Component {
             // watched =   <span className="badge badge-primary badge-pill">&#128065;</span>;
             watched =   <img src="/storage/images/view.png" width="24" height="24"/>;
          }
+         let active ="";
+         let UniqueSum = content.content_id +""+ this.props.id;
+         if (content.content_id==this.props.activeLink) {
+            active = "active"
+         }
          return (<a
-            onClick={()=>{this.loadVideo(content)}}
+            href={"#" +content.content_title}
+            onClick={()=>{
+               this.loadVideo(content)
+            }}
             key={content.content_id}
-            className="list-group-item d-flex justify-content-between align-items-center
-            list-group-item-action">{content.content_title}
+            className={"list-group-item d-flex \
+               justify-content-between align-items-center \
+            list-group-item-action " +active }>{content.content_title}
           {watched}
          </a>);
       })
@@ -41,9 +51,9 @@ export default class Chapter extends Component {
    render(){
       return (
          <div className="card mb-2">
-            <div className="card-header">
+            <h5 className="card-header">
              {this.props.title}
-            </div>
+          </h5>
             <ul className="list-group list-group-flush bg-light">
            {this.renderVideoLinks()}
            </ul>

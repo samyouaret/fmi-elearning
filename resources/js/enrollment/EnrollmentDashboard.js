@@ -21,14 +21,16 @@ class EnrollmentDashboard extends Component {
          chapters : [],
          resources : [],
          relatedCourses : [],
-         instructor :{}
+         instructor :{},
+         activeLink : -1,
       }
       this.options = {
          url:  "/enrollment/course/" + this.getCourseId()
       }
       this.loadVideo = (content)=>{
         this.setState({
-           current_content : content
+           current_content : content,
+           activeLink : content.content_id
         })
         if (!content.watched) {
            this.videoPlayer.watch(this.watch);
@@ -91,6 +93,7 @@ class EnrollmentDashboard extends Component {
       return this.state.chapters.map((chapter)=>{
          return (<Chapter key={chapter.chapter_id}
             id={chapter.chapter_id}
+            activeLink={this.state.activeLink}
             loadVideo={this.loadVideo}
             title={chapter.chapter_title} contents={chapter.contents}/>)
       })
@@ -143,11 +146,13 @@ class EnrollmentDashboard extends Component {
    render(){
       let cover_image = this.state.current_content.video_url ? null :
       "/storage/course_image/" + this.state.cover_image;
+      let content_title = <h5 className="p-3 bg-light rounded">{this.state.current_content.content_title}</h5>;
       return (
          <div className="row justify-content-end" style={{minHeight:500 + "px"}}>
             <div className="container rounded border justify-content-between d-flex bg-white p-4 mb-3">
                <h4>{this.state.course_title}</h4>
-               <h5 className="p-3 bg-light rounded">{this.state.current_content.content_title}</h5>
+               {this.state.current_content.content_title && content_title}
+
             </div>
              <Sidebar>
               <DataProvider options={this.options}
