@@ -7,7 +7,8 @@ import Form from '../formcomponents/Form'
 import Input from '../formcomponents/Input'
 import DataProvider from '../providers/DataProvider'
 import DataPager from '../providers/DataPager'
-import Row from './Row'
+import ListGroup from '../components/ListGroup'
+import ListGroupRow from '../components/ListGroupRow'
 
 // FIXME: bug null is converted as string "null"
 // TODO: enhance validatoin (not accurate)
@@ -97,7 +98,7 @@ class AdminDashboard extends Component {
     }
     renderUsers(users){
       return users.map((user)=>{
-         return(<Row key={user.id} title={user.first_name + " " + user.last_name}
+         return(<ListGroupRow key={user.id} title={user.first_name + " " + user.last_name}
          subTitle={user.email}>
          <button className="btn btn-primary btn-sm mr-1"
             onClick={this.authorizeUser.bind(this,user.id,2)}>set as admin</button>
@@ -105,17 +106,18 @@ class AdminDashboard extends Component {
             onClick={this.authorizeUser.bind(this,user.id,1)}>set as instructor</button>
          <button onClick={this.authorizeUser.bind(this,user.id,0)}
             className="btn btn-danger btn-sm">delete roles</button>
-      </Row>)
+      </ListGroupRow>)
    });
    }
    renderCourses(courses){
       // <button className="btn btn-primary btn-sm mr-1">unpublish</button>
       return courses.map(function(course) {
-         return(<Row key={course.id} title={course.title}
+         return(<ListGroupRow key={course.id} image={"storage/course_image/"+course.cover_image}
+            title={course.title}
          subTitle={course.created_at}>
          <a target="_blank" href={"/enrollment/" + course.id}
             className="btn btn-secondary btn-sm mr-1">view</a>
-      </Row>)
+      </ListGroupRow>)
    });
    }
    rendersubjects(subjects){
@@ -126,19 +128,19 @@ class AdminDashboard extends Component {
          if (subject.id==this.state.subject_id) {
             active = "active"
          }
-         return(<Row key={subject.id} title={subject.label}
+         return(<ListGroupRow key={subject.id} title={subject.label}
             active={active} onClick={this.selectSubject.bind(this,subject.id)}>
             <button onClick={this.deleteSubject.bind(this,subject.id)}
                className="btn btn-danger btn-sm">delete</button>
-         </Row>)
+         </ListGroupRow>)
    });
    }
    renderSubSubjects(subSubjects){
       console.log(subSubjects);
       return subSubjects.map((sub_subject) =>{
-         return(<Row key={sub_subject.sub_id} title={sub_subject.sub_label}
+         return(<ListGroupRow key={sub_subject.sub_id} title={sub_subject.sub_label}
             subTitle={sub_subject.label}
-            ></Row>)
+            ></ListGroupRow>)
    });
    }
    renderMessage(){
@@ -167,14 +169,14 @@ class AdminDashboard extends Component {
                         btn = <button className="btn btn-info my-2" onClick={loadMore}>load</button>
                      }
                      let userList =  this.renderUsers(users);
-                  return (<ul className="list-group">
+                  return (<ListGroup>
                   <input className="form-control my-2" type="search" placeholder="filter user"
                      onChange={(e)=>{
                         filter({attr : "email",value : event.target.value});
                      }}/>
                      {userList}
                      {btn}
-                  </ul>)
+                  </ListGroup>)
                }}
             </DataPager>
              </div>
@@ -188,14 +190,14 @@ class AdminDashboard extends Component {
                         btn = <button className="btn btn-info" onClick={loadMore}>load</button>
                      }
                      let courseList =  this.renderCourses(courses);
-                  return (<ul className="list-group">
+                  return (<ListGroup>
                   <input className="form-control my-2" type="search" placeholder="search course"
                      onChange={(e)=>{
                         filter({attr : "title",value : event.target.value})
                      }}/>
                   {courseList}
                      {btn}
-                  </ul>)
+                  </ListGroup>)
                }}
             </DataPager>
              </div>
@@ -220,7 +222,7 @@ class AdminDashboard extends Component {
                         </button>
                      }
                      let subjectList =  this.rendersubjects(subjects);
-                  return (<ul className="list-group">
+                  return (<ListGroup>
                   <input className="form-control my-2" type="search" placeholder="search subject"
                      onChange={(e)=>{
                         loadMore()
@@ -232,7 +234,7 @@ class AdminDashboard extends Component {
                   {subjectList}
                      {btn}
                      {addBtn}
-                  </ul>)
+                  </ListGroup>)
                }}
             </DataPager>
              </div>
@@ -263,7 +265,7 @@ class AdminDashboard extends Component {
                        </button>
                     }
                     let subSubjectList =  this.renderSubSubjects(subSubjects);
-                  return (<ul className="list-group">
+                  return (<ListGroup>
                   <input className="form-control my-2" type="search" placeholder="search sub subject"
                      onChange={(e)=>{
                         loadMore()
@@ -275,7 +277,7 @@ class AdminDashboard extends Component {
                   {subSubjectList}
                      {btn}
                      {addBtn}
-                  </ul>)
+                  </ListGroup>)
                }}
             </DataPager>
              </div>

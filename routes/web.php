@@ -40,8 +40,9 @@ Route::prefix('test')->group(function()
 Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
-Route::get('/dashboard', 'HomeController@dashboard')->middleware('auth')
-->name('dashboard');
+Route::get('/dashboard', 'HomeController@dashboard')->middleware('auth')->name('dashboard');
+Route::get('/dashboard/enrolledcourses', 'HomeController@getEnrolledcourses')->middleware('auth');
+
 Route::get('/courses', 'HomeController@courses');
 Route::post('/search', 'HomeController@search');
 

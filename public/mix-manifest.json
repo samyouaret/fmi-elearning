@@ -5,6 +5,7 @@
     "/js/courseinstructor/index.js": "/js/courseinstructor/index.js",
     "/js/enrollment/enrollment.js": "/js/enrollment/enrollment.js",
     "/js/formcomponents/DataProviderTest.js": "/js/formcomponents/DataProviderTest.js",
+    "/js/home/dashboard.js": "/js/home/dashboard.js",
     "/js/home/home.js": "/js/home/home.js",
     "/js/profile/edit.js": "/js/profile/edit.js"
 }

@@ -35,7 +35,7 @@ class AdminController extends Controller
     }
     public function getCourses()
     {
-      $courses = Course::select("id",'title','created_at')
+      $courses = Course::select("id",'cover_image','title','created_at')
       ->where('is_published',1)
       ->paginate(5);
       return response()->json($courses,200);
@@ -62,7 +62,7 @@ class AdminController extends Controller
     public function searchCourse(string $search)
     {
          return DB::table("course")
-                    ->select("id",'title','created_at')
+                    ->select("id",'cover_image','title','created_at')
                     ->where([['title','like',"%$search%"],'is_published'=>1])
                     ->paginate(5);
     }

@@ -79,8 +79,20 @@ class enrollmentController extends Controller
    }
    public function enrollcontent(Request $request)
    {
-     $this->validate($request,['content_id'=>"bail|required|integer"]);
+     $this->validate($request,['content_id'=>"bail|required|integer",
+  'course_id'=>"bail|required|integer"]);
      $user_id = Auth::id();
+     $course_id = $request->input("course_id");
+     $count = DB::table('course_chapter')
+     ->join('course','course.id','course_chapter.course_id')
+     ->join('course_chapter_content','course_chapter.id','course_chapter_id')
+     ->join('user_content','course_chapter_content.id','user_content.content_id')
+     ->where(["user_content.user_id"=>$user_id,'course_chapter.course_id'=>$course_id])
+     ->count();
+     if ($count==0) {
+        DB::table('enrollment')
+        ->insert(["user_id"=>$user_id,"course_id"=>$course_id]);
+     }
      $instructor = DB::table('instructor_course')
      ->select('instructor_id as user_id')
      ->where('course_id',$request->input("course_id"))

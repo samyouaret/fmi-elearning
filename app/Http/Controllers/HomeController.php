@@ -37,6 +37,14 @@ class HomeController extends Controller
          return response()->json($message,200);
     }
 
+    public function getEnrolledcourses()
+    {
+      $courses = Course::select("course.id as id",'cover_image','title','enrollment_date')
+      ->join("enrollment",'enrollment.course_id','course.id')
+      ->where('enrollment.user_id',Auth::id())
+      ->paginate(5);
+      return response()->json($courses,200);
+    }
     public function search(Request $request)
     {
       $this->validate($request,['search_term'=>"bail|required|string"]);

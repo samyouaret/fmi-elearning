@@ -19,6 +19,7 @@ mix.react('resources/js/app.js', 'public/js')
 .react('resources/js/courseinstructor/edit.js', 'public/js/courseinstructor')
 .react('resources/js/formcomponents/DataProviderTest.js', 'public/js/formcomponents')
 .react('resources/js/home/home.js', 'public/js/home')
+.react('resources/js/home/dashboard.js', 'public/js/home')
 .react('resources/js/enrollment/enrollment.js', 'public/js/enrollment')
 .react('resources/js/admin/admin.js', 'public/js/admin');
 //test
