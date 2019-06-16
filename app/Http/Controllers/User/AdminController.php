@@ -19,7 +19,7 @@ class AdminController extends Controller
   * @param int id the id of admin
   * @return HttpRequest
   */
- public function show()
+ public function show($id)
  {
    return view('admin.show');
  }
@@ -31,7 +31,16 @@ class AdminController extends Controller
     {
       $users = User::select("id",'first_name','last_name','email','user_type')
       ->paginate(3);
-      return response()->json($users,200);
+      $admin_type = Auth::user()->user_type;
+      // extract(get_object_vars($users));
+      // return var_dump($users);
+      // $users->append('admin_type',$admin_type);
+      $custom = collect(["admin_type"=>$admin_type]);
+
+      $data = $custom->merge($users);
+
+      return response()->json($data,200);
+      // return response()->json(["data"=>$users,"admin_type"=>$admin_type],200);
     }
     public function getCourses()
     {
@@ -74,26 +83,43 @@ class AdminController extends Controller
                     ->paginate(1);
     }
 
-    public function authorizeUser($id,$type)
+    public function authorizeUser(Request $request,int $id)
     {
-      $user = User::find($id);
-      if ($user->id ==Auth::id()) {
-         return response()->json(["message"=>"unathorized","status"=>"error"],405);
-      }
-      $label = "";
+      /**
+       * 2 admin
+       *   make instructor
+       *   delete roles from instrucor
+       *   3 can do evething
+       */
+       $this->authorize('isAdmin');
+       $this->validate($request,['type'=>"bail|required|integer",
+       "user_id"=>"bail|required|integer"]);
+       $type = $request->input("type");
+       $user_id = $request->input("user_id");
+       $user = User::find($user_id);
+       //cannot change his own state
+       if ($user->id == $id) {
+          return response()->json(["message"=>"unauthorized","status"=>"error"],405);
+       }
+       $admin = User::find($id);
+       if ($admin->user_type == 2 && $user->user_type>1) {
+          return response()->json(["message"=>"unauthorized","status"=>"error"],405);
+       }
       switch ($type) {
          case 0:
+            if ($admin->user_type == 2 && $user->user_type>1) {
+            return response()->json(["message"=>"unauthorized","status"=>"error"],405);
+            }
             $label = "basic user";
             break;
-
          case 1:
             $label = "instructor";
             break;
-         case 1:
+         case 2:
             $label = "admin";
             break;
          default:
-            return response()->json(["message"=>"unathorized","status"=>"error"],405);
+            return response()->json(["message"=>"unauthorized","status"=>"error"],405);
             break;
       }
        $user->user_type = $type;

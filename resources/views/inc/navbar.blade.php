@@ -33,7 +33,7 @@
                   <li class="nav-item mr-1"><a class="btn btn-primary rounded-0" href="/instructor">Instructor</a></li>
               @endcan
               @can ('isAdmin')
-                  <li class="nav-item"><a class="btn btn-secondary rounded-0" href="/admin">Admin</a></li>
+                  <li class="nav-item"><a class="btn btn-secondary rounded-0" href="/admin/{{Auth::id()}}/manage">Admin</a></li>
               @endcan
             </ul>
 

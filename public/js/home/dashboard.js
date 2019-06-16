@@ -61430,11 +61430,14 @@ function ListGroupRow(props) {
 
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
     className: "list-group-item d-flex justify-content-between " + props.active,
+    style: {
+      cursor: "pointer"
+    },
     onClick: props.onClick
   }, image, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
     className: "d-flex flex-column"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, props.title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-    className: "text-muted"
+    className: "text-muted" + props.active
   }, props.subTitle)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, props.children));
 }
 
@@ -62259,7 +62262,7 @@ function (_Component) {
           key: course.id,
           image: "storage/course_image/" + course.cover_image,
           title: course.title,
-          subTitle: course.created_at
+          subTitle: "enrolled at " + course.enrollment_date
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
           target: "_blank",
           href: "/enrollment/" + course.id,
@@ -62274,7 +62277,9 @@ function (_Component) {
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_DataPager__WEBPACK_IMPORTED_MODULE_4__["default"], {
         url: "/dashboard/enrolledcourses"
-      }, function (courses, loadMore, hasNext, search, filter) {
+      }, function (courses, loadMore, _ref, search, filter) {
+        var hasNext = _ref.hasNext,
+            paginateData = _ref.paginateData;
         var btn = null;
 
         if (hasNext) {
@@ -62430,8 +62435,9 @@ function (_Component) {
       // })
       Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_this.options.url + '?page=' + page, _this.options.data, _this.options.method).done(function (message) {
         _this.oldData = null;
+        var result = message;
 
-        _this.success(message, currentData);
+        _this.success(result, currentData);
       }).fail(function (jqXHR) {
         var message = jqXHR.responseJSON;
 
@@ -62525,7 +62531,10 @@ function (_Component) {
       } else if (!isLoaded) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Loading_js__WEBPACK_IMPORTED_MODULE_5__["default"], null);
       } else {
-        return this.props.children && this.props.children.constructor.name == "Function" ? this.props.children(data, this.loadMore, this.state.hasNext, this.search, this.filter, this.reset) : this.props.children || null;
+        return this.props.children && this.props.children.constructor.name == "Function" ? this.props.children(data, this.loadMore, {
+          paginateData: this.state.paginateData,
+          hasNext: this.state.hasNext
+        }, this.search, this.filter, this.reset) : this.props.children || null;
       }
     }
   }]);

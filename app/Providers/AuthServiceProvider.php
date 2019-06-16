@@ -13,6 +13,7 @@ class AuthServiceProvider extends ServiceProvider
     const USER_STUDENT = 0;
     const USER_INSTRUCTOR = 1;
     const USER_ADMIN = 2;
+    const SUPER_ADMIN = 3;
     /**
      * The policy mappings for the application.
      *
@@ -31,8 +32,11 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
+        Gate::define('isSuperAdmin', function ($user) {
+           return $user->user_type == self::SUPER_ADMIN;
+        });
         Gate::define('isAdmin', function ($user) {
-          return $user->user_type == self::USER_ADMIN;
+          return $user->user_type >= self::USER_ADMIN;
         });
         Gate::define('isStudent', function ($user) {
           return $user->user_type == self::USER_STUDENT;

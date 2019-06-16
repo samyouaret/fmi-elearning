@@ -21,7 +21,7 @@ class LoggedDashboard extends Component {
          return courses.map(function(course) {
             return(<ListGroupRow key={course.id} image={"storage/course_image/"+course.cover_image}
                title={course.title}
-            subTitle={course.created_at}>
+            subTitle={"enrolled at "+ course.enrollment_date}>
             <a target="_blank" href={"/enrollment/" + course.id}
                className="btn btn-secondary btn-sm mr-1">view</a>
          </ListGroupRow>)
@@ -29,7 +29,7 @@ class LoggedDashboard extends Component {
     }
    render(){
       return(<DataPager url="/dashboard/enrolledcourses">
-                         {(courses,loadMore,hasNext,search,filter)=>{
+                         {(courses,loadMore,{hasNext,paginateData},search,filter)=>{
                             let btn = null;
                             if (hasNext) {
                               btn = <button className="btn btn-secondary my-2" onClick={loadMore}>load</button>

@@ -1,6 +1,8 @@
 import React,{Component} from "react"
 import request from '../helpers/request.js'
 import findByAttr from '../helpers/findByAttr.js'
+import ListGroup from '../components/ListGroup'
+import ListGroupRow from '../components/ListGroupRow'
 
 export default class Chapter extends Component {
    constructor(props){
@@ -20,7 +22,24 @@ export default class Chapter extends Component {
       //    contents : contents
       // })
    }
+   fancyTimeFormat(time)
+   {
+       // Hours, minutes and seconds
+       var hrs = ~~(time / 3600);
+       var mins = ~~((time % 3600) / 60);
+       var secs = ~~time % 60;
 
+       // Output like "1:01" or "4:03:59" or "123:03:59"
+       var ret = "";
+
+       if (hrs > 0) {
+           ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+       }
+
+       ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+       ret += "" + secs;
+       return ret;
+   }
    renderVideoLinks(){
       let contents = this.state.contents;
       return contents.map((content) =>{
@@ -34,29 +53,28 @@ export default class Chapter extends Component {
          if (content.content_id==this.props.activeLink) {
             active = "active"
          }
-         return (<a
-            href={"#" +content.content_title}
+         return (<ListGroupRow
             onClick={()=>{
                this.loadVideo(content)
             }}
+            title={content.content_title}
+            subTitle={this.fancyTimeFormat(content.time_required_in_sec)}
             key={content.content_id}
-            className={"list-group-item d-flex \
-               justify-content-between align-items-center \
-            list-group-item-action " +active }>{content.content_title}
+            active={active}>
           {watched}
-         </a>);
+         </ListGroupRow>);
       })
    }
 
    render(){
       return (
-         <div className="card mb-2">
-            <h5 className="card-header">
+         <div className="mb-2">
+            <h5 className="bg-secondary text-white p-3">
              {this.props.title}
           </h5>
-            <ul className="list-group list-group-flush bg-light">
+            <ListGroup>
            {this.renderVideoLinks()}
-           </ul>
+           </ListGroup>
         </div>
       )
    }

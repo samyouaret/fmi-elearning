@@ -21,10 +21,14 @@ class AdminDashboard extends Component {
            sub_subject_value : null,
            subject_id : 0,
            hasMessage : false,
+           user_type: -1,
         }
-        this.authorizeUser = (id,type)=>{
-           let url = "/admin/users/authorize/"+ id + "/" + type;
-           request(url,{},"PUT").done((message)=>{
+        this.getUserId = ()=>{
+           return location.pathname.split('/')[2];
+        }
+        this.authorizeUser = (user_id,type)=>{
+           let url = "/admin/users/authorize/"+ this.getUserId();
+           request(url,{user_id:user_id,type:type},"PUT").done((message)=>{
              this.setState({
                message:message.message || message,
                hasMessage  :true
@@ -96,23 +100,39 @@ class AdminDashboard extends Component {
         this.timerMessage();
        }
     }
-    renderUsers(users){
+    renderUsers(users,admin_type){
+      if (this.state.admin_type < 1) {
+         this.setState({
+            admin_type : admin_type
+         })
+      }
       return users.map((user)=>{
+         let instructorBtn =null;
+         let adminBtn =null;
+         let deleteBtn =null;
+         instructorBtn = (<button className="btn btn-secondary btn-sm mr-1"
+         onClick={this.authorizeUser.bind(this,user.id,1)}>set as instructor</button>)
+         if (admin_type == 2) {
+          deleteBtn = <button onClick={this.authorizeUser.bind(this,user.id,0)}
+                              className="btn btn-danger btn-sm">delete roles</button>
+        } else if (admin_type == 3) {
+           adminBtn = (<button className="btn btn-primary btn-sm mr-1"
+                      onClick={this.authorizeUser.bind(this,user.id,2)}>set as admin</button>)
+           deleteBtn = <button onClick={this.authorizeUser.bind(this,user.id,0)}
+                              className="btn btn-danger btn-sm">delete roles</button>
+        }
          return(<ListGroupRow key={user.id} title={user.first_name + " " + user.last_name}
          subTitle={user.email}>
-         <button className="btn btn-primary btn-sm mr-1"
-            onClick={this.authorizeUser.bind(this,user.id,2)}>set as admin</button>
-         <button className="btn btn-secondary btn-sm mr-1"
-            onClick={this.authorizeUser.bind(this,user.id,1)}>set as instructor</button>
-         <button onClick={this.authorizeUser.bind(this,user.id,0)}
-            className="btn btn-danger btn-sm">delete roles</button>
+         {adminBtn}
+         {instructorBtn}
+         {deleteBtn}
       </ListGroupRow>)
    });
    }
    renderCourses(courses){
       // <button className="btn btn-primary btn-sm mr-1">unpublish</button>
       return courses.map(function(course) {
-         return(<ListGroupRow key={course.id} image={"storage/course_image/"+course.cover_image}
+         return(<ListGroupRow key={course.id} image={"/storage/course_image/"+course.cover_image}
             title={course.title}
          subTitle={course.created_at}>
          <a target="_blank" href={"/enrollment/" + course.id}
@@ -162,13 +182,13 @@ class AdminDashboard extends Component {
              <div className="col-md-6">
                 <h4>users</h4>
                 <DataPager url="/admin/users" searchUrl="/admin/search/user">
-                   {(users,loadMore,hasNext,search,filter)=>{
+                   {(users,loadMore,{hasNext,paginateData},search,filter)=>{
                       let btn = null;
                       if (hasNext) {
                         console.log("has next");
                         btn = <button className="btn btn-info my-2" onClick={loadMore}>load</button>
                      }
-                     let userList =  this.renderUsers(users);
+                     let userList =  this.renderUsers(users,paginateData.admin_type);
                   return (<ListGroup>
                   <input className="form-control my-2" type="search" placeholder="filter user"
                      onChange={(e)=>{
@@ -183,7 +203,7 @@ class AdminDashboard extends Component {
              <div className="col-md-6">
                  <h4>published courses</h4>
                 <DataPager url="/admin/courses" searchUrl="/admin/search/course">
-                   {(courses,loadMore,hasNext,search,filter)=>{
+                   {(courses,loadMore,{hasNext,paginateData},search,filter)=>{
                       let btn = null;
                       if (hasNext) {
                         console.log("has next");
@@ -204,7 +224,7 @@ class AdminDashboard extends Component {
              <div className="col-md-6">
                  <h4>subjects</h4>
                 <DataPager url="/admin/subjects" searchUrl="/admin/search/subjec">
-                   {(subjects,loadMore,hasNext,search,filter,reset)=>{
+                   {(subjects,loadMore,{hasNext,paginateData},search,filter,reset)=>{
                       let btn = null;
                       if (hasNext) {
                         console.log("has next");
@@ -241,7 +261,7 @@ class AdminDashboard extends Component {
              <div className="col-md-6">
                  <h4>sub subjects</h4>
                 <DataPager url="/admin/subsubjects">
-                   {(subSubjects,loadMore,hasNext,search,filter,reset)=>{
+                   {(subSubjects,loadMore,{hasNext,paginateData},search,filter,reset)=>{
                       let btn = null;
                       if (hasNext) {
                         console.log("has next");

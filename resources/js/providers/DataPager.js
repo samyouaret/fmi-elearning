@@ -35,7 +35,8 @@ export default class DataPager extends Component{
          request(this.options.url + '?page=' + page,this.options.data,this.options.method).
          done((message)=>{
             this.oldData = null;
-            this.success(message,currentData);
+            let result  = message
+            this.success(result,currentData);
          }).fail((jqXHR)=>{
             let message = jqXHR.responseJSON;
             this.setState({
@@ -99,7 +100,9 @@ export default class DataPager extends Component{
       return <Loading/>;
      }else{
          return this.props.children && this.props.children.constructor.name == "Function" ?
-         this.props.children(data,this.loadMore,this.state.hasNext,this.search,this.filter,this.reset) :
+         this.props.children(data,this.loadMore,
+            {paginateData:this.state.paginateData,hasNext:this.state.hasNext},
+            this.search,this.filter,this.reset) :
             this.props.children || null;
      }
    }

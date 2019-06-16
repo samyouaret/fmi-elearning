@@ -61277,12 +61277,21 @@ function (_Component) {
       subject_value: null,
       sub_subject_value: null,
       subject_id: 0,
-      hasMessage: false
+      hasMessage: false,
+      user_type: -1
     };
 
-    _this.authorizeUser = function (id, type) {
-      var url = "/admin/users/authorize/" + id + "/" + type;
-      Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_1__["default"])(url, {}, "PUT").done(function (message) {
+    _this.getUserId = function () {
+      return location.pathname.split('/')[2];
+    };
+
+    _this.authorizeUser = function (user_id, type) {
+      var url = "/admin/users/authorize/" + _this.getUserId();
+
+      Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_1__["default"])(url, {
+        user_id: user_id,
+        type: type
+      }, "PUT").done(function (message) {
         _this.setState({
           message: message.message || message,
           hasMessage: true
@@ -61373,24 +61382,45 @@ function (_Component) {
 
   _createClass(AdminDashboard, [{
     key: "renderUsers",
-    value: function renderUsers(users) {
+    value: function renderUsers(users, admin_type) {
       var _this2 = this;
 
+      if (this.state.admin_type < 1) {
+        this.setState({
+          admin_type: admin_type
+        });
+      }
+
       return users.map(function (user) {
+        var instructorBtn = null;
+        var adminBtn = null;
+        var deleteBtn = null;
+        instructorBtn = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          className: "btn btn-secondary btn-sm mr-1",
+          onClick: _this2.authorizeUser.bind(_this2, user.id, 1)
+        }, "set as instructor");
+
+        if (admin_type == 2) {
+          deleteBtn = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+            onClick: _this2.authorizeUser.bind(_this2, user.id, 0),
+            className: "btn btn-danger btn-sm"
+          }, "delete roles");
+        } else if (admin_type == 3) {
+          adminBtn = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+            className: "btn btn-primary btn-sm mr-1",
+            onClick: _this2.authorizeUser.bind(_this2, user.id, 2)
+          }, "set as admin");
+          deleteBtn = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+            onClick: _this2.authorizeUser.bind(_this2, user.id, 0),
+            className: "btn btn-danger btn-sm"
+          }, "delete roles");
+        }
+
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_ListGroupRow__WEBPACK_IMPORTED_MODULE_9__["default"], {
           key: user.id,
           title: user.first_name + " " + user.last_name,
           subTitle: user.email
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-          className: "btn btn-primary btn-sm mr-1",
-          onClick: _this2.authorizeUser.bind(_this2, user.id, 2)
-        }, "set as admin"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-          className: "btn btn-secondary btn-sm mr-1",
-          onClick: _this2.authorizeUser.bind(_this2, user.id, 1)
-        }, "set as instructor"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-          onClick: _this2.authorizeUser.bind(_this2, user.id, 0),
-          className: "btn btn-danger btn-sm"
-        }, "delete roles"));
+        }, adminBtn, instructorBtn, deleteBtn);
       });
     }
   }, {
@@ -61400,7 +61430,7 @@ function (_Component) {
       return courses.map(function (course) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_ListGroupRow__WEBPACK_IMPORTED_MODULE_9__["default"], {
           key: course.id,
-          image: "storage/course_image/" + course.cover_image,
+          image: "/storage/course_image/" + course.cover_image,
           title: course.title,
           subTitle: course.created_at
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
@@ -61477,7 +61507,9 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "users"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_DataPager__WEBPACK_IMPORTED_MODULE_7__["default"], {
         url: "/admin/users",
         searchUrl: "/admin/search/user"
-      }, function (users, loadMore, hasNext, search, filter) {
+      }, function (users, loadMore, _ref, search, filter) {
+        var hasNext = _ref.hasNext,
+            paginateData = _ref.paginateData;
         var btn = null;
 
         if (hasNext) {
@@ -61488,7 +61520,7 @@ function (_Component) {
           }, "load");
         }
 
-        var userList = _this5.renderUsers(users);
+        var userList = _this5.renderUsers(users, paginateData.admin_type);
 
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_ListGroup__WEBPACK_IMPORTED_MODULE_8__["default"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
           className: "form-control my-2",
@@ -61506,7 +61538,9 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "published courses"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_DataPager__WEBPACK_IMPORTED_MODULE_7__["default"], {
         url: "/admin/courses",
         searchUrl: "/admin/search/course"
-      }, function (courses, loadMore, hasNext, search, filter) {
+      }, function (courses, loadMore, _ref2, search, filter) {
+        var hasNext = _ref2.hasNext,
+            paginateData = _ref2.paginateData;
         var btn = null;
 
         if (hasNext) {
@@ -61535,7 +61569,9 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "subjects"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_DataPager__WEBPACK_IMPORTED_MODULE_7__["default"], {
         url: "/admin/subjects",
         searchUrl: "/admin/search/subjec"
-      }, function (subjects, loadMore, hasNext, search, filter, reset) {
+      }, function (subjects, loadMore, _ref3, search, filter, reset) {
+        var hasNext = _ref3.hasNext,
+            paginateData = _ref3.paginateData;
         var btn = null;
 
         if (hasNext) {
@@ -61585,7 +61621,9 @@ function (_Component) {
         className: "col-md-6"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "sub subjects"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_providers_DataPager__WEBPACK_IMPORTED_MODULE_7__["default"], {
         url: "/admin/subsubjects"
-      }, function (subSubjects, loadMore, hasNext, search, filter, reset) {
+      }, function (subSubjects, loadMore, _ref4, search, filter, reset) {
+        var hasNext = _ref4.hasNext,
+            paginateData = _ref4.paginateData;
         var btn = null;
 
         if (hasNext) {
@@ -61893,11 +61931,14 @@ function ListGroupRow(props) {
 
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
     className: "list-group-item d-flex justify-content-between " + props.active,
+    style: {
+      cursor: "pointer"
+    },
     onClick: props.onClick
   }, image, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
     className: "d-flex flex-column"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, props.title), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-    className: "text-muted"
+    className: "text-muted" + props.active
   }, props.subTitle)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, props.children));
 }
 
@@ -62369,8 +62410,9 @@ function (_Component) {
       // })
       Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_this.options.url + '?page=' + page, _this.options.data, _this.options.method).done(function (message) {
         _this.oldData = null;
+        var result = message;
 
-        _this.success(message, currentData);
+        _this.success(result, currentData);
       }).fail(function (jqXHR) {
         var message = jqXHR.responseJSON;
 
@@ -62464,7 +62506,10 @@ function (_Component) {
       } else if (!isLoaded) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Loading_js__WEBPACK_IMPORTED_MODULE_5__["default"], null);
       } else {
-        return this.props.children && this.props.children.constructor.name == "Function" ? this.props.children(data, this.loadMore, this.state.hasNext, this.search, this.filter, this.reset) : this.props.children || null;
+        return this.props.children && this.props.children.constructor.name == "Function" ? this.props.children(data, this.loadMore, {
+          paginateData: this.state.paginateData,
+          hasNext: this.state.hasNext
+        }, this.search, this.filter, this.reset) : this.props.children || null;
       }
     }
   }]);
