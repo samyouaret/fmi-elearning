@@ -62633,6 +62633,13 @@ function (_Component) {
         video.onloadedmetadata = function () {
           state.data.time_required_in_sec = Math.round(video.duration);
         };
+
+        console.log("to update----------------");
+        console.log(_objectSpread({}, state.data, {
+          time_required_in_sec: state.data.time_required_in_sec
+        }));
+
+        _this.update(state.data);
       }
 
       console.log(state);
@@ -62675,7 +62682,8 @@ function (_Component) {
       Object(_helpers_request_js__WEBPACK_IMPORTED_MODULE_10__["default"])("/curriculum/content/removevideo/" + _this.state.data.content_id, {}, "DELETE").done(function (message) {
         _this.setState({
           data: _objectSpread({}, _this.state.data, {
-            video_url: ""
+            video_url: "",
+            time_required_in_sec: 0
           }),
           hasMessage: true,
           message: message
@@ -63749,6 +63757,26 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/helpers/nullToEmptyString.js":
+/*!***************************************************!*\
+  !*** ./resources/js/helpers/nullToEmptyString.js ***!
+  \***************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return nullToEmptyString; });
+function nullToEmptyString($var) {
+  if ($var === null || $var === "null") {
+    return "";
+  }
+
+  return $var;
+}
+
+/***/ }),
+
 /***/ "./resources/js/helpers/request.js":
 /*!*****************************************!*\
   !*** ./resources/js/helpers/request.js ***!
@@ -63759,6 +63787,8 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return request; });
+/* harmony import */ var _nullToEmptyString__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./nullToEmptyString */ "./resources/js/helpers/nullToEmptyString.js");
+
 function request(url, data) {
   var method = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "POST";
   $.ajaxSetup({
@@ -63769,7 +63799,7 @@ function request(url, data) {
   var form_data = new FormData();
 
   for (var key in data) {
-    form_data.append(key, data[key]);
+    form_data.append(key, Object(_nullToEmptyString__WEBPACK_IMPORTED_MODULE_0__["default"])(data[key]));
   }
 
   var type = method.toLowerCase();

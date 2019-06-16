@@ -1,3 +1,5 @@
+import nullToEmptyString from './nullToEmptyString'
+
 export default function request(url,data,method="POST"){
    $.ajaxSetup({
       headers: {
@@ -6,7 +8,7 @@ export default function request(url,data,method="POST"){
    });
    var form_data = new FormData();
    for ( var key in data ) {
-       form_data.append(key,data[key]);
+       form_data.append(key,nullToEmptyString(data[key]));
    }
    let type = method.toLowerCase();
    if (type!="get" && type!="post") {

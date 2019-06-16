@@ -204,7 +204,7 @@ class ContentController extends Controller
            ->where('id',$content_id)->first();
          if ($resource) {
             DB::table("course_chapter_content")->where('id',$content_id)
-            ->update(["video_url"=>NULL]);
+            ->update(["video_url"=>NULL,'time_required_in_sec'=>0]);
             $path = str_replace("/storage",'public',$resource->video_url);
             Storage::delete($path);
             return response()->json(['status'=>'success','message' =>"video deleted."],200);

@@ -93,6 +93,9 @@ export default class Content extends Component {
             video.onloadedmetadata = ()=>{
                state.data.time_required_in_sec = Math.round(video.duration);
             }
+            console.log("to update----------------");
+            console.log({...state.data,time_required_in_sec:state.data.time_required_in_sec});
+            this.update(state.data);
           }
         console.log(state);
        this.setState(state);
@@ -130,7 +133,8 @@ export default class Content extends Component {
            this.setState({
               data : {
                  ...this.state.data,
-                 video_url:""
+                 video_url:"",
+                 time_required_in_sec : 0
               },
               hasMessage:true,
               message : message
