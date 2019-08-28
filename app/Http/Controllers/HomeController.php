@@ -31,37 +31,42 @@ class HomeController extends Controller
     }
     public function courses()
     {
-         $data = Course::simplePaginate(3);
-         $message = ["auth"=>Auth::check(),
-         "data"=>$data];
-         return response()->json($message,200);
+        $data = Course::simplePaginate(3);
+        $message = [
+            "auth" => Auth::check(),
+            "data" => $data
+        ];
+        return response()->json($message, 200);
     }
 
     public function getEnrolledcourses()
     {
-      $courses = Course::select("course.id as id",'cover_image','title','enrollment_date')
-      ->join("enrollment",'enrollment.course_id','course.id')
-      ->where('enrollment.user_id',Auth::id())
-      ->paginate(5);
-      return response()->json($courses,200);
+        $courses = Course::select("course.id as id", 'cover_image', 'title', 'enrollment_date')
+            ->join("enrollment", 'enrollment.course_id', 'course.id')
+            ->where('enrollment.user_id', Auth::id())
+            ->paginate(5);
+        return response()->json($courses, 200);
     }
     public function search(Request $request)
     {
-      $this->validate($request,['search_term'=>"bail|required|string"]);
-      $search  = $request->input("search_term");
+        $this->validate($request, ['search_term' => "bail|required|string"]);
+        $search  = $request->input("search_term");
 
-         $data = DB::table('course')
-                    ->where('title','like',"%$search%")
-                    ->orWhere('description','like',"%$search%")
-                    ->paginate(3);
-         $message = ["count"=>count($data),"auth"=>Auth::check(),
-         "data"=>$data];
-         return response()->json($message,200);
+        $data = DB::table('course')
+            ->where('title', 'like', "%$search%")
+            ->orWhere('description', 'like', "%$search%")
+            ->paginate(3);
+        $message = [
+            "count" => count($data), "auth" => Auth::check(),
+            "data" => $data
+        ];
+        return response()->json($message, 200);
     }
+
 
     public function index()
     {
-           // return var_dump(Gate::allows("isInstructor"));
+        // return var_dump(Gate::allows("isInstructor"));
         return view('home.index');
     }
 }

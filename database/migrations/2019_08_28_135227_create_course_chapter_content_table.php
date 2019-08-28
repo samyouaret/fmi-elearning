@@ -17,7 +17,7 @@ class CreateCourseChapterContentTable extends Migration {
 			$table->bigInteger('id', true);
 			$table->string('title', 60);
 			$table->integer('course_chapter_id')->index('course_chapter_content_course_chapter');
-			$table->integer('content_type');
+			$table->string('video_url')->nullable();
 			$table->char('is_mandatory', 1);
 			$table->integer('time_required_in_sec');
 			$table->boolean('is_open_for_free');

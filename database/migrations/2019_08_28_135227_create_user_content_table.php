@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateAdminTable extends Migration {
+class CreateUserContentTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,10 +12,10 @@ class CreateAdminTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('admin', function(Blueprint $table)
+		Schema::create('user_content', function(Blueprint $table)
 		{
-			$table->bigInteger('id')->primary();
-			$table->tinyInteger('role');
+			$table->bigInteger('user_id');
+			$table->bigInteger('content_id');
 		});
 	}
 
@@ -27,7 +27,7 @@ class CreateAdminTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('admin');
+		Schema::drop('user_content');
 	}
 
 }

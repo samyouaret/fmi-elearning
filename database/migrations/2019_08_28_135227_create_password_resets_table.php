@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateArticleTable extends Migration {
+class CreatePasswordResetsTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,11 +12,11 @@ class CreateArticleTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('article', function(Blueprint $table)
+		Schema::create('password_resets', function(Blueprint $table)
 		{
-			$table->bigInteger('id', true);
-			$table->text('content');
-			$table->bigInteger('course_chapter_content_id')->index('article_course_chapter_content');
+			$table->string('email', 191)->index();
+			$table->string('token', 191);
+			$table->dateTime('created_at')->nullable();
 		});
 	}
 
@@ -28,7 +28,7 @@ class CreateArticleTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('article');
+		Schema::drop('password_resets');
 	}
 
 }

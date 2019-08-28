@@ -16,8 +16,8 @@ class CreateEnrollmentTable extends Migration {
 		{
 			$table->bigInteger('id', true);
 			$table->bigInteger('course_id')->index('enrollment_course');
-			$table->date('enrollment_date');
-			$table->char('is_paid_subscription', 1);
+			$table->timestamp('enrollment_date')->default(DB::raw('CURRENT_TIMESTAMP'));
+			$table->char('is_paid_subscription', 1)->default(0);
 			$table->bigInteger('user_id')->index('enrollment_user');
 		});
 	}

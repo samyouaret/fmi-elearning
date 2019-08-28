@@ -15,10 +15,9 @@ class CreateUserInfoTable extends Migration {
 		Schema::create('user_info', function(Blueprint $table)
 		{
 			$table->bigInteger('id')->primary();
-			$table->boolean('gender');
-			$table->integer('birth_date')->nullable();
 			$table->integer('university_id')->index('user_info_university');
 			$table->integer('department_id')->index('user_info_department');
+			$table->text('biography', 65535)->nullable();
 		});
 	}
 

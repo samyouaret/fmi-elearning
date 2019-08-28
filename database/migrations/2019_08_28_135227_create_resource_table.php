@@ -17,7 +17,6 @@ class CreateResourceTable extends Migration {
 			$table->bigInteger('id', true);
 			$table->string('url', 191);
 			$table->bigInteger('course_chapter_content_id')->index('resource_course_chapter_content');
-			$table->integer('resource_type');
 		});
 	}
 
