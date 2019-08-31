@@ -12,10 +12,9 @@ class ExampleTest extends TestCase
      *
      * @return void
      */
-    // public function testBasicTest()
-    // {
-    //     $response = $this->get('/');
+    public function testBasicTest()
+    {
 
-    //     $response->assertStatus(200);
-    // }
+        $this->markTestSkipped("Just an exampale test is skipped");
+    }
 }
