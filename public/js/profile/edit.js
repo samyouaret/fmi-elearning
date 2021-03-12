@@ -26255,7 +26255,7 @@ function (_Component) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /opt/lampp/htdocs/fmi-Elearning/resources/js/profile/edit.js */"./resources/js/profile/edit.js");
+module.exports = __webpack_require__(/*! /media/samyouaret/storage_drive/fmi-elearning/resources/js/profile/edit.js */"./resources/js/profile/edit.js");
 
 
 /***/ })

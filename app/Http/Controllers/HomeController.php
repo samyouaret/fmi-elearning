@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use App\Course;
 use Gate;
 
@@ -67,6 +68,7 @@ class HomeController extends Controller
     public function index()
     {
         // return var_dump(Gate::allows("isInstructor"));
+        // echo Hash::make('somepass');
         return view('home.index');
     }
 }

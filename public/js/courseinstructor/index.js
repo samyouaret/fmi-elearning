@@ -62058,7 +62058,7 @@ function shortenString(str) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /opt/lampp/htdocs/fmi-Elearning/resources/js/courseinstructor/index.js */"./resources/js/courseinstructor/index.js");
+module.exports = __webpack_require__(/*! /media/samyouaret/storage_drive/fmi-elearning/resources/js/courseinstructor/index.js */"./resources/js/courseinstructor/index.js");
 
 
 /***/ })

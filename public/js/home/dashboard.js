@@ -62730,7 +62730,7 @@ function (_Component) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /opt/lampp/htdocs/fmi-Elearning/resources/js/home/dashboard.js */"./resources/js/home/dashboard.js");
+module.exports = __webpack_require__(/*! /media/samyouaret/storage_drive/fmi-elearning/resources/js/home/dashboard.js */"./resources/js/home/dashboard.js");
 
 
 /***/ })
