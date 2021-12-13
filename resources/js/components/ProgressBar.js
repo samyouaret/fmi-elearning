@@ -3,7 +3,6 @@ import React,{Component} from "react"
 class ProgressBar extends Component {
    constructor(props) {
       super(props);
-      this.satte
    }
    render() {
       return this.props.value < 100 && this.props.value > -1 ?
