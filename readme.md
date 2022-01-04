@@ -44,13 +44,19 @@ This space allows the administrator of the platform to manage users and their pe
 
 ![adminstration space](https://github.com/samyouaret/fmi-elearning/blob/master/public/images/fmi-learning-adminstration.gif)
 
-## Running in Dev mode
+## Quick dev start
 
-  npm run development
+install `npm` dependencies
+
+    npm install
+
+install `PHP` dependencies
+
+    composer install
 
 Serve the application
 
-  php artisan serve
+    php artisan serve
 
 if you face some problems with missing extensions you can install them
 
