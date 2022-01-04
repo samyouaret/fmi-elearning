@@ -17,7 +17,7 @@ This tool helps to access a course builder that makes the management of courses 
 2. each course may have several chapters.
 3. each chapter has many contents that are composed of videos and files.
 
-[![fmi learning](https://github.com/samyouaret/fmi-elearning/blob/master/public/images/fmi_learning.png)](https://www.canva.com/design/DAE0fJzPSxQ/TP3OZIf_zM7mcfUZLRJrwg/watch?utm_content=DAE0fJzPSxQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink)
+[![fmi learning](https://github.com/samyouaret/fmi-elearning/blob/master/public/images/canvas-player.png)](https://www.canva.com/design/DAE0fJzPSxQ/TP3OZIf_zM7mcfUZLRJrwg/watch?utm_content=DAE0fJzPSxQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink)
 
 ### Student Space
 
