@@ -17,16 +17,9 @@ This tool helps to access a course builder that makes the management of courses 
 2. each course may have several chapters.
 3. each chapter has many contents that are composed of videos and files.
 
-<div style="position: relative; width: 100%; height: 0; padding-top: 56.2500%;
- padding-bottom: 48px; box-shadow: 0 2px 8px 0 rgba(63,69,81,0.16); margin-top: 1.6em; margin-bottom: 0.9em; overflow: hidden;
- border-radius: 8px; will-change: transform;">
-  <iframe loading="lazy" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; border: none; padding: 0;margin: 0;"
-    src="https:&#x2F;&#x2F;www.canva.com&#x2F;design&#x2F;DAE0fJzPSxQ&#x2F;watch?embed" allowfullscreen="allowfullscreen" allow="fullscreen">
-  </iframe>
-</div>
-<p>
-<a href="https:&#x2F;&#x2F;www.canva.com&#x2F;design&#x2F;DAE0fJzPSxQ&#x2F;watch?utm_content=DAE0fJzPSxQ&amp;utm_campaign=designshare&amp;utm_medium=embeds&amp;utm_source=link" target="_blank" rel="noopener">fmi-learning</a> by Samy Ouaret
-</p>
+[![Alternate Text](https://github.com/samyouaret/fmi-elearning/blob/master/public/images/fmi_learning.png)]({video-url} "Link Title")
+
+[![fmi learning](https://github.com/samyouaret/fmi-elearning/blob/master/public/images/fmi_learning.png)](https://github.com/samyouaret/fmi-elearning/blob/master/public/images/fmi-learning.mp4)
 
 ### Student Space
 
